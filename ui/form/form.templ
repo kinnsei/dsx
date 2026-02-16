@@ -75,13 +75,13 @@ templ Form(props Props) {
 		var submitAction string
 		switch props.Method {
 		case "put":
-			submitAction = ds.Put(actionURL)
+			submitAction = ds.PutOnce(actionURL)
 		case "patch":
-			submitAction = ds.Patch(actionURL)
+			submitAction = ds.PatchOnce(actionURL)
 		case "delete":
-			submitAction = ds.Delete(actionURL)
+			submitAction = ds.DeleteOnce(actionURL)
 		default:
-			submitAction = ds.Post(actionURL)
+			submitAction = ds.PostOnce(actionURL)
 		}
 	}}
 	<form
