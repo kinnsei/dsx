@@ -102,13 +102,13 @@ func Form(props Props) templ.Component {
 		var submitAction string
 		switch props.Method {
 		case "put":
-			submitAction = ds.Put(actionURL)
+			submitAction = ds.PutOnce(actionURL)
 		case "patch":
-			submitAction = ds.Patch(actionURL)
+			submitAction = ds.PatchOnce(actionURL)
 		case "delete":
-			submitAction = ds.Delete(actionURL)
+			submitAction = ds.DeleteOnce(actionURL)
 		default:
-			submitAction = ds.Post(actionURL)
+			submitAction = ds.PostOnce(actionURL)
 		}
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("space-y-4", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
