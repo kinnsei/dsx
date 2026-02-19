@@ -4,11 +4,12 @@ import "github.com/go-chi/chi/v5"
 
 // Handlers wires all showcase SSE/API handlers.
 type Handlers struct {
-	validate  *validateHandlers
-	parse     *parseHandlers
-	form      *formHandlers
-	upload    *uploadHandlers
-	preview   *previewHandlers
+	validate *validateHandlers
+	parse    *parseHandlers
+	form     *formHandlers
+	upload   *uploadHandlers
+	preview  *previewHandlers
+	toast    *toastHandlers
 }
 
 func New() *Handlers {
@@ -19,6 +20,7 @@ func New() *Handlers {
 		form:     newFormHandlers(),
 		upload:   newUploadHandlers(fileStore),
 		preview:  newPreviewHandlers(),
+		toast:    newToastHandlers(),
 	}
 }
 
@@ -29,4 +31,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.form.register(r)
 	h.upload.register(r)
 	h.preview.register(r)
+	h.toast.register(r)
 }

@@ -35,6 +35,7 @@ templ Base(props BaseProps) {
 		</head>
 		<body class="min-h-screen bg-base-100 text-base-content antialiased font-sans">
 			{ children... }
+			<div id="toast-container" class="toast toast-end toast-bottom z-50"></div>
 			for _, bt := range wctx.BodyTags {
 				@templ.Raw(bt.Tag)
 			}

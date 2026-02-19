@@ -1,7 +1,9 @@
 package pages
 
 import (
+	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/alert"
 	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/toast"
@@ -13,13 +15,52 @@ templ Toasts() {
 		Description: "DaisyUI toast component",
 		CurrentPath: "/components/toast",
 	}) {
+		{{
+			wctx := webx.FromContext(ctx)
+		}}
 		<div class="space-y-8">
 			<div>
 				<h1 class="text-3xl font-bold">Toast</h1>
 				<p class="text-base-content/70 mt-2">
-					Toast sticks alert messages to a corner of the page. Purely CSS positioning, no JavaScript needed.
+					Toast sticks alert messages to a corner of the page. Click the buttons below to trigger real toast notifications via SSE.
 				</p>
 			</div>
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Live Toasts
+					}
+					<p class="text-sm mb-4">
+						Click a button to trigger a toast notification. Toasts auto-dismiss after 3 seconds.
+					</p>
+					<div class="flex flex-wrap gap-3">
+						<button
+							class="btn btn-info"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/info")))... }
+						>
+							Info Toast
+						</button>
+						<button
+							class="btn btn-success"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/success")))... }
+						>
+							Success Toast
+						</button>
+						<button
+							class="btn btn-warning"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/warning")))... }
+						>
+							Warning Toast
+						</button>
+						<button
+							class="btn btn-error"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/error")))... }
+						>
+							Error Toast
+						</button>
+					</div>
+				}
+			}
 			@card.Card() {
 				@card.Body() {
 					@card.Title() {
