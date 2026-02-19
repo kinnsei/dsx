@@ -22,20 +22,22 @@ templ JSONViews() {
 			@card.Card() {
 				@card.Body() {
 					@card.Title() {
-						Simple Object
+						Simple Object (with copy button)
 					}
 					@jsonview.JSONView(jsonview.Props{
-						Value: `{"name":"Alice","age":30,"active":true,"email":"alice@example.com"}`,
+						Value:    `{"name":"Alice","age":30,"active":true,"email":"alice@example.com"}`,
+						Copyable: true,
 					})
 				}
 			}
 			@card.Card() {
 				@card.Body() {
 					@card.Title() {
-						Nested Object
+						Nested Object (with copy button)
 					}
 					@jsonview.JSONView(jsonview.Props{
-						Value: `{"user":{"name":"Bob","address":{"city":"Amsterdam","country":"NL"}},"roles":["admin","editor"],"settings":{"theme":"dark","notifications":true}}`,
+						Value:    `{"user":{"name":"Bob","address":{"city":"Amsterdam","country":"NL"}},"roles":["admin","editor"],"settings":{"theme":"dark","notifications":true}}`,
+						Copyable: true,
 					})
 				}
 			}
@@ -45,7 +47,18 @@ templ JSONViews() {
 						Array
 					}
 					@jsonview.JSONView(jsonview.Props{
-						Value: `[{"id":1,"status":"active"},{"id":2,"status":"pending"},{"id":3,"status":null}]`,
+						Value:    `[{"id":1,"status":"active"},{"id":2,"status":"pending"},{"id":3,"status":null}]`,
+						Copyable: true,
+					})
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Without copy button
+					}
+					@jsonview.JSONView(jsonview.Props{
+						Value: `{"readonly":true,"message":"No copy button on this one"}`,
 					})
 				}
 			}
@@ -55,7 +68,8 @@ templ JSONViews() {
 						Invalid JSON (plain text fallback)
 					}
 					@jsonview.JSONView(jsonview.Props{
-						Value: `This is not valid JSON, just a plain string value.`,
+						Value:    `This is not valid JSON, just a plain string value.`,
+						Copyable: true,
 					})
 				}
 			}

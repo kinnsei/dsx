@@ -1,27 +1,90 @@
 package jsonview
 
-import "github.com/plaenen/webx/utils"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/icon"
+	"github.com/plaenen/webx/utils"
+)
 
 type Props struct {
 	ID         string
 	Class      string
 	Attributes templ.Attributes
 	Value      string // raw value to display (JSON or plain text)
+	Copyable   bool   // show a copy-to-clipboard button
+}
+
+// prettyJSON returns indented JSON if valid, or the raw value as-is.
+func prettyJSON(raw string) string {
+	var parsed any
+	if err := json.Unmarshal([]byte(raw), &parsed); err != nil {
+		return raw
+	}
+	b, err := json.MarshalIndent(parsed, "", "  ")
+	if err != nil {
+		return raw
+	}
+	return string(b)
 }
 
 // JSONView renders a formatted, syntax-highlighted JSON viewer.
 // If Value is valid JSON, it is pretty-printed with color-coded tokens.
 // If not, the raw value is displayed as-is.
+// When Copyable is true, a copy button appears that copies the raw JSON text.
 templ JSONView(props Props) {
-	<pre
-		if props.ID != "" {
-			id={ props.ID }
+	{{
+		id := props.ID
+		if id == "" {
+			id = utils.RandomID()
 		}
-		class={ utils.TwMerge("bg-base-200 rounded-box p-4 overflow-x-auto text-sm font-mono", props.Class) }
-		{ props.Attributes... }
-	>
-		<code>
-			@templ.Raw(highlight(props.Value))
-		</code>
-	</pre>
+		codeID := id + "-code"
+	}}
+	<div class="relative group">
+		<pre
+			id={ codeID }
+			class={ utils.TwMerge("bg-base-200 rounded-box p-4 overflow-x-auto text-sm font-mono", props.Class) }
+			{ props.Attributes... }
+		>
+			<code>
+				@templ.Raw(highlight(props.Value))
+			</code>
+		</pre>
+		if props.Copyable {
+			{{
+				signals := utils.Signals(id, CopySignals{Copied: false})
+				copyExpr := fmt.Sprintf(
+					"navigator.clipboard.writeText(document.getElementById('%s').textContent).then(() => { %s; setTimeout(() => %s, 2000) })",
+					codeID,
+					signals.Set("copied", "true"),
+					signals.Set("copied", "false"),
+				)
+			}}
+			<button
+				class="btn btn-ghost btn-xs absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+				data-signals={ signals.DataSignals }
+				{ ds.OnClick(copyExpr)... }
+			>
+				<span
+					style="display: none;"
+					{ ds.Show(signals.Signal("copied"))... }
+				>
+					@icon.ClipboardCheck(icon.Props{Size: 14, Class: "text-success"})
+				</span>
+				<span
+					style="display: none;"
+					{ ds.Show("!" + signals.Signal("copied"))... }
+				>
+					@icon.ClipboardCopy(icon.Props{Size: 14})
+				</span>
+			</button>
+		}
+	</div>
+}
+
+// CopySignals holds the reactive state for the copy button.
+type CopySignals struct {
+	Copied bool `json:"copied"`
 }
