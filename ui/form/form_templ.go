@@ -12,6 +12,7 @@ import (
 	"fmt"
 
 	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/button"
 	"github.com/plaenen/webx/utils"
 )
 
@@ -122,7 +123,7 @@ func Form(props Props) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 88, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 89, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -135,7 +136,7 @@ func Form(props Props) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(signals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 89, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 90, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -525,6 +526,9 @@ func Success(signal string) templ.Component {
 type SubmitProps struct {
 	// FormID is the form's ID for accessing its signals.
 	FormID string
+	// Variant sets the button color variant (e.g. button.VariantPrimary).
+	// Defaults to no variant (plain btn).
+	Variant button.Variant
 	// Class adds CSS classes to the button.
 	Class string
 	// Attributes adds arbitrary HTML attributes.
@@ -554,7 +558,7 @@ func Submit(props SubmitProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		signals := utils.Signals(props.FormID, FormSignals{})
-		var templ_7745c5c3_Var19 = []any{utils.TwMerge("btn btn-primary", props.Class)}
+		var templ_7745c5c3_Var19 = []any{utils.TwMerge("btn", string(props.Variant), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var19...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/button"
 	"github.com/plaenen/webx/utils"
 )
 
@@ -180,6 +181,9 @@ templ Success(signal string) {
 type SubmitProps struct {
 	// FormID is the form's ID for accessing its signals.
 	FormID string
+	// Variant sets the button color variant (e.g. button.VariantPrimary).
+	// Defaults to no variant (plain btn).
+	Variant button.Variant
 	// Class adds CSS classes to the button.
 	Class string
 	// Attributes adds arbitrary HTML attributes.
@@ -193,7 +197,7 @@ templ Submit(props SubmitProps) {
 	}}
 	<button
 		type="submit"
-		class={ utils.TwMerge("btn btn-primary", props.Class) }
+		class={ utils.TwMerge("btn", string(props.Variant), props.Class) }
 		{ ds.Attr("disabled", signals.Signal("submitting"))... }
 		{ props.Attributes... }
 	>
