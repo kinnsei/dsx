@@ -54,6 +54,7 @@ var showcaseNav = []layouts.NavGroup{
 			{Label: "Hover Gallery", Href: "/components/hover-gallery", Icon: icon.Images},
 			{Label: "Indicator", Href: "/components/indicator", Icon: icon.MapPin},
 			{Label: "Join", Href: "/components/join", Icon: icon.Combine},
+			{Label: "JSON View", Href: "/components/json-view", Icon: icon.Braces},
 			{Label: "Kbd", Href: "/components/kbd", Icon: icon.Command},
 			{Label: "Link", Href: "/components/link", Icon: icon.Link},
 			{Label: "List", Href: "/components/list", Icon: icon.List},

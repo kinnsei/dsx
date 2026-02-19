@@ -1,0 +1,27 @@
+package jsonview
+
+import "github.com/plaenen/webx/utils"
+
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Value      string // raw value to display (JSON or plain text)
+}
+
+// JSONView renders a formatted, syntax-highlighted JSON viewer.
+// If Value is valid JSON, it is pretty-printed with color-coded tokens.
+// If not, the raw value is displayed as-is.
+templ JSONView(props Props) {
+	<pre
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class={ utils.TwMerge("bg-base-200 rounded-box p-4 overflow-x-auto text-sm font-mono", props.Class) }
+		{ props.Attributes... }
+	>
+		<code>
+			@templ.Raw(highlight(props.Value))
+		</code>
+	</pre>
+}

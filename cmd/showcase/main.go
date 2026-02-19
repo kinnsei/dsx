@@ -151,6 +151,7 @@ func serve(port int, pro bool) error {
 	r.Get("/components/stack", templ.Handler(pages.Stacks()).ServeHTTP)
 	r.Get("/components/form", templ.Handler(pages.Forms()).ServeHTTP)
 	r.Get("/components/file-upload", templ.Handler(pages.FileUploads()).ServeHTTP)
+	r.Get("/components/json-view", templ.Handler(pages.JSONViews()).ServeHTTP)
 
 	// SSE API endpoints
 	h := handlers.New()

@@ -1,0 +1,79 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/card"
+	"github.com/plaenen/webx/ui/jsonview"
+)
+
+templ JSONViews() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "JSON View — WebX Showcase",
+		Description: "Formatted and syntax-highlighted JSON viewer",
+		CurrentPath: "/components/json-view",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">JSON View</h1>
+				<p class="text-base-content/70 mt-2">
+					Displays formatted, syntax-highlighted JSON. Falls back to plain text when the input is not valid JSON.
+				</p>
+			</div>
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Simple Object
+					}
+					@jsonview.JSONView(jsonview.Props{
+						Value: `{"name":"Alice","age":30,"active":true,"email":"alice@example.com"}`,
+					})
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Nested Object
+					}
+					@jsonview.JSONView(jsonview.Props{
+						Value: `{"user":{"name":"Bob","address":{"city":"Amsterdam","country":"NL"}},"roles":["admin","editor"],"settings":{"theme":"dark","notifications":true}}`,
+					})
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Array
+					}
+					@jsonview.JSONView(jsonview.Props{
+						Value: `[{"id":1,"status":"active"},{"id":2,"status":"pending"},{"id":3,"status":null}]`,
+					})
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Invalid JSON (plain text fallback)
+					}
+					@jsonview.JSONView(jsonview.Props{
+						Value: `This is not valid JSON, just a plain string value.`,
+					})
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Empty Object &amp; Array
+					}
+					<div class="space-y-4">
+						@jsonview.JSONView(jsonview.Props{
+							Value: `{}`,
+						})
+						@jsonview.JSONView(jsonview.Props{
+							Value: `[]`,
+						})
+					</div>
+				}
+			}
+		</div>
+	}
+}
