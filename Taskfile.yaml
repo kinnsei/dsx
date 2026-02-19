@@ -100,7 +100,7 @@ tasks:
         go tool air \
           -build.cmd "go build -o tmp/bin/showcase ./cmd/showcase" \
           -build.bin "tmp/bin/showcase" \
-          -build.args_bin "serve" \
+          -build.args_bin "serve -p 3001" \
           -build.exclude_dir "tmp,bin,node_modules,.git" \
           -build.include_ext "go" \
           -build.exclude_regex "_test\\.go$$" \
@@ -112,7 +112,6 @@ tasks:
       - live:templ
       - live:styles
       - live:showcase
-      - live:dashboard
 
   # --- Test ---
 

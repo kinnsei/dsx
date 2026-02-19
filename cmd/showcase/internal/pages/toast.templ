@@ -28,35 +28,89 @@ templ Toasts() {
 			@card.Card() {
 				@card.Body() {
 					@card.Title() {
-						Live Toasts
+						Auto-dismiss
 					}
 					<p class="text-sm mb-4">
-						Click a button to trigger a toast notification. Toasts auto-dismiss after 3 seconds.
+						Toasts auto-dismiss after 3 seconds. Can be closed early with the close button.
 					</p>
 					<div class="flex flex-wrap gap-3">
 						<button
 							class="btn btn-info"
 							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/info")))... }
 						>
-							Info Toast
+							Info
 						</button>
 						<button
 							class="btn btn-success"
 							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/success")))... }
 						>
-							Success Toast
+							Success
 						</button>
 						<button
 							class="btn btn-warning"
 							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/warning")))... }
 						>
-							Warning Toast
+							Warning
 						</button>
 						<button
 							class="btn btn-error"
 							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/error")))... }
 						>
-							Error Toast
+							Error
+						</button>
+					</div>
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Persistent
+					}
+					<p class="text-sm mb-4">
+						Stays visible until the user clicks the close button. No auto-dismiss timer.
+					</p>
+					<div class="flex flex-wrap gap-3">
+						<button
+							class="btn btn-warning"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/persistent")))... }
+						>
+							Persistent Toast
+						</button>
+					</div>
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Action Required
+					}
+					<p class="text-sm mb-4">
+						Stays visible until the user clicks the action button or closes it. The action button triggers a server call.
+					</p>
+					<div class="flex flex-wrap gap-3">
+						<button
+							class="btn btn-error"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/action")))... }
+						>
+							Action Toast (Undo)
+						</button>
+					</div>
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Link
+					}
+					<p class="text-sm mb-4">
+						Contains a clickable link that navigates to another page. Auto-dismisses after 5 seconds.
+					</p>
+					<div class="flex flex-wrap gap-3">
+						<button
+							class="btn btn-info"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/link")))... }
+						>
+							Link Toast
 						</button>
 					</div>
 				}
@@ -70,63 +124,63 @@ templ Toasts() {
 					<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 						@toastBox("Top Start") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalStart, Vertical: toast.VerticalTop, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "shadow-lg"}) {
 									<span>top-start</span>
 								}
 							}
 						}
 						@toastBox("Top Center") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalCenter, Vertical: toast.VerticalTop, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "shadow-lg"}) {
 									<span>top-center</span>
 								}
 							}
 						}
 						@toastBox("Top End") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalEnd, Vertical: toast.VerticalTop, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "shadow-lg"}) {
 									<span>top-end</span>
 								}
 							}
 						}
 						@toastBox("Middle Start") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalStart, Vertical: toast.VerticalMiddle, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "shadow-lg"}) {
 									<span>middle-start</span>
 								}
 							}
 						}
 						@toastBox("Middle Center") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalCenter, Vertical: toast.VerticalMiddle, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "shadow-lg"}) {
 									<span>middle-center</span>
 								}
 							}
 						}
 						@toastBox("Middle End") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalEnd, Vertical: toast.VerticalMiddle, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "shadow-lg"}) {
 									<span>middle-end</span>
 								}
 							}
 						}
 						@toastBox("Bottom Start") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalStart, Vertical: toast.VerticalBottom, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantWarning, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantWarning, Class: "shadow-lg"}) {
 									<span>bottom-start</span>
 								}
 							}
 						}
 						@toastBox("Bottom Center") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalCenter, Vertical: toast.VerticalBottom, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantWarning, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantWarning, Class: "shadow-lg"}) {
 									<span>bottom-center</span>
 								}
 							}
 						}
 						@toastBox("Bottom End (default)") {
 							@toast.Toast(toast.Props{Horizontal: toast.HorizontalEnd, Vertical: toast.VerticalBottom, Class: "absolute"}) {
-								@alert.Alert(alert.Props{Variant: alert.VariantWarning, Class: "alert-soft"}) {
+								@alert.Alert(alert.Props{Variant: alert.VariantWarning, Class: "shadow-lg"}) {
 									<span>bottom-end</span>
 								}
 							}
@@ -142,13 +196,13 @@ templ Toasts() {
 					<p class="text-sm mb-3">A toast can hold multiple alerts that stack vertically.</p>
 					@toastBox("Stacked") {
 						@toast.Toast(toast.Props{Horizontal: toast.HorizontalEnd, Vertical: toast.VerticalTop, Class: "absolute"}) {
-							@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "alert-soft"}) {
+							@alert.Alert(alert.Props{Variant: alert.VariantInfo, Class: "shadow-lg"}) {
 								<span>New message received.</span>
 							}
-							@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "alert-soft"}) {
+							@alert.Alert(alert.Props{Variant: alert.VariantSuccess, Class: "shadow-lg"}) {
 								<span>File uploaded.</span>
 							}
-							@alert.Alert(alert.Props{Variant: alert.VariantError, Class: "alert-soft"}) {
+							@alert.Alert(alert.Props{Variant: alert.VariantError, Class: "shadow-lg"}) {
 								<span>Connection lost.</span>
 							}
 						}
