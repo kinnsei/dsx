@@ -104,7 +104,7 @@ func ThemeControllers() templ.Component {
 					templ_7745c5c3_Err = themecontroller.Toggle(themecontroller.ToggleProps{
 						ID:      "tc-toggle",
 						Theme:   "dark",
-						Default: "default",
+						Default: "silk",
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
@@ -177,7 +177,7 @@ func ThemeControllers() templ.Component {
 					}
 					templ_7745c5c3_Err = themecontroller.RadioGroup(themecontroller.RadioGroupProps{
 						ID:      "tc-radio",
-						Default: "default",
+						Default: "silk",
 						Themes:  defaultThemes(),
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
@@ -285,7 +285,7 @@ func ThemeControllers() templ.Component {
 
 func defaultThemes() []themecontroller.ThemeOption {
 	return []themecontroller.ThemeOption{
-		{Value: "default", Label: "Default"},
+		{Value: "silk", Label: "Silk"},
 		{Value: "dark", Label: "Dark"},
 		{Value: "retro", Label: "Retro"},
 		{Value: "cyberpunk", Label: "Cyberpunk"},

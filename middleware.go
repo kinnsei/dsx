@@ -11,6 +11,7 @@ import (
 const (
 	sessionCookieName = "webx_session"
 	csrfSessionKey    = "csrf_token"
+	ThemeSessionKey   = "theme"
 )
 
 // SessionMiddleware reads or creates a session cookie, then populates
@@ -57,9 +58,17 @@ func SessionMiddleware(store SessionStore) func(http.Handler) http.Handler {
 				}
 			}
 
+			theme, err := store.Get(sessionID, ThemeSessionKey)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("session store error: %v", err), http.StatusInternalServerError)
+				return
+			}
+
 			wctx := FromContext(r.Context())
 			wctx.SessionID = sessionID
 			wctx.CSRFToken = token
+			wctx.Theme = theme
+			wctx.Store = store
 
 			next.ServeHTTP(w, r.WithContext(wctx.WithContext(r.Context())))
 		})

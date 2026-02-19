@@ -26,8 +26,9 @@ type WebXContext struct {
 	CSRFToken   string
 	DevMode     bool
 	SessionID   string
-	BasePath    string // prefix for all SSE handler routes (e.g. "/showcase")
-	Theme       string // DaisyUI theme name applied via data-theme on <html>
+	BasePath    string       // prefix for all SSE handler routes (e.g. "/showcase")
+	Theme       string       // DaisyUI theme name applied via data-theme on <html>
+	Store       SessionStore // session store for handlers that need to persist data
 	Stylesheets []Stylesheet
 	Scripts     []Script
 	BodyTags    []BodyTag

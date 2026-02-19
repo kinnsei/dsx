@@ -94,6 +94,10 @@ templ Showcase(props ShowcaseProps) {
 		},
 		Nav:         showcaseNav,
 		CurrentPath: props.CurrentPath,
+		ThemeToggle: &layouts.ThemeToggleConfig{
+			DarkTheme:  "dark",
+			LightTheme: "silk",
+		},
 	}) {
 		{ children... }
 	}

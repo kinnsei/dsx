@@ -3,6 +3,7 @@ package themecontroller
 import (
 	"fmt"
 
+	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/utils"
 )
@@ -24,6 +25,11 @@ func themeEffect(signals *utils.SignalManager) string {
 	return fmt.Sprintf("document.documentElement.setAttribute('data-theme', %s)", signals.Signal("theme"))
 }
 
+// persistAction returns a ds.Post expression to persist the theme to the backend.
+func persistAction(basePath string) string {
+	return ds.Post(basePath + SetThemePath)
+}
+
 // ToggleProps configures a toggle switch between two themes.
 type ToggleProps struct {
 	ID         string
@@ -35,6 +41,7 @@ type ToggleProps struct {
 
 templ Toggle(props ToggleProps) {
 	{{
+		wctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -43,7 +50,13 @@ templ Toggle(props ToggleProps) {
 		if defaultTheme == "" {
 			defaultTheme = "default"
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: defaultTheme})
+		initialTheme := defaultTheme
+		if wctx.Theme != "" {
+			initialTheme = wctx.Theme
+		}
+		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
+		onChange := fmt.Sprintf("%s = evt.target.checked ? '%s' : '%s'; %s",
+			signals.Signal("theme"), props.Theme, defaultTheme, persistAction(wctx.BasePath))
 	}}
 	<input
 		type="checkbox"
@@ -51,7 +64,7 @@ templ Toggle(props ToggleProps) {
 		class={ utils.TwMerge("toggle theme-controller", props.Class) }
 		data-signals={ signals.DataSignals }
 		{ ds.Effect(themeEffect(signals))... }
-		{ ds.On("change", fmt.Sprintf("%s = evt.target.checked ? '%s' : '%s'", signals.Signal("theme"), props.Theme, defaultTheme))... }
+		{ ds.On("change", onChange)... }
 		{ ds.Attr("checked", fmt.Sprintf("%s === '%s'", signals.Signal("theme"), props.Theme))... }
 		{ props.Attributes... }
 	/>
@@ -68,6 +81,7 @@ type RadioGroupProps struct {
 
 templ RadioGroup(props RadioGroupProps) {
 	{{
+		wctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -76,8 +90,13 @@ templ RadioGroup(props RadioGroupProps) {
 		if defaultTheme == "" && len(props.Themes) > 0 {
 			defaultTheme = props.Themes[0].Value
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: defaultTheme})
+		initialTheme := defaultTheme
+		if wctx.Theme != "" {
+			initialTheme = wctx.Theme
+		}
+		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-radios"
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
 	}}
 	<div
 		data-signals={ signals.DataSignals }
@@ -94,7 +113,7 @@ templ RadioGroup(props RadioGroupProps) {
 					value={ theme.Value }
 					class="radio theme-controller"
 					aria-label={ theme.Label }
-					{ ds.On("change", signals.Set("theme", "evt.target.value"))... }
+					{ ds.On("change", onChange)... }
 					{ ds.Attr("checked", signals.Equals("theme", theme.Value))... }
 				/>
 			</label>
@@ -113,6 +132,7 @@ type ButtonGroupProps struct {
 
 templ ButtonGroup(props ButtonGroupProps) {
 	{{
+		wctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -121,8 +141,13 @@ templ ButtonGroup(props ButtonGroupProps) {
 		if defaultTheme == "" && len(props.Themes) > 0 {
 			defaultTheme = props.Themes[0].Value
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: defaultTheme})
+		initialTheme := defaultTheme
+		if wctx.Theme != "" {
+			initialTheme = wctx.Theme
+		}
+		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-btns"
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
 	}}
 	<div
 		data-signals={ signals.DataSignals }
@@ -137,7 +162,7 @@ templ ButtonGroup(props ButtonGroupProps) {
 				value={ theme.Value }
 				class="btn theme-controller join-item"
 				aria-label={ theme.Label }
-				{ ds.On("change", signals.Set("theme", "evt.target.value"))... }
+				{ ds.On("change", onChange)... }
 				{ ds.Attr("checked", signals.Equals("theme", theme.Value))... }
 			/>
 		}

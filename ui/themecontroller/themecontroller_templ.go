@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
+	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/utils"
 )
@@ -30,6 +31,11 @@ type ThemeOption struct {
 // theme signal to the document root element.
 func themeEffect(signals *utils.SignalManager) string {
 	return fmt.Sprintf("document.documentElement.setAttribute('data-theme', %s)", signals.Signal("theme"))
+}
+
+// persistAction returns a ds.Post expression to persist the theme to the backend.
+func persistAction(basePath string) string {
+	return ds.Post(basePath + SetThemePath)
 }
 
 // ToggleProps configures a toggle switch between two themes.
@@ -62,6 +68,7 @@ func Toggle(props ToggleProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		wctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -70,7 +77,13 @@ func Toggle(props ToggleProps) templ.Component {
 		if defaultTheme == "" {
 			defaultTheme = "default"
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: defaultTheme})
+		initialTheme := defaultTheme
+		if wctx.Theme != "" {
+			initialTheme = wctx.Theme
+		}
+		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
+		onChange := fmt.Sprintf("%s = evt.target.checked ? '%s' : '%s'; %s",
+			signals.Signal("theme"), props.Theme, defaultTheme, persistAction(wctx.BasePath))
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("toggle theme-controller", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
@@ -83,7 +96,7 @@ func Toggle(props ToggleProps) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.Theme)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 50, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 63, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -109,7 +122,7 @@ func Toggle(props ToggleProps) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(signals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 52, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 65, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -123,7 +136,7 @@ func Toggle(props ToggleProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.On("change", fmt.Sprintf("%s = evt.target.checked ? '%s' : '%s'", signals.Signal("theme"), props.Theme, defaultTheme)))
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.On("change", onChange))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -173,6 +186,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		wctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -181,8 +195,13 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 		if defaultTheme == "" && len(props.Themes) > 0 {
 			defaultTheme = props.Themes[0].Value
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: defaultTheme})
+		initialTheme := defaultTheme
+		if wctx.Theme != "" {
+			initialTheme = wctx.Theme
+		}
+		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-radios"
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
 		var templ_7745c5c3_Var7 = []any{utils.TwMerge("flex flex-col gap-1", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
@@ -195,7 +214,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(signals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 83, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 102, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -242,7 +261,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 90, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 109, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -255,7 +274,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(groupName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 93, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 112, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
@@ -268,7 +287,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 94, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 113, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -281,7 +300,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 96, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 115, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -291,7 +310,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.On("change", signals.Set("theme", "evt.target.value")))
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.On("change", onChange))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -342,6 +361,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		wctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -350,8 +370,13 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 		if defaultTheme == "" && len(props.Themes) > 0 {
 			defaultTheme = props.Themes[0].Value
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: defaultTheme})
+		initialTheme := defaultTheme
+		if wctx.Theme != "" {
+			initialTheme = wctx.Theme
+		}
+		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-btns"
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
 		var templ_7745c5c3_Var15 = []any{utils.TwMerge("join", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {
@@ -364,7 +389,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(signals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 128, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 153, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -411,7 +436,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(groupName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 136, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 161, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -424,7 +449,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			var templ_7745c5c3_Var19 string
 			templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 137, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 162, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 			if templ_7745c5c3_Err != nil {
@@ -437,7 +462,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			var templ_7745c5c3_Var20 string
 			templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(theme.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 139, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/themecontroller/themecontroller.templ`, Line: 164, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 			if templ_7745c5c3_Err != nil {
@@ -447,7 +472,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.On("change", signals.Set("theme", "evt.target.value")))
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.On("change", onChange))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
