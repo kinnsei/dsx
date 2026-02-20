@@ -2,6 +2,7 @@ package layouts
 
 import (
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/stream"
 )
 
 type BaseProps struct {
@@ -35,6 +36,7 @@ templ Base(props BaseProps) {
 		</head>
 		<body class="min-h-screen bg-base-100 text-base-content antialiased font-sans">
 			{ children... }
+			@stream.Connect()
 			<div id="toast-container" class="toast toast-end toast-bottom z-50"></div>
 			for _, bt := range wctx.BodyTags {
 				@templ.Raw(bt.Tag)

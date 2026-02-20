@@ -1,6 +1,9 @@
 package handlers
 
-import "github.com/go-chi/chi/v5"
+import (
+	"github.com/go-chi/chi/v5"
+	"github.com/plaenen/webx/stream"
+)
 
 // Handlers wires all showcase SSE/API handlers.
 type Handlers struct {
@@ -10,9 +13,10 @@ type Handlers struct {
 	upload   *uploadHandlers
 	preview  *previewHandlers
 	toast    *toastHandlers
+	stream   *streamHandlers
 }
 
-func New() *Handlers {
+func New(broker *stream.Broker) *Handlers {
 	fileStore := newFileStore()
 	return &Handlers{
 		validate: newValidateHandlers(),
@@ -21,6 +25,7 @@ func New() *Handlers {
 		upload:   newUploadHandlers(fileStore),
 		preview:  newPreviewHandlers(),
 		toast:    newToastHandlers(),
+		stream:   newStreamHandlers(broker),
 	}
 }
 
@@ -32,4 +37,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.upload.register(r)
 	h.preview.register(r)
 	h.toast.register(r)
+	h.stream.register(r)
 }

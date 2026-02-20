@@ -7,14 +7,18 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
+	"github.com/nats-io/nats-server/v2/server"
+	"github.com/nats-io/nats.go"
 	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/cmd/showcase/internal/handlers"
 	"github.com/plaenen/webx/cmd/showcase/internal/pages"
 	memstore "github.com/plaenen/webx/cmd/showcase/internal/session"
 	"github.com/plaenen/webx/cmd/showcase/internal/static"
+	"github.com/plaenen/webx/stream"
 	"github.com/plaenen/webx/ui"
 	"github.com/spf13/cobra"
 )
@@ -58,6 +62,26 @@ func serve(port int, pro bool) error {
 	}
 	readme := string(readmeBytes)
 
+	// Start embedded NATS server (in-process, no TCP port).
+	ns, err := server.NewServer(&server.Options{DontListen: true})
+	if err != nil {
+		return fmt.Errorf("creating NATS server: %w", err)
+	}
+	ns.Start()
+	defer ns.Shutdown()
+	if !ns.ReadyForConnections(4 * time.Second) {
+		return fmt.Errorf("NATS server not ready")
+	}
+
+	nc, err := nats.Connect(ns.ClientURL(), nats.InProcessServer(ns))
+	if err != nil {
+		return fmt.Errorf("connecting to NATS: %w", err)
+	}
+	defer nc.Close()
+
+	broker := stream.NewBroker(nc)
+	slog.Info("embedded NATS started (in-process)")
+
 	r := chi.NewRouter()
 
 	// Session + CSRF middleware
@@ -67,6 +91,7 @@ func serve(port int, pro bool) error {
 
 	// Set dev-mode flag, base path, and dependencies on every request
 	const basePath = "/showcase"
+	streamURL := basePath + "/stream"
 	stylesheets := []webx.Stylesheet{{Href: "/assets/css/output.css"}}
 	scripts := []webx.Script{{Src: "/assets/js/datastar.js"}}
 	var bodyTags []webx.BodyTag
@@ -75,6 +100,7 @@ func serve(port int, pro bool) error {
 			wctx := webx.FromContext(r.Context())
 			wctx.DevMode = true
 			wctx.BasePath = basePath
+			wctx.StreamURL = streamURL
 			wctx.Stylesheets = stylesheets
 			wctx.Scripts = scripts
 			wctx.BodyTags = bodyTags
@@ -135,6 +161,7 @@ func serve(port int, pro bool) error {
 	r.Get("/components/select", templ.Handler(pages.SelectInputs()).ServeHTTP)
 	r.Get("/components/separator", templ.Handler(pages.Separators()).ServeHTTP)
 	r.Get("/components/skeleton", templ.Handler(pages.Skeletons()).ServeHTTP)
+	r.Get("/components/stream", templ.Handler(pages.Stream()).ServeHTTP)
 	r.Get("/components/tab", templ.Handler(pages.Tabs()).ServeHTTP)
 	r.Get("/components/table", templ.Handler(pages.Tables()).ServeHTTP)
 	r.Get("/components/textarea", templ.Handler(pages.Textareas()).ServeHTTP)
@@ -154,8 +181,9 @@ func serve(port int, pro bool) error {
 	r.Get("/components/json-view", templ.Handler(pages.JSONViews()).ServeHTTP)
 
 	// SSE API endpoints
-	h := handlers.New()
+	h := handlers.New(broker)
 	r.Route(basePath, func(r chi.Router) {
+		r.Get("/stream", broker.Handler())
 		ui.RegisterRoutes(r)
 		h.RegisterRoutes(r)
 	})

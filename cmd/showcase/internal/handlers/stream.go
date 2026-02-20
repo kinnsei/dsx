@@ -1,0 +1,61 @@
+package handlers
+
+import (
+	"fmt"
+	"net/http"
+	"sync/atomic"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/plaenen/webx/stream"
+	"github.com/starfederation/datastar-go/datastar"
+)
+
+type streamHandlers struct {
+	broker  *stream.Broker
+	counter atomic.Int64
+}
+
+func newStreamHandlers(broker *stream.Broker) *streamHandlers {
+	return &streamHandlers{broker: broker}
+}
+
+func (s *streamHandlers) register(r chi.Router) {
+	r.Get("/api/stream/counter", s.getCounter())
+	r.Get("/api/stream/increment", s.increment())
+	r.Get("/api/stream/decrement", s.decrement())
+	r.Get("/api/stream/reset", s.reset())
+}
+
+func (s *streamHandlers) getCounter() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		sse := datastar.NewSSE(w, r)
+		count := s.counter.Load()
+		sse.PatchElements(
+			fmt.Sprintf(`<span id="stream-counter-value" class="text-6xl font-bold tabular-nums">%d</span>`, count),
+		)
+	}
+}
+
+func (s *streamHandlers) increment() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.counter.Add(1)
+		s.broker.Invalidate("counter:shared")
+		datastar.NewSSE(w, r)
+	}
+}
+
+func (s *streamHandlers) decrement() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.counter.Add(-1)
+		s.broker.Invalidate("counter:shared")
+		datastar.NewSSE(w, r)
+	}
+}
+
+func (s *streamHandlers) reset() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		s.counter.Store(0)
+		s.broker.Invalidate("counter:shared")
+		datastar.NewSSE(w, r)
+	}
+}

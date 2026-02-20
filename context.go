@@ -4,6 +4,7 @@ package webx
 import (
 	"context"
 	"fmt"
+	"slices"
 )
 
 // Stylesheet represents a <link rel="stylesheet"> tag to inject in <head>.
@@ -29,9 +30,21 @@ type WebXContext struct {
 	BasePath    string       // prefix for all SSE handler routes (e.g. "/showcase")
 	Theme       string       // DaisyUI theme name applied via data-theme on <html>
 	Store       SessionStore // session store for handlers that need to persist data
+	StreamURL   string       // URL for the reactive SSE stream endpoint (e.g. "/showcase/stream")
 	Stylesheets []Stylesheet
 	Scripts     []Script
 	BodyTags    []BodyTag
+	Scopes      []string // reactive scopes accumulated during render by components
+}
+
+// WatchScope registers a scope to be watched by the stream SSE connection.
+// Components call this during render to declare what data they depend on.
+// Duplicates are ignored.
+func (wctx *WebXContext) WatchScope(scope string) {
+	if slices.Contains(wctx.Scopes, scope) {
+		return
+	}
+	wctx.Scopes = append(wctx.Scopes, scope)
 }
 
 func NewContext(ctx context.Context) *WebXContext {

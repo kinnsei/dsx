@@ -110,8 +110,9 @@ const csrfJS = `document.querySelector('meta[name=csrf-token]')?.content||''`
 type ActionOption func(*actionConfig)
 
 type actionConfig struct {
-	retries     *int   // nil = Datastar default; 0 = no retry; >0 = custom count
-	contentType string // e.g. "form" for multipart/form-data
+	retries               *int   // nil = Datastar default; 0 = no retry; >0 = custom count
+	contentType           string // e.g. "form" for multipart/form-data
+	requestCancellation   string // e.g. "disabled" to prevent other SSE requests from cancelling this one
 }
 
 // WithRetries sets the maximum number of retry attempts.
@@ -124,6 +125,12 @@ func WithRetries(n int) ActionOption {
 // Use "form" to send multipart/form-data (file uploads).
 func WithContentType(ct string) ActionOption {
 	return func(c *actionConfig) { c.contentType = ct }
+}
+
+// WithRequestCancellation controls whether other SSE requests cancel this one.
+// Use "disabled" for persistent stream connections that should not be interrupted.
+func WithRequestCancellation(mode string) ActionOption {
+	return func(c *actionConfig) { c.requestCancellation = mode }
 }
 
 // noRetry is a pre-built option that disables retries.
@@ -142,6 +149,9 @@ func buildAction(method, url string, csrf bool, opts []ActionOption) string {
 	}
 	if cfg.contentType != "" {
 		parts = append(parts, fmt.Sprintf("contentType: '%s'", cfg.contentType))
+	}
+	if cfg.requestCancellation != "" {
+		parts = append(parts, fmt.Sprintf("requestCancellation: '%s'", cfg.requestCancellation))
 	}
 	if cfg.retries != nil {
 		parts = append(parts, fmt.Sprintf("retryMaxCount: %d", *cfg.retries))

@@ -1,0 +1,44 @@
+package stream
+
+import (
+	"encoding/json"
+	"strings"
+
+	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/ds"
+)
+
+// Connect renders a hidden element that opens the persistent SSE stream.
+// Place this AFTER { children... } in the page layout so all component
+// scopes are accumulated before this component reads them.
+//
+// If no scopes have been registered, nothing is rendered.
+templ Connect() {
+	{{
+		wctx := webx.FromContext(ctx)
+		scopes := wctx.Scopes
+	}}
+	if len(scopes) > 0 && wctx.StreamURL != "" {
+		{{
+			// Build URL with scope query params.
+			params := make([]string, len(scopes))
+			for i, s := range scopes {
+				params[i] = "scope=" + s
+			}
+			url := wctx.StreamURL + "?" + strings.Join(params, "&")
+
+			// Build initial signal object: {invoice_42: false, invoices_WILD: false}
+			signalMap := make(map[string]any, len(scopes))
+			for _, s := range scopes {
+				signalMap[ScopeKey(s)] = false
+			}
+			signalJSON, _ := json.Marshal(signalMap)
+			signalsAttr := "{" + SignalNamespace + ": " + string(signalJSON) + "}"
+		}}
+		<div
+			style="display:none"
+			data-signals={ signalsAttr }
+			data-init={ ds.Get(url, ds.WithRequestCancellation("disabled")) }
+		></div>
+	}
+}

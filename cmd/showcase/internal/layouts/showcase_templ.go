@@ -79,6 +79,7 @@ var showcaseNav = []layouts.NavGroup{
 			{Label: "Stat", Href: "/components/stat", Icon: icon.ChartColumn},
 			{Label: "Status", Href: "/components/status", Icon: icon.Activity},
 			{Label: "Steps", Href: "/components/steps", Icon: icon.Footprints},
+			{Label: "Stream", Href: "/components/stream", Icon: icon.Radio},
 			{Label: "Tab", Href: "/components/tab", Icon: icon.LayoutPanelTop},
 			{Label: "Textarea", Href: "/components/textarea", Icon: icon.TextCursorInput},
 			{Label: "Text Rotate", Href: "/components/text-rotate", Icon: icon.RotateCw},

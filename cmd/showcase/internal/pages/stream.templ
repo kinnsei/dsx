@@ -1,0 +1,110 @@
+package pages
+
+import (
+	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/stream"
+	"github.com/plaenen/webx/ui/card"
+)
+
+templ Stream() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Stream — WebX Showcase",
+		Description: "Reactive SSE stream with NATS pub/sub",
+		CurrentPath: "/components/stream",
+	}) {
+		{{
+			wctx := webx.FromContext(ctx)
+			counterEffect := stream.WatchEffect(ctx,
+				"counter:shared",
+				wctx.APIPath("/api/stream/counter"),
+			)
+		}}
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Stream</h1>
+				<p class="text-base-content/70 mt-2">
+					Reactive SSE stream backed by embedded NATS. Components auto-reload when server-side data changes. Open this page in multiple tabs to see real-time sync.
+				</p>
+			</div>
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						Shared Counter
+					}
+					<p class="text-sm mb-6">
+						This counter is shared across all browser tabs. Click the buttons to modify it — all connected tabs update in real-time via the SSE stream.
+					</p>
+					<div class="flex flex-col items-center gap-6">
+						<div
+							data-signals={ stream.ScopeSignals("counter:shared") }
+							{ ds.Effect(counterEffect)... }
+						>
+							<span
+								id="stream-counter-value"
+								{ ds.Init(ds.GetOnce(wctx.APIPath("/api/stream/counter")))... }
+								class="text-6xl font-bold tabular-nums"
+							>
+								—
+							</span>
+						</div>
+						<div class="flex gap-3">
+							<button
+								class="btn btn-primary btn-lg"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/decrement")))... }
+							>
+								−
+							</button>
+							<button
+								class="btn btn-neutral btn-lg"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/reset")))... }
+							>
+								Reset
+							</button>
+							<button
+								class="btn btn-primary btn-lg"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/increment")))... }
+							>
+								+
+							</button>
+						</div>
+					</div>
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						How It Works
+					}
+					<ol class="list-decimal list-inside space-y-3 text-sm">
+						<li>
+							<span class="font-medium">Register scope</span> —
+							Component calls
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "stream.WatchEffect(ctx, scope, reloadURL)" }</code>
+						</li>
+						<li>
+							<span class="font-medium">Connect</span> —
+							Base layout renders
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "stream.Connect()" }</code>
+							which opens a persistent SSE connection scoped to registered entities
+						</li>
+						<li>
+							<span class="font-medium">Mutate</span> —
+							Button click calls handler, which runs
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `broker.Invalidate("counter:shared")` }</code>
+						</li>
+						<li>
+							<span class="font-medium">Push</span> —
+							NATS delivers the message, stream pushes a stale signal to all connected browsers
+						</li>
+						<li>
+							<span class="font-medium">Reload</span> —
+							The component's data-effect detects the stale signal and auto-reloads itself
+						</li>
+					</ol>
+				}
+			}
+		</div>
+	}
+}
