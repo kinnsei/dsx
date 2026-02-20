@@ -48,7 +48,7 @@ templ Dropdown(props Props) {
 		}
 		signals := utils.Signals(id, DropdownSignals{Open: false})
 	}}
-	<details
+	<div
 		id={ id }
 		data-signals={ signals.DataSignals }
 		class={ utils.TwMerge("dropdown", string(props.Position), string(props.Align), utils.If(props.Hover, "dropdown-hover"), props.Class) }
@@ -57,7 +57,7 @@ templ Dropdown(props Props) {
 		{ props.Attributes... }
 	>
 		{ children... }
-	</details>
+	</div>
 }
 
 // TriggerProps configures the dropdown trigger button.
@@ -71,13 +71,15 @@ templ Trigger(props TriggerProps) {
 	{{
 		signals := utils.Signals(props.DropdownID, DropdownSignals{})
 	}}
-	<summary
+	<div
+		tabindex="0"
+		role="button"
 		class={ utils.TwMerge("btn", props.Class) }
-		{ ds.On("click__prevent", signals.Toggle("open"))... }
+		{ ds.On("click", signals.Toggle("open"))... }
 		{ props.Attributes... }
 	>
 		{ children... }
-	</summary>
+	</div>
 }
 
 // ContentProps configures the dropdown content panel.
