@@ -131,6 +131,7 @@ func serve(port int, pro bool) error {
 	r.Get("/components/breadcrumbs", templ.Handler(pages.Breadcrumbs()).ServeHTTP)
 	r.Get("/components/calendar-advanced", templ.Handler(pages.CalendarAdvanced()).ServeHTTP)
 	r.Get("/components/dock", templ.Handler(pages.Docks()).ServeHTTP)
+	r.Get("/components/drawer-advanced", templ.Handler(pages.DrawersAdvanced()).ServeHTTP)
 	r.Get("/components/dropdown", templ.Handler(pages.Dropdowns()).ServeHTTP)
 	r.Get("/components/fab", templ.Handler(pages.Fabs()).ServeHTTP)
 	r.Get("/components/fieldset", templ.Handler(pages.Fieldsets()).ServeHTTP)

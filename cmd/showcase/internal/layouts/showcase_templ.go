@@ -42,6 +42,7 @@ var showcaseNav = []layouts.NavGroup{
 			{Label: "Chat", Href: "/components/chat", Icon: icon.MessageCircle},
 			{Label: "Dock", Href: "/components/dock", Icon: icon.Dock},
 			{Label: "Drawer", Href: "/components/drawer", Icon: icon.PanelLeft},
+			{Label: "Drawer Advanced", Href: "/components/drawer-advanced", Icon: icon.PanelRight},
 			{Label: "Dropdown", Href: "/components/dropdown", Icon: icon.ChevronDown},
 			{Label: "FAB", Href: "/components/fab", Icon: icon.Rocket},
 			{Label: "Fieldset", Href: "/components/fieldset", Icon: icon.Form},
