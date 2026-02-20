@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/calendar"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
@@ -26,38 +26,99 @@ templ CalendarAdvanced() {
 					Month navigation via SSE (server re-renders the grid) and date-range selection via Datastar signals.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Month Navigation
-					}
-					<p class="text-sm mb-4">
-						Use the arrow buttons to navigate between months. The calendar grid is re-rendered on the server via SSE.
-					</p>
-					@navigableCalendarDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Month Navigation",
+				TemplCode: `navSignals := utils.Signals(calID, calendar.NavigableSignals{
+    Year:  now.Year(),
+    Month: int(now.Month()),
+})
+navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
+
+<div data-signals={ navSignals.DataSignals }>
+    <button { ds.OnClick(fmt.Sprintf("%s; %s",
+        navSignals.Set("direction", "-1"),
+        datastar.GetSSE(navURL)))... }>
+        Prev
+    </button>
+    <button { ds.OnClick(fmt.Sprintf("%s; %s",
+        navSignals.Set("direction", "1"),
+        datastar.GetSSE(navURL)))... }>
+        Next
+    </button>
+    @calendar.Calendar(calendar.Props{
+        ID:    calID,
+        Year:  now.Year(),
+        Month: now.Month(),
+    })
+</div>`,
+				HandlerCode: `// Built-in handler from the calendar package:
+// Mount calendar.NavigateHandler() at calendar.NavigatePath
+// e.g. r.Get(calendar.NavigatePath, calendar.NavigateHandler())`,
+			}) {
+				<p class="text-sm mb-4">
+					Use the arrow buttons to navigate between months. The calendar grid is re-rendered on the server via SSE.
+				</p>
+				@navigableCalendarDemo()
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Date Range Selection
-					}
-					<p class="text-sm mb-4">
-						Click a start date, then click an end date. The range is highlighted with accent styling. Click again to start a new range.
-					</p>
-					@rangeCalendarDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Date Range Selection",
+				TemplCode: `rangeSigs := utils.Signals(calID, calendar.RangeCalendarSignals{})
+
+<div data-signals={ rangeSigs.DataSignals }>
+    <span>
+        Range:
+        <code class="badge badge-sm"
+            data-text={ fmt.Sprintf(
+                "%s !== '' ? %s + ' -> ' + (%s !== '' ? %s : '...') : 'none'",
+                rangeSigs.Signal("rangeStart"),
+                rangeSigs.Signal("rangeStart"),
+                rangeSigs.Signal("rangeEnd"),
+                rangeSigs.Signal("rangeEnd"),
+            ) }>none</code>
+    </span>
+    @calendar.Calendar(calendar.Props{
+        ID:   calID,
+        Mode: calendar.ModeRange,
+    })
+</div>`,
+			}) {
+				<p class="text-sm mb-4">
+					Click a start date, then click an end date. The range is highlighted with accent styling. Click again to start a new range.
+				</p>
+				@rangeCalendarDemo()
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Navigation + Range Combined
-					}
-					<p class="text-sm mb-4">
-						Navigate between months with SSE while selecting a date range client-side.
-					</p>
-					@combinedCalendarDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Navigation + Range Combined",
+				TemplCode: `navSignals := utils.Signals(calID, calendar.NavigableSignals{
+    Year:  now.Year(),
+    Month: int(now.Month()),
+})
+navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=range&id=" + calID
+
+<div data-signals={ navSignals.DataSignals }>
+    <button { ds.OnClick(fmt.Sprintf("%s; %s",
+        navSignals.Set("direction", "-1"),
+        datastar.GetSSE(navURL)))... }>
+        Prev
+    </button>
+    <button { ds.OnClick(fmt.Sprintf("%s; %s",
+        navSignals.Set("direction", "1"),
+        datastar.GetSSE(navURL)))... }>
+        Next
+    </button>
+    @calendar.Calendar(calendar.Props{
+        ID:   calID,
+        Mode: calendar.ModeRange,
+    })
+</div>`,
+				HandlerCode: `// Built-in handler from the calendar package:
+// Mount calendar.NavigateHandler() at calendar.NavigatePath
+// e.g. r.Get(calendar.NavigatePath, calendar.NavigateHandler())`,
+			}) {
+				<p class="text-sm mb-4">
+					Navigate between months with SSE while selecting a date range client-side.
+				</p>
+				@combinedCalendarDemo()
 			}
 		</div>
 	}

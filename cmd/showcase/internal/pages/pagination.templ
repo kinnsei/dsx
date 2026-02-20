@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/pagination"
 )
 
@@ -19,112 +19,148 @@ templ Paginations() {
 					Pagination is a group of buttons that allow the user to navigate between pages.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@pagination.Pagination() {
+  @pagination.Button() {
+    1
+  }
+  @pagination.Button(pagination.ButtonProps{Active: true}) {
+    2
+  }
+  @pagination.Button() {
+    3
+  }
+  @pagination.Button() {
+    4
+  }
+}`,
+			}) {
+				@pagination.Pagination() {
+					@pagination.Button() {
+						1
 					}
-					<div class="py-4">
-						@pagination.Pagination() {
-							@pagination.Button() {
-								1
-							}
-							@pagination.Button(pagination.ButtonProps{Active: true}) {
-								2
-							}
-							@pagination.Button() {
-								3
-							}
-							@pagination.Button() {
-								4
-							}
-						}
-					</div>
+					@pagination.Button(pagination.ButtonProps{Active: true}) {
+						2
+					}
+					@pagination.Button() {
+						3
+					}
+					@pagination.Button() {
+						4
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Disabled
+			@components.Example(components.ExampleProps{
+				Title: "With Disabled",
+				TemplCode: `@pagination.Pagination() {
+  @pagination.Button() {
+    1
+  }
+  @pagination.Button(pagination.ButtonProps{Disabled: true}) {
+    ...
+  }
+  @pagination.Button() {
+    50
+  }
+  @pagination.Button(pagination.ButtonProps{Disabled: true}) {
+    ...
+  }
+  @pagination.Button() {
+    100
+  }
+}`,
+			}) {
+				@pagination.Pagination() {
+					@pagination.Button() {
+						1
 					}
-					<div class="py-4">
-						@pagination.Pagination() {
-							@pagination.Button() {
-								1
-							}
-							@pagination.Button(pagination.ButtonProps{Disabled: true}) {
-								...
-							}
-							@pagination.Button() {
-								50
-							}
-							@pagination.Button(pagination.ButtonProps{Disabled: true}) {
-								...
-							}
-							@pagination.Button() {
-								100
-							}
-						}
-					</div>
+					@pagination.Button(pagination.ButtonProps{Disabled: true}) {
+						...
+					}
+					@pagination.Button() {
+						50
+					}
+					@pagination.Button(pagination.ButtonProps{Disabled: true}) {
+						...
+					}
+					@pagination.Button() {
+						100
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Sizes
+			@components.Example(components.ExampleProps{
+				Title: "Sizes",
+				TemplCode: `@pagination.Pagination() {
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs}) { 1 }
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs, Active: true}) { 2 }
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs}) { 3 }
+}
+@pagination.Pagination() {
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm}) { 1 }
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm, Active: true}) { 2 }
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm}) { 3 }
+}
+@pagination.Pagination() {
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg}) { 1 }
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg, Active: true}) { 2 }
+  @pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg}) { 3 }
+}`,
+			}) {
+				<div class="flex flex-col gap-4">
+					@pagination.Pagination() {
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs}) {
+							1
+						}
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs, Active: true}) {
+							2
+						}
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs}) {
+							3
+						}
 					}
-					<div class="flex flex-col gap-4 py-4">
-						@pagination.Pagination() {
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs}) {
-								1
-							}
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs, Active: true}) {
-								2
-							}
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeXs}) {
-								3
-							}
+					@pagination.Pagination() {
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm}) {
+							1
 						}
-						@pagination.Pagination() {
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm}) {
-								1
-							}
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm, Active: true}) {
-								2
-							}
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm}) {
-								3
-							}
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm, Active: true}) {
+							2
 						}
-						@pagination.Pagination() {
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg}) {
-								1
-							}
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg, Active: true}) {
-								2
-							}
-							@pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg}) {
-								3
-							}
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeSm}) {
+							3
 						}
-					</div>
-				}
+					}
+					@pagination.Pagination() {
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg}) {
+							1
+						}
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg, Active: true}) {
+							2
+						}
+						@pagination.Button(pagination.ButtonProps{Size: pagination.SizeLg}) {
+							3
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Previous / Next
+			@components.Example(components.ExampleProps{
+				Title: "Previous / Next",
+				TemplCode: `@pagination.Pagination(pagination.Props{Class: "grid grid-cols-2"}) {
+  @pagination.Button(pagination.ButtonProps{Class: "btn-outline"}) {
+    Previous
+  }
+  @pagination.Button(pagination.ButtonProps{Class: "btn-outline"}) {
+    Next
+  }
+}`,
+			}) {
+				@pagination.Pagination(pagination.Props{Class: "grid grid-cols-2"}) {
+					@pagination.Button(pagination.ButtonProps{Class: "btn-outline"}) {
+						Previous
 					}
-					<div class="py-4">
-						@pagination.Pagination(pagination.Props{Class: "grid grid-cols-2"}) {
-							@pagination.Button(pagination.ButtonProps{Class: "btn-outline"}) {
-								Previous
-							}
-							@pagination.Button(pagination.ButtonProps{Class: "btn-outline"}) {
-								Next
-							}
-						}
-					</div>
+					@pagination.Button(pagination.ButtonProps{Class: "btn-outline"}) {
+						Next
+					}
 				}
 			}
 		</div>

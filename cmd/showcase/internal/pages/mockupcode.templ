@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/mockupcode"
 )
 
@@ -19,116 +19,133 @@ templ MockupCodes() {
 					Mockup Code displays code blocks in a terminal/editor-style container with line prefixes.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "$"}) {
+    npm i daisyui
+  }
+}`,
+			}) {
+				@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "$"}) {
+						npm i daisyui
 					}
-					<div class="py-4">
-						@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "$"}) {
-								npm i daisyui
-							}
-						}
-					</div>
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Multi-line with status
+			@components.Example(components.ExampleProps{
+				Title: "Multi-line with status",
+				TemplCode: `@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "$"}) {
+    npm i daisyui
+  }
+  @mockupcode.Line(mockupcode.LineProps{Prefix: ">", Class: "text-warning"}) {
+    installing...
+  }
+  @mockupcode.Line(mockupcode.LineProps{Prefix: ">", Class: "text-success"}) {
+    Done!
+  }
+}`,
+			}) {
+				@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "$"}) {
+						npm i daisyui
 					}
-					<div class="py-4">
-						@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "$"}) {
-								npm i daisyui
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: ">", Class: "text-warning"}) {
-								installing...
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: ">", Class: "text-success"}) {
-								Done!
-							}
-						}
-					</div>
+					@mockupcode.Line(mockupcode.LineProps{Prefix: ">", Class: "text-warning"}) {
+						installing...
+					}
+					@mockupcode.Line(mockupcode.LineProps{Prefix: ">", Class: "text-success"}) {
+						Done!
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Line numbers
+			@components.Example(components.ExampleProps{
+				Title: "Line numbers",
+				TemplCode: `@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "1"}) {
+    package main
+  }
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "2"}) {
+  }
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "3"}) {
+    import "fmt"
+  }
+}`,
+			}) {
+				@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "1"}) {
+						package main
 					}
-					<div class="py-4">
-						@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "1"}) {
-								package main
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "2"}) {
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "3"}) {
-								import "fmt"
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "4"}) {
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "5"}) {
-								func main() &#123;
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "6"}) {
-								&nbsp;&nbsp;fmt.Println("Hello, World!")
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "7"}) {
-								&#125;
-							}
-						}
-					</div>
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "2"}) {
+					}
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "3"}) {
+						import "fmt"
+					}
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "4"}) {
+					}
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "5"}) {
+						func main() &#123;
+					}
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "6"}) {
+						&nbsp;&nbsp;fmt.Println("Hello, World!")
+					}
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "7"}) {
+						&#125;
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Highlighted line
+			@components.Example(components.ExampleProps{
+				Title: "Highlighted line",
+				TemplCode: `@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "1"}) {
+    Installing dependencies
+  }
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "2"}) {
+    Compiling source
+  }
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "3", Class: "bg-warning text-warning-content"}) {
+    Error: missing semicolon
+  }
+}`,
+			}) {
+				@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "1"}) {
+						Installing dependencies
 					}
-					<div class="py-4">
-						@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "1"}) {
-								Installing dependencies
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "2"}) {
-								Compiling source
-							}
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "3", Class: "bg-warning text-warning-content"}) {
-								Error: missing semicolon
-							}
-						}
-					</div>
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "2"}) {
+						Compiling source
+					}
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "3", Class: "bg-warning text-warning-content"}) {
+						Error: missing semicolon
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Without prefix
+			@components.Example(components.ExampleProps{
+				Title: "Without prefix",
+				TemplCode: `@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+  @mockupcode.Line() {
+    no prefix on this line
+  }
+}`,
+			}) {
+				@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
+					@mockupcode.Line() {
+						no prefix on this line
 					}
-					<div class="py-4">
-						@mockupcode.MockupCode(mockupcode.Props{Class: "w-full"}) {
-							@mockupcode.Line() {
-								no prefix on this line
-							}
-						}
-					</div>
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Custom colors
+			@components.Example(components.ExampleProps{
+				Title: "Custom colors",
+				TemplCode: `@mockupcode.MockupCode(mockupcode.Props{Class: "bg-primary text-primary-content w-full"}) {
+  @mockupcode.Line(mockupcode.LineProps{Prefix: "~"}) {
+    Styled with primary colors
+  }
+}`,
+			}) {
+				@mockupcode.MockupCode(mockupcode.Props{Class: "bg-primary text-primary-content w-full"}) {
+					@mockupcode.Line(mockupcode.LineProps{Prefix: "~"}) {
+						Styled with primary colors
 					}
-					<div class="py-4">
-						@mockupcode.MockupCode(mockupcode.Props{Class: "bg-primary text-primary-content w-full"}) {
-							@mockupcode.Line(mockupcode.LineProps{Prefix: "~"}) {
-								Styled with primary colors
-							}
-						}
-					</div>
 				}
 			}
 		</div>

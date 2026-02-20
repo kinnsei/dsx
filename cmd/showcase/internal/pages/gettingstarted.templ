@@ -1,0 +1,18 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/markdown"
+)
+
+templ GettingStarted(content string) {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Getting Started — WebX Showcase",
+		Description: "Getting started guide for the WebX framework",
+		CurrentPath: "/getting-started",
+	}) {
+		@markdown.Markdown(markdown.Props{
+			Content: content,
+		})
+	}
+}

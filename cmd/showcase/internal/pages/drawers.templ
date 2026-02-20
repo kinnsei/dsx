@@ -1,10 +1,10 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/button"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/drawer"
 	"github.com/plaenen/webx/ui/menu"
 	"github.com/plaenen/webx/utils"
@@ -23,39 +23,79 @@ templ Drawers() {
 					DaisyUI drawer component controlled by Datastar signals.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						How it works
-					}
-					<div class="space-y-3 text-sm">
-						<p>The drawer combines DaisyUI CSS classes for styling with Datastar signals for state management.</p>
-						<ul class="list-disc list-inside space-y-1">
-							<li>SignalManager namespaces signals per drawer instance</li>
-							<li>data-class toggles drawer-open based on signal state</li>
-							<li>lg:drawer-open keeps sidebar visible on desktop</li>
-							<li>Overlay click sets the signal to false to close</li>
-						</ul>
-					</div>
-				}
+			@components.Example(components.ExampleProps{
+				Title: "How it works",
+				TemplCode: `signals := utils.Signals("my_drawer", drawer.DrawerSignals{Open: false})
+
+<div data-signals={ signals.DataSignals }>
+    @button.Button(button.Props{
+        OnClick: signals.Toggle("open"),
+    }) {
+        Toggle Drawer
+    }
+</div>`,
+			}) {
+				<div class="space-y-3 text-sm">
+					<p>The drawer combines DaisyUI CSS classes for styling with Datastar signals for state management.</p>
+					<ul class="list-disc list-inside space-y-1">
+						<li>SignalManager namespaces signals per drawer instance</li>
+						<li>data-class toggles drawer-open based on signal state</li>
+						<li>lg:drawer-open keeps sidebar visible on desktop</li>
+						<li>Overlay click sets the signal to false to close</li>
+					</ul>
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Standalone Drawer Demo
-					}
-					<p class="mb-4">This is a self-contained drawer inside the page content.</p>
-					@inlineDrawerDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Standalone Drawer Demo",
+				TemplCode: `signals := utils.Signals("demo_drawer", drawer.DrawerSignals{Open: false})
+
+<div data-signals={ signals.DataSignals }>
+    @button.Button(button.Props{
+        Variant: button.VariantPrimary,
+        Size:    button.SizeSm,
+        OnClick: signals.Toggle("open"),
+    }) {
+        Toggle Drawer
+    }
+    // Drawer panel with slide-in transition
+    <div data-class={ utils.NewDataClass().
+        Add("-translate-x-full", "!"+signals.Signal("open")).
+        Add("translate-x-0", signals.Signal("open")).Build() }>
+        @menu.Menu(menu.Props{Class: "p-0"}) {
+            @menu.Title() { Demo Menu }
+            @menu.Item(menu.ItemProps{Href: "#"}) { Dashboard }
+        }
+    </div>
+</div>`,
+			}) {
+				<p class="mb-4">This is a self-contained drawer inside the page content.</p>
+				@inlineDrawerDemo()
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Right Side (drawer-end)
-					}
-					<p class="mb-4">Drawer positioned on the right side of the content.</p>
-					@inlineDrawerEndDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Right Side (drawer-end)",
+				TemplCode: `signals := utils.Signals("demo_drawer_end", drawer.DrawerSignals{Open: false})
+
+<div data-signals={ signals.DataSignals }>
+    @button.Button(button.Props{
+        Variant: button.VariantPrimary,
+        Size:    button.SizeSm,
+        OnClick: signals.Toggle("open"),
+    }) {
+        Toggle Right Drawer
+    }
+    // Right-side panel with slide-in from right
+    <div data-class={ utils.NewDataClass().
+        Add("translate-x-full", "!"+signals.Signal("open")).
+        Add("translate-x-0", signals.Signal("open")).Build() }>
+        @menu.Menu(menu.Props{Class: "p-0"}) {
+            @menu.Title() { Right Panel }
+            @menu.Item(menu.ItemProps{Href: "#"}) { Notifications }
+        }
+    </div>
+</div>`,
+			}) {
+				<p class="mb-4">Drawer positioned on the right side of the content.</p>
+				@inlineDrawerEndDemo()
 			}
 		</div>
 	}

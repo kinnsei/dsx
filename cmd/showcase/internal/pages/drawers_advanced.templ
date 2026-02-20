@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/badge"
@@ -35,34 +36,51 @@ templ DrawersAdvanced() {
 				@projectCard(wctx, "5", "Auth Service", "OAuth2 and OIDC identity provider", "completed", 100)
 				@projectCard(wctx, "6", "Monitoring", "Observability stack with metrics and alerts", "planning", 12)
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						How It Works
-					}
-					<ol class="list-decimal list-inside space-y-3 text-sm">
-						<li>
-							<span class="font-medium">Click a card</span> —
-							triggers
-							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "@get('/api/drawer/project/{id}')" }</code>
-						</li>
-						<li>
-							<span class="font-medium">Handler renders</span> —
-							calls
-							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "ds.Send.Drawer(sse, pages.DrawerDetail(project))" }</code>
-						</li>
-						<li>
-							<span class="font-medium">SSE patches DOM</span> —
-							the drawer shell + content replaces
-							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "#drawer-panel" }</code>
-							via PatchElements
-						</li>
-						<li>
-							<span class="font-medium">Close</span> —
-							inline expression clears the container, no SSE roundtrip
-						</li>
-					</ol>
-				}
+			@components.Example(components.ExampleProps{
+				Title: "How It Works",
+				TemplCode: `templ projectCard(wctx *webx.WebXContext, id, name string) {
+    @card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg"}) {
+        @card.Body(card.Props{
+            Attributes: ds.Merge(
+                ds.OnClick(ds.GetOnce(wctx.APIPath("/api/drawer/project/"+id))),
+            ),
+        }) {
+            { name }
+        }
+    }
+}`,
+				HandlerCode: `func (h *drawerHandlers) showProject() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        id := chi.URLParam(r, "id")
+        project := mockProjects[id]
+
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Drawer(sse, pages.DrawerDetail(project))
+    }
+}`,
+			}) {
+				<ol class="list-decimal list-inside space-y-3 text-sm">
+					<li>
+						<span class="font-medium">Click a card</span> —
+						triggers
+						<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "@get('/api/drawer/project/{id}')" }</code>
+					</li>
+					<li>
+						<span class="font-medium">Handler renders</span> —
+						calls
+						<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "ds.Send.Drawer(sse, pages.DrawerDetail(project))" }</code>
+					</li>
+					<li>
+						<span class="font-medium">SSE patches DOM</span> —
+						the drawer shell + content replaces
+						<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "#drawer-panel" }</code>
+						via PatchElements
+					</li>
+					<li>
+						<span class="font-medium">Close</span> —
+						inline expression clears the container, no SSE roundtrip
+					</li>
+				</ol>
 			}
 		</div>
 	}

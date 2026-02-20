@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/fab"
 )
 
@@ -19,102 +19,123 @@ templ Fabs() {
 					Floating action button with speed dial for quick actions.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
+    <div tabindex="0" role="button" class="btn btn-primary btn-circle btn-lg">
+        // plus icon
+    </div>
+    <button class="btn btn-circle">// action icon</button>
+    <button class="btn btn-circle">// action icon</button>
+}`,
+			}) {
+				<div class="py-4 h-64 relative">
+					@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
+						<div tabindex="0" role="button" class="btn btn-primary btn-circle btn-lg">
+							@fabPlusIcon()
+						</div>
+						<button class="btn btn-circle">
+							@fabHeartIcon()
+						</button>
+						<button class="btn btn-circle">
+							@fabStarIcon()
+						</button>
+						<button class="btn btn-circle">
+							@fabShareIcon()
+						</button>
 					}
-					<div class="py-4 h-64 relative">
-						@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
-							<div tabindex="0" role="button" class="btn btn-primary btn-circle btn-lg">
-								@fabPlusIcon()
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Close Button",
+				TemplCode: `@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
+    <div tabindex="0" role="button" class="btn btn-primary btn-circle btn-lg">
+        // plus icon
+    </div>
+    @fab.Close() {
+        <div tabindex="0" role="button" class="btn btn-error btn-circle btn-lg">
+            // close icon
+        </div>
+    }
+    <button class="btn btn-circle">// action icon</button>
+}`,
+			}) {
+				<div class="py-4 h-64 relative">
+					@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
+						<div tabindex="0" role="button" class="btn btn-primary btn-circle btn-lg">
+							@fabPlusIcon()
+						</div>
+						@fab.Close() {
+							<div tabindex="0" role="button" class="btn btn-error btn-circle btn-lg">
+								@fabCloseIcon()
 							</div>
+						}
+						<button class="btn btn-circle">
+							@fabHeartIcon()
+						</button>
+						<button class="btn btn-circle">
+							@fabStarIcon()
+						</button>
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Flower",
+				TemplCode: `@fab.Fab(fab.Props{Flower: true, Class: "absolute bottom-4 right-4"}) {
+    <div tabindex="0" role="button" class="btn btn-secondary btn-circle btn-lg">
+        // plus icon
+    </div>
+    <button class="btn btn-circle">// action icon</button>
+}`,
+			}) {
+				<div class="py-4 h-72 relative">
+					@fab.Fab(fab.Props{Flower: true, Class: "absolute bottom-4 right-4"}) {
+						<div tabindex="0" role="button" class="btn btn-secondary btn-circle btn-lg">
+							@fabPlusIcon()
+						</div>
+						<button class="btn btn-circle">
+							@fabHeartIcon()
+						</button>
+						<button class="btn btn-circle">
+							@fabStarIcon()
+						</button>
+						<button class="btn btn-circle">
+							@fabShareIcon()
+						</button>
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Labels",
+				TemplCode: `@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
+    <div tabindex="0" role="button" class="btn btn-accent btn-circle btn-lg">
+        // plus icon
+    </div>
+    <div class="flex items-center gap-2">
+        <span class="badge">Edit</span>
+        <button class="btn btn-circle">// edit icon</button>
+    </div>
+}`,
+			}) {
+				<div class="py-4 h-72 relative">
+					@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
+						<div tabindex="0" role="button" class="btn btn-accent btn-circle btn-lg">
+							@fabPlusIcon()
+						</div>
+						<div class="flex items-center gap-2">
+							<span class="badge">Edit</span>
 							<button class="btn btn-circle">
-								@fabHeartIcon()
+								@fabEditIcon()
 							</button>
-							<button class="btn btn-circle">
-								@fabStarIcon()
-							</button>
+						</div>
+						<div class="flex items-center gap-2">
+							<span class="badge">Share</span>
 							<button class="btn btn-circle">
 								@fabShareIcon()
 							</button>
-						}
-					</div>
-				}
-			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Close Button
+						</div>
 					}
-					<div class="py-4 h-64 relative">
-						@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
-							<div tabindex="0" role="button" class="btn btn-primary btn-circle btn-lg">
-								@fabPlusIcon()
-							</div>
-							@fab.Close() {
-								<div tabindex="0" role="button" class="btn btn-error btn-circle btn-lg">
-									@fabCloseIcon()
-								</div>
-							}
-							<button class="btn btn-circle">
-								@fabHeartIcon()
-							</button>
-							<button class="btn btn-circle">
-								@fabStarIcon()
-							</button>
-						}
-					</div>
-				}
-			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Flower
-					}
-					<div class="py-4 h-72 relative">
-						@fab.Fab(fab.Props{Flower: true, Class: "absolute bottom-4 right-4"}) {
-							<div tabindex="0" role="button" class="btn btn-secondary btn-circle btn-lg">
-								@fabPlusIcon()
-							</div>
-							<button class="btn btn-circle">
-								@fabHeartIcon()
-							</button>
-							<button class="btn btn-circle">
-								@fabStarIcon()
-							</button>
-							<button class="btn btn-circle">
-								@fabShareIcon()
-							</button>
-						}
-					</div>
-				}
-			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Labels
-					}
-					<div class="py-4 h-72 relative">
-						@fab.Fab(fab.Props{Class: "absolute bottom-4 right-4"}) {
-							<div tabindex="0" role="button" class="btn btn-accent btn-circle btn-lg">
-								@fabPlusIcon()
-							</div>
-							<div class="flex items-center gap-2">
-								<span class="badge">Edit</span>
-								<button class="btn btn-circle">
-									@fabEditIcon()
-								</button>
-							</div>
-							<div class="flex items-center gap-2">
-								<span class="badge">Share</span>
-								<button class="btn btn-circle">
-									@fabShareIcon()
-								</button>
-							</div>
-						}
-					</div>
-				}
+				</div>
 			}
 		</div>
 	}

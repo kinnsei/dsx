@@ -39,12 +39,18 @@ func storeKey(sessionID, componentID string) string {
 	return sessionID + ":" + componentID
 }
 
+// UploadPath is the standard handler path for file uploads.
+const UploadPath = "/api/upload/files"
+
+// RemovePath is the standard handler path for file removal.
+const RemovePath = "/api/upload/remove"
+
 // UploadHandler returns an http.HandlerFunc that accepts multipart file
 // uploads and responds with an SSE patch of the updated file list.
 //
 // Mount at a dedicated POST path:
 //
-//	r.Post("/api/upload/files", fileupload.UploadHandler(store))
+//	r.Post(fileupload.UploadPath, fileupload.UploadHandler(store))
 func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
 	cfg := &handlerConfig{
 		maxFileSize: 10 << 20, // 10MB
@@ -144,7 +150,7 @@ func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
 //
 // Mount at a dedicated POST path:
 //
-//	r.Post("/api/upload/remove", fileupload.RemoveHandler(store))
+//	r.Post(fileupload.RemovePath, fileupload.RemoveHandler(store))
 func RemoveHandler(store *Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		componentID := r.URL.Query().Get("id")

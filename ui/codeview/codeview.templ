@@ -1,0 +1,69 @@
+package codeview
+
+import (
+	"fmt"
+
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/icon"
+	"github.com/plaenen/webx/utils"
+)
+
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Code       string // source code to display
+	Language   string // "go", "templ", "html", "sh", etc.
+}
+
+// CopySignals holds the reactive state for the copy button.
+type CopySignals struct {
+	Copied bool `json:"copied"`
+}
+
+// CodeView renders a syntax-highlighted code block with a copy button.
+templ CodeView(props Props) {
+	{{
+		id := props.ID
+		if id == "" {
+			id = "cv-" + utils.RandomID()
+		}
+		codeID := id + "-code"
+		signals := utils.Signals(id, CopySignals{Copied: false})
+		copyExpr := fmt.Sprintf(
+			"navigator.clipboard.writeText(document.getElementById('%s').textContent).then(() => { %s; setTimeout(() => %s, 2000) })",
+			codeID,
+			signals.Set("copied", "true"),
+			signals.Set("copied", "false"),
+		)
+	}}
+	<div class="relative group">
+		<pre
+			id={ codeID }
+			class={ utils.TwMerge("bg-base-200 rounded-box p-4 overflow-x-auto text-sm font-mono leading-relaxed max-h-96", props.Class) }
+			{ props.Attributes... }
+		>
+			<code>
+				@templ.Raw(Highlight(props.Code, props.Language))
+			</code>
+		</pre>
+		<button
+			class="btn btn-ghost btn-xs absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+			data-signals={ signals.DataSignals }
+			{ ds.OnClick(copyExpr)... }
+		>
+			<span
+				style="display: none;"
+				{ ds.Show(signals.Signal("copied"))... }
+			>
+				@icon.ClipboardCheck(icon.Props{Size: 14, Class: "text-success"})
+			</span>
+			<span
+				style="display: none;"
+				{ ds.Show("!" + signals.Signal("copied"))... }
+			>
+				@icon.ClipboardCopy(icon.Props{Size: 14})
+			</span>
+		</button>
+	</div>
+}

@@ -2,9 +2,9 @@ package pages
 
 import (
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/card"
 )
 
 templ ModalAdvanced() {
@@ -25,118 +25,177 @@ templ ModalAdvanced() {
 					All interactions are server-driven — no client-side JavaScript.
 				</p>
 			</div>
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				<!-- Modal -->
-				@card.Card() {
-					@card.Body() {
-						@card.Title() {
-							Modal
-						}
-						<p class="text-sm text-base-content/70">
-							Opens a centered dialog with server-rendered content. Closes via overlay click, close button, or server-side HideModal.
-						</p>
-						<div class="card-actions mt-4">
-							<button
-								class="btn btn-primary btn-sm"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show")))... }
-							>
-								Open Modal
-							</button>
-							<button
-								class="btn btn-sm"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show-wide")))... }
-							>
-								Wide Modal
-							</button>
-						</div>
-					}
-				}
-				<!-- Confirm -->
-				@card.Card() {
-					@card.Body() {
-						@card.Title() {
-							Confirm
-						}
-						<p class="text-sm text-base-content/70">
-							A confirmation dialog with confirm/cancel buttons. Confirm triggers a server action, cancel closes the dialog.
-						</p>
-						<div class="card-actions mt-4">
-							<button
-								class="btn btn-primary btn-sm"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm")))... }
-							>
-								Ask Confirmation
-							</button>
-							<button
-								class="btn btn-error btn-sm"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm-danger")))... }
-							>
-								Danger Confirm
-							</button>
-						</div>
-					}
-				}
-				<!-- Patch -->
-				@card.Card() {
-					@card.Body() {
-						@card.Title() {
-							Patch
-						}
-						<p class="text-sm text-base-content/70">
-							Renders a templ component server-side and patches it into the DOM by ID.
-						</p>
-						<div id="patch-target" class="mt-4 p-3 bg-base-200 rounded-box text-sm">
-							Click the button to patch this element with server-rendered content.
-						</div>
-						<div class="card-actions mt-4">
-							<button
-								class="btn btn-primary btn-sm"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/patch")))... }
-							>
-								Patch Content
-							</button>
-						</div>
-					}
-				}
-				<!-- Redirect -->
-				@card.Card() {
-					@card.Body() {
-						@card.Title() {
-							Redirect
-						}
-						<p class="text-sm text-base-content/70">
-							Navigates the browser to a new URL via SSE. Useful after form submissions or actions.
-						</p>
-						<div class="card-actions mt-4">
-							<button
-								class="btn btn-primary btn-sm"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/redirect")))... }
-							>
-								Redirect to Home
-							</button>
-						</div>
-					}
-				}
-				<!-- Download -->
-				@card.Card() {
-					@card.Body() {
-						@card.Title() {
-							Download
-						}
-						<p class="text-sm text-base-content/70">
-							Triggers a file download without navigating away from the page.
-						</p>
-						<div class="card-actions mt-4">
-							<button
-								class="btn btn-primary btn-sm"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/download")))... }
-							>
-								Download File
-							</button>
-						</div>
-					}
-				}
-			</div>
+			<!-- Modal -->
+			@components.Example(components.ExampleProps{
+				Title: "Modal",
+				TemplCode: `<button
+    class="btn btn-primary btn-sm"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show")))... }
+>
+    Open Modal
+</button>`,
+				HandlerCode: `func (h *modalHandlers) showModal() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Modal(sse, pages.ModalContent())
+    }
+}`,
+			}) {
+				<p class="text-sm text-base-content/70 mb-4">
+					Opens a centered dialog with server-rendered content. Closes via overlay click, close button, or server-side HideModal.
+				</p>
+				<div class="flex flex-wrap gap-3">
+					<button
+						class="btn btn-primary btn-sm"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show")))... }
+					>
+						Open Modal
+					</button>
+					<button
+						class="btn btn-sm"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show-wide")))... }
+					>
+						Wide Modal
+					</button>
+				</div>
+			}
+			<!-- Confirm -->
+			@components.Example(components.ExampleProps{
+				Title: "Confirm",
+				TemplCode: `<button
+    class="btn btn-primary btn-sm"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm")))... }
+>
+    Ask Confirmation
+</button>`,
+				HandlerCode: `func (h *modalHandlers) showConfirm() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        wctx := webx.FromContext(r.Context())
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Confirm(sse, "Are you sure?",
+            wctx.APIPath("/api/modal/confirmed"),
+        )
+    }
+}
+
+// Danger variant with custom styling:
+ds.Send.Confirm(sse, "Delete all data?",
+    wctx.APIPath("/api/data/purge"),
+    ds.WithConfirmTitle("Danger Zone"),
+    ds.WithConfirmLabel("Delete Everything"),
+    ds.WithConfirmClass("btn btn-error"),
+)`,
+			}) {
+				<p class="text-sm text-base-content/70 mb-4">
+					A confirmation dialog with confirm/cancel buttons. Confirm triggers a server action, cancel closes the dialog.
+				</p>
+				<div class="flex flex-wrap gap-3">
+					<button
+						class="btn btn-primary btn-sm"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm")))... }
+					>
+						Ask Confirmation
+					</button>
+					<button
+						class="btn btn-error btn-sm"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm-danger")))... }
+					>
+						Danger Confirm
+					</button>
+				</div>
+			}
+			<!-- Patch -->
+			@components.Example(components.ExampleProps{
+				Title: "Patch",
+				TemplCode: `<div id="patch-target" class="p-3 bg-base-200 rounded-box text-sm">
+    Click the button to patch this element.
+</div>
+<button
+    class="btn btn-primary btn-sm"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/patch")))... }
+>
+    Patch Content
+</button>`,
+				HandlerCode: `func (h *modalHandlers) patchContent() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        sse := datastar.NewSSE(w, r)
+        timestamp := time.Now().Format("15:04:05")
+        ds.Send.Patch(sse, pages.PatchedContent(timestamp))
+    }
+}`,
+			}) {
+				<p class="text-sm text-base-content/70 mb-4">
+					Renders a templ component server-side and patches it into the DOM by ID.
+				</p>
+				<div id="patch-target" class="p-3 bg-base-200 rounded-box text-sm">
+					Click the button to patch this element with server-rendered content.
+				</div>
+				<div class="mt-4">
+					<button
+						class="btn btn-primary btn-sm"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/patch")))... }
+					>
+						Patch Content
+					</button>
+				</div>
+			}
+			<!-- Redirect -->
+			@components.Example(components.ExampleProps{
+				Title: "Redirect",
+				TemplCode: `<button
+    class="btn btn-primary btn-sm"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/redirect")))... }
+>
+    Redirect to Home
+</button>`,
+				HandlerCode: `func (h *modalHandlers) redirect() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        wctx := webx.FromContext(r.Context())
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Redirect(sse, wctx.BasePath+"/")
+    }
+}`,
+			}) {
+				<p class="text-sm text-base-content/70 mb-4">
+					Navigates the browser to a new URL via SSE. Useful after form submissions or actions.
+				</p>
+				<button
+					class="btn btn-primary btn-sm"
+					{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/redirect")))... }
+				>
+					Redirect to Home
+				</button>
+			}
+			<!-- Download -->
+			@components.Example(components.ExampleProps{
+				Title: "Download",
+				TemplCode: `<button
+    class="btn btn-primary btn-sm"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/download")))... }
+>
+    Download File
+</button>`,
+				HandlerCode: `func (h *modalHandlers) download() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        wctx := webx.FromContext(r.Context())
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Download(sse,
+            wctx.APIPath("/api/reports/export.csv"),
+            "export.csv",
+        )
+    }
+}`,
+			}) {
+				<p class="text-sm text-base-content/70 mb-4">
+					Triggers a file download without navigating away from the page.
+				</p>
+				<button
+					class="btn btn-primary btn-sm"
+					{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/download")))... }
+				>
+					Download File
+				</button>
+			}
 		</div>
 	}
 }

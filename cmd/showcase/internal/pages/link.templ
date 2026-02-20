@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/link"
 )
 
@@ -19,86 +19,99 @@ templ Links() {
 					Styled hyperlinks with color variants and hover underline.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@link.Link(link.Props{Href: "#"}) {
+    This is a link
+}`,
+			}) {
+				<div class="py-4">
+					@link.Link(link.Props{Href: "#"}) {
+						This is a link
 					}
-					<div class="py-4">
-						@link.Link(link.Props{Href: "#"}) {
-							This is a link
-						}
-					</div>
-				}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Colors
+			@components.Example(components.ExampleProps{
+				Title: "Colors",
+				TemplCode: `@link.Link(link.Props{Variant: link.VariantPrimary, Href: "#"}) {
+    Primary
+}
+@link.Link(link.Props{Variant: link.VariantSecondary, Href: "#"}) {
+    Secondary
+}
+@link.Link(link.Props{Variant: link.VariantAccent, Href: "#"}) {
+    Accent
+}`,
+			}) {
+				<div class="flex flex-wrap items-center gap-4 py-4">
+					@link.Link(link.Props{Variant: link.VariantNeutral, Href: "#"}) {
+						Neutral
 					}
-					<div class="flex flex-wrap items-center gap-4 py-4">
-						@link.Link(link.Props{Variant: link.VariantNeutral, Href: "#"}) {
-							Neutral
-						}
-						@link.Link(link.Props{Variant: link.VariantPrimary, Href: "#"}) {
-							Primary
-						}
-						@link.Link(link.Props{Variant: link.VariantSecondary, Href: "#"}) {
-							Secondary
-						}
-						@link.Link(link.Props{Variant: link.VariantAccent, Href: "#"}) {
-							Accent
-						}
-						@link.Link(link.Props{Variant: link.VariantSuccess, Href: "#"}) {
-							Success
-						}
-						@link.Link(link.Props{Variant: link.VariantInfo, Href: "#"}) {
-							Info
-						}
-						@link.Link(link.Props{Variant: link.VariantWarning, Href: "#"}) {
-							Warning
-						}
-						@link.Link(link.Props{Variant: link.VariantError, Href: "#"}) {
-							Error
-						}
-					</div>
-				}
+					@link.Link(link.Props{Variant: link.VariantPrimary, Href: "#"}) {
+						Primary
+					}
+					@link.Link(link.Props{Variant: link.VariantSecondary, Href: "#"}) {
+						Secondary
+					}
+					@link.Link(link.Props{Variant: link.VariantAccent, Href: "#"}) {
+						Accent
+					}
+					@link.Link(link.Props{Variant: link.VariantSuccess, Href: "#"}) {
+						Success
+					}
+					@link.Link(link.Props{Variant: link.VariantInfo, Href: "#"}) {
+						Info
+					}
+					@link.Link(link.Props{Variant: link.VariantWarning, Href: "#"}) {
+						Warning
+					}
+					@link.Link(link.Props{Variant: link.VariantError, Href: "#"}) {
+						Error
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Hover Underline
+			@components.Example(components.ExampleProps{
+				Title: "Hover Underline",
+				TemplCode: `@link.Link(link.Props{Hover: true, Href: "#"}) {
+    Hover to see underline
+}
+@link.Link(link.Props{Hover: true, Variant: link.VariantPrimary, Href: "#"}) {
+    Primary hover
+}`,
+			}) {
+				<div class="flex items-center gap-4 py-4">
+					@link.Link(link.Props{Hover: true, Href: "#"}) {
+						Hover to see underline
 					}
-					<div class="flex items-center gap-4 py-4">
-						@link.Link(link.Props{Hover: true, Href: "#"}) {
-							Hover to see underline
-						}
-						@link.Link(link.Props{Hover: true, Variant: link.VariantPrimary, Href: "#"}) {
-							Primary hover
-						}
-						@link.Link(link.Props{Hover: true, Variant: link.VariantSecondary, Href: "#"}) {
-							Secondary hover
-						}
-					</div>
-				}
+					@link.Link(link.Props{Hover: true, Variant: link.VariantPrimary, Href: "#"}) {
+						Primary hover
+					}
+					@link.Link(link.Props{Hover: true, Variant: link.VariantSecondary, Href: "#"}) {
+						Secondary hover
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						In Text
+			@components.Example(components.ExampleProps{
+				Title: "In Text",
+				TemplCode: `<p>
+    Check the
+    @link.Link(link.Props{Variant: link.VariantPrimary, Href: "#"}) {
+        documentation
+    }
+    to learn more.
+</p>`,
+			}) {
+				<p class="py-4">
+					Check the
+					@link.Link(link.Props{Variant: link.VariantPrimary, Href: "#"}) {
+						documentation
 					}
-					<p class="py-4">
-						Check the
-						@link.Link(link.Props{Variant: link.VariantPrimary, Href: "#"}) {
-							documentation
-						}
-						to learn more, or browse the
-						@link.Link(link.Props{Variant: link.VariantSecondary, Href: "#"}) {
-							source code
-						}
-						on GitHub.
-					</p>
-				}
+					to learn more, or browse the
+					@link.Link(link.Props{Variant: link.VariantSecondary, Href: "#"}) {
+						source code
+					}
+					on GitHub.
+				</p>
 			}
 		</div>
 	}

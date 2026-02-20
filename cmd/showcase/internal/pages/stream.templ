@@ -2,6 +2,7 @@ package pages
 
 import (
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/stream"
@@ -28,49 +29,91 @@ templ Stream() {
 					Reactive SSE stream backed by embedded NATS. Components auto-reload when server-side data changes. Open this page in multiple tabs to see real-time sync.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Shared Counter
-					}
-					<p class="text-sm mb-6">
-						This counter is shared across all browser tabs. Click the buttons to modify it — all connected tabs update in real-time via the SSE stream.
-					</p>
-					<div class="flex flex-col items-center gap-6">
-						<div
-							data-signals={ stream.ScopeSignals("counter:shared") }
-							{ ds.Effect(counterEffect)... }
+			@components.Example(components.ExampleProps{
+				Title: "Shared Counter",
+				TemplCode: `{{
+    wctx := webx.FromContext(ctx)
+    counterEffect := stream.WatchEffect(ctx,
+        "counter:shared",
+        wctx.APIPath("/api/stream/counter"),
+    )
+}}
+<div data-signals={ stream.ScopeSignals("counter:shared") }
+    { ds.Effect(counterEffect)... }>
+    <span id="stream-counter-value"
+        { ds.Init(ds.GetOnce(wctx.APIPath("/api/stream/counter")))... }
+        class="text-6xl font-bold tabular-nums">
+        —
+    </span>
+</div>
+<button class="btn btn-primary btn-lg"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/decrement")))... }>
+    −
+</button>
+<button class="btn btn-neutral btn-lg"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/reset")))... }>
+    Reset
+</button>
+<button class="btn btn-primary btn-lg"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/increment")))... }>
+    +
+</button>`,
+				HandlerCode: `func (s *streamHandlers) getCounter() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        sse := datastar.NewSSE(w, r)
+        count := s.counter.Load()
+        sse.PatchElements(
+            fmt.Sprintf(` + "`" + `<span id="stream-counter-value"
+                class="text-6xl font-bold tabular-nums">%d</span>` + "`" + `, count),
+        )
+    }
+}
+
+func (s *streamHandlers) increment() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        s.counter.Add(1)
+        s.broker.Invalidate("counter:shared")
+        datastar.NewSSE(w, r)
+    }
+}`,
+			}) {
+				<p class="text-sm mb-6">
+					This counter is shared across all browser tabs. Click the buttons to modify it — all connected tabs update in real-time via the SSE stream.
+				</p>
+				<div class="flex flex-col items-center gap-6">
+					<div
+						data-signals={ stream.ScopeSignals("counter:shared") }
+						{ ds.Effect(counterEffect)... }
+					>
+						<span
+							id="stream-counter-value"
+							{ ds.Init(ds.GetOnce(wctx.APIPath("/api/stream/counter")))... }
+							class="text-6xl font-bold tabular-nums"
 						>
-							<span
-								id="stream-counter-value"
-								{ ds.Init(ds.GetOnce(wctx.APIPath("/api/stream/counter")))... }
-								class="text-6xl font-bold tabular-nums"
-							>
-								—
-							</span>
-						</div>
-						<div class="flex gap-3">
-							<button
-								class="btn btn-primary btn-lg"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/decrement")))... }
-							>
-								−
-							</button>
-							<button
-								class="btn btn-neutral btn-lg"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/reset")))... }
-							>
-								Reset
-							</button>
-							<button
-								class="btn btn-primary btn-lg"
-								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/increment")))... }
-							>
-								+
-							</button>
-						</div>
+							—
+						</span>
 					</div>
-				}
+					<div class="flex gap-3">
+						<button
+							class="btn btn-primary btn-lg"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/decrement")))... }
+						>
+							−
+						</button>
+						<button
+							class="btn btn-neutral btn-lg"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/reset")))... }
+						>
+							Reset
+						</button>
+						<button
+							class="btn btn-primary btn-lg"
+							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/increment")))... }
+						>
+							+
+						</button>
+					</div>
+				</div>
 			}
 			@card.Card() {
 				@card.Body() {

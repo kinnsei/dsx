@@ -13,12 +13,15 @@ type previewSignals struct {
 	Mode  string `json:"mode"`
 }
 
+// PreviewPath is the standard handler path for markdown preview.
+const PreviewPath = "/api/preview/markdown"
+
 // PreviewHandler returns an http.HandlerFunc that renders markdown from
 // the component's signals and patches the preview div via SSE.
 //
 // Mount at a dedicated POST path:
 //
-//	r.Post("/api/preview/markdown", markdown.PreviewHandler())
+//	r.Post(markdown.PreviewPath, markdown.PreviewHandler())
 func PreviewHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		componentID := r.URL.Query().Get("id")

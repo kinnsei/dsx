@@ -62,6 +62,12 @@ func serve(port int, pro bool) error {
 	}
 	readme := string(readmeBytes)
 
+	gettingStartedBytes, err := os.ReadFile("docs/getting-started.md")
+	if err != nil {
+		slog.Warn("could not read docs/getting-started.md", "error", err)
+	}
+	gettingStarted := string(gettingStartedBytes)
+
 	// Start embedded NATS server (in-process, no TCP port).
 	ns, err := server.NewServer(&server.Options{DontListen: true})
 	if err != nil {
@@ -118,6 +124,7 @@ func serve(port int, pro bool) error {
 
 	// Pages
 	r.Get("/", templ.Handler(pages.Home(readme)).ServeHTTP)
+	r.Get("/getting-started", templ.Handler(pages.GettingStarted(gettingStarted)).ServeHTTP)
 	r.Get("/components/button", templ.Handler(pages.Buttons()).ServeHTTP)
 	r.Get("/components/card", templ.Handler(pages.Cards()).ServeHTTP)
 	r.Get("/components/drawer", templ.Handler(pages.Drawers()).ServeHTTP)
@@ -181,12 +188,17 @@ func serve(port int, pro bool) error {
 	r.Get("/components/file-upload", templ.Handler(pages.FileUploads()).ServeHTTP)
 	r.Get("/components/json-view", templ.Handler(pages.JSONViews()).ServeHTTP)
 	r.Get("/components/sse-sdk", templ.Handler(pages.ModalAdvanced()).ServeHTTP)
+	r.Get("/components/code-view", templ.Handler(pages.CodeViews()).ServeHTTP)
 
 	// SSE API endpoints
 	h := handlers.New(broker)
 	r.Route(basePath, func(r chi.Router) {
 		r.Get("/stream", broker.Handler())
-		ui.RegisterRoutes(r)
+		ui.RegisterRoutes(r,
+			ui.WithMarkdownPreview(),
+			ui.WithDecimalParser(),
+			ui.WithMoneyParser(),
+		)
 		h.RegisterRoutes(r)
 	})
 

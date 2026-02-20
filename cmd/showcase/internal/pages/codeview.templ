@@ -1,0 +1,180 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/codeview"
+)
+
+templ CodeViews() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Code View — WebX Showcase",
+		Description: "Syntax-highlighted code display with copy button",
+		CurrentPath: "/components/code-view",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Code View</h1>
+				<p class="text-base-content/70 mt-2">
+					Syntax-highlighted code blocks with copy-to-clipboard. Uses Chroma { "for" } server-side highlighting with DaisyUI color classes.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Go",
+				TemplCode: `@codeview.CodeView(codeview.Props{
+    Code: goCode,
+    Language: "go",
+})`,
+			}) {
+				@codeview.CodeView(codeview.Props{
+					Code:     goExample,
+					Language: "go",
+				})
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Templ",
+				TemplCode: `@codeview.CodeView(codeview.Props{
+    Code: templCode,
+    Language: "templ",
+})`,
+			}) {
+				@codeview.CodeView(codeview.Props{
+					Code:     templExample,
+					Language: "templ",
+				})
+			}
+			@components.Example(components.ExampleProps{
+				Title: "HTML",
+				TemplCode: `@codeview.CodeView(codeview.Props{
+    Code: htmlCode,
+    Language: "html",
+})`,
+			}) {
+				@codeview.CodeView(codeview.Props{
+					Code:     htmlExample,
+					Language: "html",
+				})
+			}
+			@components.Example(components.ExampleProps{
+				Title: "SQL",
+				TemplCode: `@codeview.CodeView(codeview.Props{
+    Code: sqlCode,
+    Language: "sql",
+})`,
+			}) {
+				@codeview.CodeView(codeview.Props{
+					Code:     sqlExample,
+					Language: "sql",
+				})
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Shell",
+				TemplCode: `@codeview.CodeView(codeview.Props{
+    Code: shellCode,
+    Language: "sh",
+})`,
+			}) {
+				@codeview.CodeView(codeview.Props{
+					Code:     shellExample,
+					Language: "sh",
+				})
+			}
+		</div>
+	}
+}
+
+var goExample = `package main
+
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/plaenen/webx/ds"
+	"github.com/starfederation/datastar-go/datastar"
+)
+
+func main() {
+	r := chi.NewRouter()
+
+	r.Get("/api/greet", func(w http.ResponseWriter, r *http.Request) {
+		sse := datastar.NewSSE(w, r)
+		ds.Send.Toast(sse, ds.ToastSuccess, "Hello, World!")
+	})
+
+	fmt.Println("Server started on :3000")
+	http.ListenAndServe(":3000", r)
+}`
+
+var templExample = `templ UserCard(name string, role string, active bool) {
+	@card.Card() {
+		@card.Body() {
+			@card.Title() {
+				{ name }
+			}
+			<p class="text-sm text-base-content/70">{ role }</p>
+			if active {
+				@badge.Badge(badge.Props{Variant: badge.VariantSuccess}) {
+					Active
+				}
+			}
+			<div class="card-actions mt-4">
+				<button
+					class="btn btn-primary btn-sm"
+					{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/user/details")))... }
+				>
+					View Details
+				</button>
+			</div>
+		}
+	}
+}`
+
+var htmlExample = `<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebX App</title>
+    <link rel="stylesheet" href="/assets/css/output.css">
+    <script type="module" src="/assets/js/datastar.js"></script>
+</head>
+<body class="min-h-screen bg-base-100">
+    <div id="app">
+        <h1 class="text-3xl font-bold">Hello WebX</h1>
+    </div>
+    <div id="drawer-panel"></div>
+    <div id="modal-panel"></div>
+    <div id="toast-container" class="toast toast-end toast-bottom z-50"></div>
+</body>
+</html>`
+
+var sqlExample = `CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    is_active BOOLEAN DEFAULT true
+);
+
+-- Find active users created in the last 30 days
+SELECT u.username, u.email, COUNT(o.id) AS order_count
+FROM users u
+LEFT JOIN orders o ON o.user_id = u.id
+WHERE u.is_active = true
+  AND u.created_at > NOW() - INTERVAL '30 days'
+GROUP BY u.id
+ORDER BY order_count DESC
+LIMIT 10;`
+
+var shellExample = `#!/bin/bash
+
+# Build and run the showcase
+go tool templ generate
+go tool gotailwind
+go build -o showcase ./cmd/showcase
+./showcase serve --port 3000
+
+# Run tests
+go test ./...
+go test ./tests/e2e/ -v -count=1`

@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/markdown"
 )
 
@@ -46,52 +46,58 @@ templ Markdowns() {
 					Display rendered markdown and edit with live server-side preview.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Markdown Display
-					}
-					<p class="text-sm mb-4">
-						Static markdown rendered to HTML with GFM support (tables, strikethrough, autolinks).
-					</p>
-					@markdown.Markdown(markdown.Props{
-						ID:      "md-display",
-						Content: sampleMarkdown,
+			@components.Example(components.ExampleProps{
+				Title: "Markdown Display",
+				TemplCode: `@markdown.Markdown(markdown.Props{
+    ID:      "md-display",
+    Content: sampleMarkdown,
+})`,
+			}) {
+				<p class="text-sm mb-4">
+					Static markdown rendered to HTML with GFM support (tables, strikethrough, autolinks).
+				</p>
+				@markdown.Markdown(markdown.Props{
+					ID:      "md-display",
+					Content: sampleMarkdown,
+				})
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Markdown Input",
+				TemplCode: `@markdown.MarkdownInput(markdown.InputProps{
+    ID:         "md-editor",
+    PreviewURL: "/showcase/api/preview/markdown",
+})`,
+				HandlerCode: `r.Post("/api/preview/markdown", markdown.PreviewHandler())`,
+			}) {
+				<p class="text-sm mb-4">
+					Write markdown in the editor, then click Preview to see server-rendered output.
+				</p>
+				<div class="w-full max-w-2xl">
+					@markdown.MarkdownInput(markdown.InputProps{
+						ID:         "md-editor",
+						PreviewURL: "/showcase/api/preview/markdown",
 					})
-				}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Markdown Input
-					}
-					<p class="text-sm mb-4">
-						Write markdown in the editor, then click Preview to see server-rendered output.
-					</p>
-					<div class="w-full max-w-2xl">
-						@markdown.MarkdownInput(markdown.InputProps{
-							ID:         "md-editor",
-							PreviewURL: "/showcase/api/preview/markdown",
-						})
-					</div>
-				}
-			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Pre-filled Input
-					}
-					<p class="text-sm mb-4">
-						A markdown input with initial content. Edit and preview to see changes.
-					</p>
-					<div class="w-full max-w-2xl">
-						@markdown.MarkdownInput(markdown.InputProps{
-							ID:         "md-prefilled",
-							PreviewURL: "/showcase/api/preview/markdown",
-							Value:      prefillMarkdown,
-						})
-					</div>
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Pre-filled Input",
+				TemplCode: `@markdown.MarkdownInput(markdown.InputProps{
+    ID:         "md-prefilled",
+    PreviewURL: "/showcase/api/preview/markdown",
+    Value:      prefillMarkdown,
+})`,
+				HandlerCode: `r.Post("/api/preview/markdown", markdown.PreviewHandler())`,
+			}) {
+				<p class="text-sm mb-4">
+					A markdown input with initial content. Edit and preview to see changes.
+				</p>
+				<div class="w-full max-w-2xl">
+					@markdown.MarkdownInput(markdown.InputProps{
+						ID:         "md-prefilled",
+						PreviewURL: "/showcase/api/preview/markdown",
+						Value:      prefillMarkdown,
+					})
+				</div>
 			}
 		</div>
 	}

@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/timeline"
 )
 
@@ -19,252 +19,292 @@ templ Timelines() {
 					Timelines display a sequence of events in chronological order.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Horizontal (default)
-					}
-					<div class="overflow-x-auto py-4">
-						@timeline.Timeline() {
-							@timeline.Item() {
-								@timeline.Start() {
-									1984
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									First Macintosh computer
-								}
-								@timeline.Hr()
+			@components.Example(components.ExampleProps{
+				Title: "Horizontal (default)",
+				TemplCode: `@timeline.Timeline() {
+  @timeline.Item() {
+    @timeline.Start() { 1984 }
+    @timeline.Middle() { ... }
+    @timeline.End(timeline.EndProps{Box: true}) { First Macintosh computer }
+    @timeline.Hr()
+  }
+  @timeline.Item() {
+    @timeline.Hr()
+    @timeline.Start() { 1998 }
+    @timeline.Middle() { ... }
+    @timeline.End(timeline.EndProps{Box: true}) { iMac }
+    @timeline.Hr()
+  }
+}`,
+			}) {
+				<div class="overflow-x-auto py-4">
+					@timeline.Timeline() {
+						@timeline.Item() {
+							@timeline.Start() {
+								1984
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Start() {
-									1998
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									iMac
-								}
-								@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Start() {
-									2001
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									iPod
-								}
-								@timeline.Hr()
+							@timeline.End(timeline.EndProps{Box: true}) {
+								First Macintosh computer
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Start() {
-									2007
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									iPhone
-								}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Start() {
+								1998
+							}
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								iMac
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Start() {
+								2001
+							}
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								iPod
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Start() {
+								2007
+							}
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								iPhone
 							}
 						}
-					</div>
-				}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Vertical
-					}
-					<div class="py-4">
-						@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical}) {
-							@timeline.Item() {
-								@timeline.Start(timeline.StartProps{Box: true}) {
-									Planning
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.Hr()
+			@components.Example(components.ExampleProps{
+				Title: "Vertical",
+				TemplCode: `@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical}) {
+  @timeline.Item() {
+    @timeline.Start(timeline.StartProps{Box: true}) { Planning }
+    @timeline.Middle() { ... }
+    @timeline.Hr()
+  }
+}`,
+			}) {
+				<div class="py-4">
+					@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical}) {
+						@timeline.Item() {
+							@timeline.Start(timeline.StartProps{Box: true}) {
+								Planning
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Start(timeline.StartProps{Box: true}) {
-									Design
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Start(timeline.StartProps{Box: true}) {
-									Development
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.Hr()
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Start(timeline.StartProps{Box: true}) {
+								Design
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Start(timeline.StartProps{Box: true}) {
-									Launch
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Start(timeline.StartProps{Box: true}) {
+								Development
+							}
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Start(timeline.StartProps{Box: true}) {
+								Launch
+							}
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
 						}
-					</div>
-				}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Alternating Sides (Vertical)
-					}
-					<div class="py-4">
-						@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical}) {
-							@timeline.Item() {
-								@timeline.Start(timeline.StartProps{Box: true}) {
-									Phase 1: Research
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.Hr()
+			@components.Example(components.ExampleProps{
+				Title: "Alternating Sides (Vertical)",
+				TemplCode: `@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical}) {
+  @timeline.Item() {
+    @timeline.Start(timeline.StartProps{Box: true}) { Phase 1: Research }
+    @timeline.Middle() { ... }
+    @timeline.Hr()
+  }
+  @timeline.Item() {
+    @timeline.Hr()
+    @timeline.Middle() { ... }
+    @timeline.End(timeline.EndProps{Box: true}) { Phase 2: Prototype }
+    @timeline.Hr()
+  }
+}`,
+			}) {
+				<div class="py-4">
+					@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical}) {
+						@timeline.Item() {
+							@timeline.Start(timeline.StartProps{Box: true}) {
+								Phase 1: Research
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Phase 2: Prototype
-								}
-								@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Start(timeline.StartProps{Box: true}) {
-									Phase 3: Build
-								}
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.Hr()
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Phase 4: Ship
-								}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Phase 2: Prototype
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Start(timeline.StartProps{Box: true}) {
+								Phase 3: Build
+							}
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Phase 4: Ship
 							}
 						}
-					</div>
-				}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Compact
-					}
-					<div class="py-4">
-						@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical, Compact: true}) {
-							@timeline.Item() {
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Sign up
-								}
-								@timeline.Hr()
+			@components.Example(components.ExampleProps{
+				Title: "Compact",
+				TemplCode: `@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical, Compact: true}) {
+  @timeline.Item() {
+    @timeline.Middle() { ... }
+    @timeline.End(timeline.EndProps{Box: true}) { Sign up }
+    @timeline.Hr()
+  }
+}`,
+			}) {
+				<div class="py-4">
+					@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical, Compact: true}) {
+						@timeline.Item() {
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Verify email
-								}
-								@timeline.Hr()
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Sign up
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Complete profile
-								}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Verify email
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Complete profile
 							}
 						}
-					</div>
-				}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Colored Lines
-					}
-					<div class="overflow-x-auto py-4">
-						@timeline.Timeline() {
-							@timeline.Item() {
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Order placed
-								}
-								@timeline.Hr("bg-primary")
+			@components.Example(components.ExampleProps{
+				Title: "Colored Lines",
+				TemplCode: `@timeline.Timeline() {
+  @timeline.Item() {
+    @timeline.Middle() { ... }
+    @timeline.End(timeline.EndProps{Box: true}) { Order placed }
+    @timeline.Hr("bg-primary")
+  }
+  @timeline.Item() {
+    @timeline.Hr("bg-primary")
+    @timeline.Middle() { ... }
+    @timeline.End(timeline.EndProps{Box: true}) { Processing }
+    @timeline.Hr()
+  }
+}`,
+			}) {
+				<div class="overflow-x-auto py-4">
+					@timeline.Timeline() {
+						@timeline.Item() {
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
-							@timeline.Item() {
-								@timeline.Hr("bg-primary")
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Processing
-								}
-								@timeline.Hr("bg-primary")
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Order placed
 							}
-							@timeline.Item() {
-								@timeline.Hr("bg-primary")
-								@timeline.Middle() {
-									@timelineCheckIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Shipped
-								}
-								@timeline.Hr()
+							@timeline.Hr("bg-primary")
+						}
+						@timeline.Item() {
+							@timeline.Hr("bg-primary")
+							@timeline.Middle() {
+								@timelineCheckIcon()
 							}
-							@timeline.Item() {
-								@timeline.Hr()
-								@timeline.Middle() {
-									@timelineCircleIcon()
-								}
-								@timeline.End(timeline.EndProps{Box: true}) {
-									Delivered
-								}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Processing
+							}
+							@timeline.Hr("bg-primary")
+						}
+						@timeline.Item() {
+							@timeline.Hr("bg-primary")
+							@timeline.Middle() {
+								@timelineCheckIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Shipped
+							}
+							@timeline.Hr()
+						}
+						@timeline.Item() {
+							@timeline.Hr()
+							@timeline.Middle() {
+								@timelineCircleIcon()
+							}
+							@timeline.End(timeline.EndProps{Box: true}) {
+								Delivered
 							}
 						}
-					</div>
-				}
+					}
+				</div>
 			}
 		</div>
 	}

@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/steps"
 )
 
@@ -19,120 +19,134 @@ templ Stepss() {
 					Steps show a sequence of progress indicators.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Horizontal
-					}
-					<div class="overflow-x-auto py-4">
-						@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
-							@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
-								Register
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
-								Choose plan
-							}
-							@steps.Step() {
-								Purchase
-							}
-							@steps.Step() {
-								Receive product
-							}
+			@components.Example(components.ExampleProps{
+				Title: "Horizontal",
+				TemplCode: `@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
+  @steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) { Register }
+  @steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) { Choose plan }
+  @steps.Step() { Purchase }
+  @steps.Step() { Receive product }
+}`,
+			}) {
+				<div class="overflow-x-auto py-4">
+					@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
+						@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
+							Register
 						}
-					</div>
-				}
+						@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
+							Choose plan
+						}
+						@steps.Step() {
+							Purchase
+						}
+						@steps.Step() {
+							Receive product
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Vertical
-					}
-					<div class="py-4">
-						@steps.Steps(steps.Props{Direction: steps.DirectionVertical}) {
-							@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
-								Register
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
-								Choose plan
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
-								Purchase
-							}
-							@steps.Step() {
-								Receive product
-							}
+			@components.Example(components.ExampleProps{
+				Title: "Vertical",
+				TemplCode: `@steps.Steps(steps.Props{Direction: steps.DirectionVertical}) {
+  @steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) { Register }
+  @steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) { Choose plan }
+  @steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) { Purchase }
+  @steps.Step() { Receive product }
+}`,
+			}) {
+				<div class="py-4">
+					@steps.Steps(steps.Props{Direction: steps.DirectionVertical}) {
+						@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
+							Register
 						}
-					</div>
-				}
+						@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
+							Choose plan
+						}
+						@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
+							Purchase
+						}
+						@steps.Step() {
+							Receive product
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Colors
-					}
-					<div class="overflow-x-auto py-4">
-						@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
-							@steps.Step(steps.StepProps{Variant: steps.VariantInfo}) {
-								Info
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantSuccess}) {
-								Success
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantWarning}) {
-								Warning
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantError}) {
-								Error
-							}
+			@components.Example(components.ExampleProps{
+				Title: "Colors",
+				TemplCode: `@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
+  @steps.Step(steps.StepProps{Variant: steps.VariantInfo}) { Info }
+  @steps.Step(steps.StepProps{Variant: steps.VariantSuccess}) { Success }
+  @steps.Step(steps.StepProps{Variant: steps.VariantWarning}) { Warning }
+  @steps.Step(steps.StepProps{Variant: steps.VariantError}) { Error }
+}`,
+			}) {
+				<div class="overflow-x-auto py-4">
+					@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
+						@steps.Step(steps.StepProps{Variant: steps.VariantInfo}) {
+							Info
 						}
-					</div>
-				}
+						@steps.Step(steps.StepProps{Variant: steps.VariantSuccess}) {
+							Success
+						}
+						@steps.Step(steps.StepProps{Variant: steps.VariantWarning}) {
+							Warning
+						}
+						@steps.Step(steps.StepProps{Variant: steps.VariantError}) {
+							Error
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Custom Content
-					}
-					<div class="overflow-x-auto py-4">
-						@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
-							@steps.Step(steps.StepProps{Variant: steps.VariantSuccess, DataContent: "✓"}) {
-								Done
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantSuccess, DataContent: "✓"}) {
-								Done
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantWarning, DataContent: "!"}) {
-								In progress
-							}
-							@steps.Step(steps.StepProps{DataContent: "?"}) {
-								Pending
-							}
+			@components.Example(components.ExampleProps{
+				Title: "Custom Content",
+				TemplCode: `@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
+  @steps.Step(steps.StepProps{Variant: steps.VariantSuccess, DataContent: "✓"}) { Done }
+  @steps.Step(steps.StepProps{Variant: steps.VariantSuccess, DataContent: "✓"}) { Done }
+  @steps.Step(steps.StepProps{Variant: steps.VariantWarning, DataContent: "!"}) { In progress }
+  @steps.Step(steps.StepProps{DataContent: "?"}) { Pending }
+}`,
+			}) {
+				<div class="overflow-x-auto py-4">
+					@steps.Steps(steps.Props{Direction: steps.DirectionHorizontal}) {
+						@steps.Step(steps.StepProps{Variant: steps.VariantSuccess, DataContent: "✓"}) {
+							Done
 						}
-					</div>
-				}
+						@steps.Step(steps.StepProps{Variant: steps.VariantSuccess, DataContent: "✓"}) {
+							Done
+						}
+						@steps.Step(steps.StepProps{Variant: steps.VariantWarning, DataContent: "!"}) {
+							In progress
+						}
+						@steps.Step(steps.StepProps{DataContent: "?"}) {
+							Pending
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Responsive
-					}
-					<p class="text-base-content/70 text-sm mb-2">
-						Vertical on small screens, horizontal on large screens.
-					</p>
-					<div class="overflow-x-auto py-4">
-						@steps.Steps(steps.Props{Class: "steps-vertical lg:steps-horizontal"}) {
-							@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
-								Start
-							}
-							@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
-								Middle
-							}
-							@steps.Step() {
-								End
-							}
+			@components.Example(components.ExampleProps{
+				Title: "Responsive",
+				TemplCode: `@steps.Steps(steps.Props{Class: "steps-vertical lg:steps-horizontal"}) {
+  @steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) { Start }
+  @steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) { Middle }
+  @steps.Step() { End }
+}`,
+			}) {
+				<p class="text-base-content/70 text-sm mb-2">
+					Vertical on small screens, horizontal on large screens.
+				</p>
+				<div class="overflow-x-auto py-4">
+					@steps.Steps(steps.Props{Class: "steps-vertical lg:steps-horizontal"}) {
+						@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
+							Start
 						}
-					</div>
-				}
+						@steps.Step(steps.StepProps{Variant: steps.VariantPrimary}) {
+							Middle
+						}
+						@steps.Step() {
+							End
+						}
+					}
+				</div>
 			}
 		</div>
 	}

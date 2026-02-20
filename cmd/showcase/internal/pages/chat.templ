@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/chat"
 )
 
@@ -21,116 +21,144 @@ templ Chats() {
 					Chat bubbles for displaying conversation messages.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+    @chat.Bubble() {
+        It's over Anakin, I have the high ground.
+    }
+}
+@chat.Chat(chat.Props{Position: chat.PositionEnd}) {
+    @chat.Bubble() {
+        You underestimate my power!
+    }
+}`,
+			}) {
+				<div class="py-4">
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble() {
+							It's over Anakin, I have the high ground.
+						}
 					}
-					<div class="py-4">
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble() {
-								It's over Anakin, I have the high ground.
-							}
+					@chat.Chat(chat.Props{Position: chat.PositionEnd}) {
+						@chat.Bubble() {
+							You underestimate my power!
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionEnd}) {
-							@chat.Bubble() {
-								You underestimate my power!
-							}
-						}
-					</div>
-				}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Image, Header & Footer
+			@components.Example(components.ExampleProps{
+				Title: "With Image, Header & Footer",
+				TemplCode: `@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+    @chat.Image() {
+        <div class="w-10 rounded-full">
+            <img alt="Avatar" src="..."/>
+        </div>
+    }
+    @chat.Header() {
+        Obi-Wan Kenobi
+        <time class="text-xs opacity-50">12:45</time>
+    }
+    @chat.Bubble() {
+        You were the Chosen One!
+    }
+    @chat.Footer() {
+        Delivered
+    }
+}`,
+			}) {
+				<div class="py-4">
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Image() {
+							<div class="w-10 rounded-full">
+								<img alt="Avatar" src={ sampleChatAvatarImg }/>
+							</div>
+						}
+						@chat.Header() {
+							Obi-Wan Kenobi
+							<time class="text-xs opacity-50">12:45</time>
+						}
+						@chat.Bubble() {
+							You were the Chosen One!
+						}
+						@chat.Footer() {
+							Delivered
+						}
 					}
-					<div class="py-4">
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Image() {
-								<div class="w-10 rounded-full">
-									<img alt="Avatar" src={ sampleChatAvatarImg }/>
-								</div>
-							}
-							@chat.Header() {
-								Obi-Wan Kenobi
-								<time class="text-xs opacity-50">12:45</time>
-							}
-							@chat.Bubble() {
-								You were the Chosen One!
-							}
-							@chat.Footer() {
-								Delivered
-							}
+					@chat.Chat(chat.Props{Position: chat.PositionEnd}) {
+						@chat.Image() {
+							<div class="w-10 rounded-full">
+								<img alt="Avatar" src={ sampleChatAvatarImg }/>
+							</div>
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionEnd}) {
-							@chat.Image() {
-								<div class="w-10 rounded-full">
-									<img alt="Avatar" src={ sampleChatAvatarImg }/>
-								</div>
-							}
-							@chat.Header() {
-								Anakin Skywalker
-								<time class="text-xs opacity-50">12:46</time>
-							}
-							@chat.Bubble() {
-								I hate you!
-							}
-							@chat.Footer() {
-								Seen at 12:46
-							}
+						@chat.Header() {
+							Anakin Skywalker
+							<time class="text-xs opacity-50">12:46</time>
 						}
-					</div>
-				}
+						@chat.Bubble() {
+							I hate you!
+						}
+						@chat.Footer() {
+							Seen at 12:46
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Bubble Colors
+			@components.Example(components.ExampleProps{
+				Title: "Bubble Colors",
+				TemplCode: `@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+    @chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantPrimary}) {
+        Primary
+    }
+}
+@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+    @chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantSecondary}) {
+        Secondary
+    }
+}`,
+			}) {
+				<div class="py-4">
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantPrimary}) {
+							Primary
+						}
 					}
-					<div class="py-4">
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantPrimary}) {
-								Primary
-							}
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantSecondary}) {
+							Secondary
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantSecondary}) {
-								Secondary
-							}
+					}
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantAccent}) {
+							Accent
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantAccent}) {
-								Accent
-							}
+					}
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantNeutral}) {
+							Neutral
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantNeutral}) {
-								Neutral
-							}
+					}
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantInfo}) {
+							Info
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantInfo}) {
-								Info
-							}
+					}
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantSuccess}) {
+							Success
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantSuccess}) {
-								Success
-							}
+					}
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantWarning}) {
+							Warning
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantWarning}) {
-								Warning
-							}
+					}
+					@chat.Chat(chat.Props{Position: chat.PositionStart}) {
+						@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantError}) {
+							Error
 						}
-						@chat.Chat(chat.Props{Position: chat.PositionStart}) {
-							@chat.Bubble(chat.BubbleProps{Variant: chat.BubbleVariantError}) {
-								Error
-							}
-						}
-					</div>
-				}
+					}
+				</div>
 			}
 		</div>
 	}

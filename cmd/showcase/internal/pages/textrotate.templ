@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/textrotate"
 )
 
@@ -19,74 +19,95 @@ templ TextRotates() {
 					Text rotate cycles through multiple text items with a CSS animation.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@textrotate.TextRotate() {
+  <span>
+    <span>Amazing</span>
+    <span>Beautiful</span>
+    <span>Creative</span>
+  </span>
+}`,
+			}) {
+				<div class="py-4 text-2xl">
+					@textrotate.TextRotate() {
+						<span>
+							<span>Amazing</span>
+							<span>Beautiful</span>
+							<span>Creative</span>
+						</span>
 					}
-					<div class="py-4 text-2xl">
-						@textrotate.TextRotate() {
-							<span>
-								<span>Amazing</span>
-								<span>Beautiful</span>
-								<span>Creative</span>
-							</span>
-						}
-					</div>
-				}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						In a Sentence
+			@components.Example(components.ExampleProps{
+				Title: "In a Sentence",
+				TemplCode: `<span>WebX is </span>
+@textrotate.TextRotate() {
+  <span>
+    <span>fast</span>
+    <span>flexible</span>
+    <span>powerful</span>
+    <span>modern</span>
+  </span>
+}`,
+			}) {
+				<div class="py-4 text-2xl">
+					<span>WebX is </span>
+					@textrotate.TextRotate() {
+						<span>
+							<span>fast</span>
+							<span>flexible</span>
+							<span>powerful</span>
+							<span>modern</span>
+						</span>
 					}
-					<div class="py-4 text-2xl">
-						<span>WebX is </span>
-						@textrotate.TextRotate() {
-							<span>
-								<span>fast</span>
-								<span>flexible</span>
-								<span>powerful</span>
-								<span>modern</span>
-							</span>
-						}
-					</div>
-				}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Large with Colors
+			@components.Example(components.ExampleProps{
+				Title: "Large with Colors",
+				TemplCode: `<span>Build </span>
+@textrotate.TextRotate() {
+  <span>
+    <span class="bg-primary text-primary-content px-2 rounded">websites</span>
+    <span class="bg-secondary text-secondary-content px-2 rounded">apps</span>
+    <span class="bg-accent text-accent-content px-2 rounded">tools</span>
+  </span>
+}`,
+			}) {
+				<div class="py-4 text-4xl font-bold">
+					<span>Build </span>
+					@textrotate.TextRotate() {
+						<span>
+							<span class="bg-primary text-primary-content px-2 rounded">websites</span>
+							<span class="bg-secondary text-secondary-content px-2 rounded">apps</span>
+							<span class="bg-accent text-accent-content px-2 rounded">tools</span>
+						</span>
 					}
-					<div class="py-4 text-4xl font-bold">
-						<span>Build </span>
-						@textrotate.TextRotate() {
-							<span>
-								<span class="bg-primary text-primary-content px-2 rounded">websites</span>
-								<span class="bg-secondary text-secondary-content px-2 rounded">apps</span>
-								<span class="bg-accent text-accent-content px-2 rounded">tools</span>
-							</span>
-						}
-					</div>
-				}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Centered
+			@components.Example(components.ExampleProps{
+				Title: "Centered",
+				TemplCode: `@textrotate.TextRotate(textrotate.Props{Class: "justify-items-center"}) {
+  <span>
+    <span>Hello</span>
+    <span>Bonjour</span>
+    <span>Hola</span>
+    <span>Ciao</span>
+    <span>Hallo</span>
+  </span>
+}`,
+			}) {
+				<div class="py-4 text-3xl">
+					@textrotate.TextRotate(textrotate.Props{Class: "justify-items-center"}) {
+						<span>
+							<span>Hello</span>
+							<span>Bonjour</span>
+							<span>Hola</span>
+							<span>Ciao</span>
+							<span>Hallo</span>
+						</span>
 					}
-					<div class="py-4 text-3xl">
-						@textrotate.TextRotate(textrotate.Props{Class: "justify-items-center"}) {
-							<span>
-								<span>Hello</span>
-								<span>Bonjour</span>
-								<span>Hola</span>
-								<span>Ciao</span>
-								<span>Hallo</span>
-							</span>
-						}
-					</div>
-				}
+				</div>
 			}
 		</div>
 	}

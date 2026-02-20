@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/fieldset"
 )
 
@@ -19,67 +19,87 @@ templ Fieldsets() {
 					Fieldset is used to group related form elements with a legend and labels.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
-					}
-					<div class="py-4">
-						@fieldset.Fieldset() {
-							@fieldset.Legend() {
-								Page title
-							}
-							<input type="text" class="input" placeholder="My awesome page"/>
-							@fieldset.Label() {
-								You can edit page title later on from settings
-							}
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@fieldset.Fieldset() {
+    @fieldset.Legend() {
+        Page title
+    }
+    <input type="text" class="input" placeholder="My awesome page"/>
+    @fieldset.Label() {
+        You can edit page title later on from settings
+    }
+}`,
+			}) {
+				<div class="py-4">
+					@fieldset.Fieldset() {
+						@fieldset.Legend() {
+							Page title
 						}
-					</div>
-				}
+						<input type="text" class="input" placeholder="My awesome page"/>
+						@fieldset.Label() {
+							You can edit page title later on from settings
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Background and Border
-					}
-					<div class="py-4">
-						@fieldset.Fieldset(fieldset.Props{Class: "bg-base-200 border-base-300 rounded-box w-xs border p-4"}) {
-							@fieldset.Legend() {
-								Page title
-							}
-							<input type="text" class="input" placeholder="My awesome page"/>
-							@fieldset.Label() {
-								You can edit page title later on from settings
-							}
+			@components.Example(components.ExampleProps{
+				Title: "With Background and Border",
+				TemplCode: `@fieldset.Fieldset(fieldset.Props{Class: "bg-base-200 border-base-300 rounded-box w-xs border p-4"}) {
+    @fieldset.Legend() {
+        Page title
+    }
+    <input type="text" class="input" placeholder="My awesome page"/>
+    @fieldset.Label() {
+        You can edit page title later on from settings
+    }
+}`,
+			}) {
+				<div class="py-4">
+					@fieldset.Fieldset(fieldset.Props{Class: "bg-base-200 border-base-300 rounded-box w-xs border p-4"}) {
+						@fieldset.Legend() {
+							Page title
 						}
-					</div>
-				}
+						<input type="text" class="input" placeholder="My awesome page"/>
+						@fieldset.Label() {
+							You can edit page title later on from settings
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Multiple Inputs
-					}
-					<div class="py-4">
-						@fieldset.Fieldset(fieldset.Props{Class: "bg-base-200 border-base-300 rounded-box w-xs border p-4"}) {
-							@fieldset.Legend() {
-								Page details
-							}
-							@fieldset.Label() {
-								Title
-							}
-							<input type="text" class="input" placeholder="My awesome page"/>
-							@fieldset.Label() {
-								Slug
-							}
-							<input type="text" class="input" placeholder="my-awesome-page"/>
-							@fieldset.Label() {
-								Author
-							}
-							<input type="text" class="input" placeholder="Name"/>
+			@components.Example(components.ExampleProps{
+				Title: "Multiple Inputs",
+				TemplCode: `@fieldset.Fieldset(fieldset.Props{Class: "bg-base-200 border-base-300 rounded-box w-xs border p-4"}) {
+    @fieldset.Legend() {
+        Page details
+    }
+    @fieldset.Label() { Title }
+    <input type="text" class="input" placeholder="My awesome page"/>
+    @fieldset.Label() { Slug }
+    <input type="text" class="input" placeholder="my-awesome-page"/>
+    @fieldset.Label() { Author }
+    <input type="text" class="input" placeholder="Name"/>
+}`,
+			}) {
+				<div class="py-4">
+					@fieldset.Fieldset(fieldset.Props{Class: "bg-base-200 border-base-300 rounded-box w-xs border p-4"}) {
+						@fieldset.Legend() {
+							Page details
 						}
-					</div>
-				}
+						@fieldset.Label() {
+							Title
+						}
+						<input type="text" class="input" placeholder="My awesome page"/>
+						@fieldset.Label() {
+							Slug
+						}
+						<input type="text" class="input" placeholder="my-awesome-page"/>
+						@fieldset.Label() {
+							Author
+						}
+						<input type="text" class="input" placeholder="Name"/>
+					}
+				</div>
 			}
 		</div>
 	}

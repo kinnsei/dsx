@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/fileupload"
 )
 
@@ -25,47 +25,68 @@ templ FileUploads() {
 					Upload files with instant server-side feedback. Files are sent via multipart/form-data and the file list is rendered server-side via SSE.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic File Upload
-					}
-					<p class="text-sm mb-4">Single file upload with default settings.</p>
-					@fileupload.FileUpload(fileupload.Props{
-						ID:        "upload-basic",
-						UploadURL: fuUploadURL,
-						RemoveURL: fuRemoveURL,
-					})
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Basic File Upload",
+				TemplCode: `@fileupload.FileUpload(fileupload.Props{
+    ID:        "upload-basic",
+    UploadURL: "/api/upload/files",
+    RemoveURL: "/api/upload/remove",
+})`,
+				HandlerCode: `store := fileupload.NewStore()
+
+r.Post("/api/upload/files", fileupload.UploadHandler(store))
+r.Post("/api/upload/remove", fileupload.RemoveHandler(store))`,
+			}) {
+				<p class="text-sm mb-4">Single file upload with default settings.</p>
+				@fileupload.FileUpload(fileupload.Props{
+					ID:        "upload-basic",
+					UploadURL: fuUploadURL,
+					RemoveURL: fuRemoveURL,
+				})
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Multi-File Upload
-					}
-					<p class="text-sm mb-4">Select multiple files at once. The file list updates automatically.</p>
-					@fileupload.FileUpload(fileupload.Props{
-						ID:        "upload-multi",
-						Multiple:  true,
-						UploadURL: fuUploadURL,
-						RemoveURL: fuRemoveURL,
-					})
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Multi-File Upload",
+				TemplCode: `@fileupload.FileUpload(fileupload.Props{
+    ID:        "upload-multi",
+    Multiple:  true,
+    UploadURL: "/api/upload/files",
+    RemoveURL: "/api/upload/remove",
+})`,
+				HandlerCode: `store := fileupload.NewStore()
+
+r.Post("/api/upload/files", fileupload.UploadHandler(store))
+r.Post("/api/upload/remove", fileupload.RemoveHandler(store))`,
+			}) {
+				<p class="text-sm mb-4">Select multiple files at once. The file list updates automatically.</p>
+				@fileupload.FileUpload(fileupload.Props{
+					ID:        "upload-multi",
+					Multiple:  true,
+					UploadURL: fuUploadURL,
+					RemoveURL: fuRemoveURL,
+				})
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Restricted Upload
-					}
-					<p class="text-sm mb-4">Only images allowed, maximum 3 files.</p>
-					@fileupload.FileUpload(fileupload.Props{
-						ID:        "upload-restricted",
-						Multiple:  true,
-						Accept:    "image/*",
-						UploadURL: fuRestrictedUploadURL,
-						RemoveURL: fuRemoveURL,
-					})
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Restricted Upload",
+				TemplCode: `@fileupload.FileUpload(fileupload.Props{
+    ID:        "upload-restricted",
+    Multiple:  true,
+    Accept:    "image/*",
+    UploadURL: "/api/upload/files-restricted",
+    RemoveURL: "/api/upload/remove",
+})`,
+				HandlerCode: `r.Post("/api/upload/files-restricted", fileupload.UploadHandler(store,
+    fileupload.WithAllowedTypes("image/"),
+    fileupload.WithMaxFiles(3),
+))`,
+			}) {
+				<p class="text-sm mb-4">Only images allowed, maximum 3 files.</p>
+				@fileupload.FileUpload(fileupload.Props{
+					ID:        "upload-restricted",
+					Multiple:  true,
+					Accept:    "image/*",
+					UploadURL: fuRestrictedUploadURL,
+					RemoveURL: fuRemoveURL,
+				})
 			}
 		</div>
 	}

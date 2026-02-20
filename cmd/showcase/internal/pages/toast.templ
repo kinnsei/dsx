@@ -2,6 +2,7 @@ package pages
 
 import (
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/alert"
@@ -25,95 +26,140 @@ templ Toasts() {
 					Toast sticks alert messages to a corner of the page. Click the buttons below to trigger real toast notifications via SSE.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Auto-dismiss
-					}
-					<p class="text-sm mb-4">
-						Toasts auto-dismiss after 3 seconds. Can be closed early with the close button.
-					</p>
-					<div class="flex flex-wrap gap-3">
-						<button
-							class="btn btn-info"
-							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/info")))... }
-						>
-							Info
-						</button>
-						<button
-							class="btn btn-success"
-							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/success")))... }
-						>
-							Success
-						</button>
-						<button
-							class="btn btn-warning"
-							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/warning")))... }
-						>
-							Warning
-						</button>
-						<button
-							class="btn btn-error"
-							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/error")))... }
-						>
-							Error
-						</button>
-					</div>
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Auto-dismiss",
+				TemplCode: `<button
+    class="btn btn-success"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/success")))... }
+>
+    Success
+</button>`,
+				HandlerCode: `func (t *toastHandlers) showToast(level ds.ToastLevel, message string) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Toast(sse, level, message)
+    }
+}`,
+			}) {
+				<p class="text-sm mb-4">
+					Toasts auto-dismiss after 3 seconds. Can be closed early with the close button.
+				</p>
+				<div class="flex flex-wrap gap-3">
+					<button
+						class="btn btn-info"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/info")))... }
+					>
+						Info
+					</button>
+					<button
+						class="btn btn-success"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/success")))... }
+					>
+						Success
+					</button>
+					<button
+						class="btn btn-warning"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/warning")))... }
+					>
+						Warning
+					</button>
+					<button
+						class="btn btn-error"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/error")))... }
+					>
+						Error
+					</button>
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Persistent
-					}
-					<p class="text-sm mb-4">
-						Stays visible until the user clicks the close button. No auto-dismiss timer.
-					</p>
-					<div class="flex flex-wrap gap-3">
-						<button
-							class="btn btn-warning"
-							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/persistent")))... }
-						>
-							Persistent Toast
-						</button>
-					</div>
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Persistent",
+				TemplCode: `<button
+    class="btn btn-warning"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/persistent")))... }
+>
+    Persistent Toast
+</button>`,
+				HandlerCode: `func (t *toastHandlers) showPersistent() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Toast(sse, ds.ToastWarning, "This toast will stay until you close it.",
+            ds.WithToastPersistent(),
+        )
+    }
+}`,
+			}) {
+				<p class="text-sm mb-4">
+					Stays visible until the user clicks the close button. No auto-dismiss timer.
+				</p>
+				<div class="flex flex-wrap gap-3">
+					<button
+						class="btn btn-warning"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/persistent")))... }
+					>
+						Persistent Toast
+					</button>
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Action Required
-					}
-					<p class="text-sm mb-4">
-						Stays visible until the user clicks the action button or closes it. The action button triggers a server call.
-					</p>
-					<div class="flex flex-wrap gap-3">
-						<button
-							class="btn btn-error"
-							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/action")))... }
-						>
-							Action Toast (Undo)
-						</button>
-					</div>
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Action Required",
+				TemplCode: `<button
+    class="btn btn-error"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/action")))... }
+>
+    Action Toast (Undo)
+</button>`,
+				HandlerCode: `func (t *toastHandlers) showAction() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        wctx := webx.FromContext(r.Context())
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Toast(sse, ds.ToastError, "Item deleted.",
+            ds.WithToastAction("Undo", wctx.APIPath("/api/toast/action-callback")),
+        )
+    }
+}`,
+			}) {
+				<p class="text-sm mb-4">
+					Stays visible until the user clicks the action button or closes it. The action button triggers a server call.
+				</p>
+				<div class="flex flex-wrap gap-3">
+					<button
+						class="btn btn-error"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/action")))... }
+					>
+						Action Toast (Undo)
+					</button>
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Link
-					}
-					<p class="text-sm mb-4">
-						Contains a clickable link that navigates to another page. Auto-dismisses after 5 seconds.
-					</p>
-					<div class="flex flex-wrap gap-3">
-						<button
-							class="btn btn-info"
-							{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/link")))... }
-						>
-							Link Toast
-						</button>
-					</div>
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Link",
+				TemplCode: `<button
+    class="btn btn-info"
+    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/link")))... }
+>
+    Link Toast
+</button>`,
+				HandlerCode: `func (t *toastHandlers) showLink() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        wctx := webx.FromContext(r.Context())
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Toast(sse, ds.ToastInfo, "New alert component available.",
+            ds.WithToastLink("View Alert", wctx.BasePath+"/components/alert"),
+            ds.WithToastDuration(5000),
+        )
+    }
+}`,
+			}) {
+				<p class="text-sm mb-4">
+					Contains a clickable link that navigates to another page. Auto-dismisses after 5 seconds.
+				</p>
+				<div class="flex flex-wrap gap-3">
+					<button
+						class="btn btn-info"
+						{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/toast/link")))... }
+					>
+						Link Toast
+					</button>
+				</div>
 			}
 			@card.Card() {
 				@card.Body() {

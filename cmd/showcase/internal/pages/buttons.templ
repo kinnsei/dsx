@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/button"
 )
@@ -17,8 +18,14 @@ templ Buttons() {
 				<p class="text-base-content/70 mt-2">DaisyUI button with variant and size props.</p>
 			</div>
 
-			<div class="space-y-4">
-				<h2 class="text-xl font-semibold">Variants</h2>
+			@components.Example(components.ExampleProps{
+				Title: "Variants",
+				TemplCode: `@button.Button() { Default }
+@button.Button(button.Props{Variant: button.VariantPrimary}) { Primary }
+@button.Button(button.Props{Variant: button.VariantSecondary}) { Secondary }
+@button.Button(button.Props{Variant: button.VariantGhost}) { Ghost }
+@button.Button(button.Props{Variant: button.VariantLink}) { Link }`,
+			}) {
 				<div class="flex flex-wrap gap-3">
 					@button.Button() {
 						Default
@@ -42,10 +49,15 @@ templ Buttons() {
 						Link
 					}
 				</div>
-			</div>
+			}
 
-			<div class="space-y-4">
-				<h2 class="text-xl font-semibold">Status Variants</h2>
+			@components.Example(components.ExampleProps{
+				Title: "Status Variants",
+				TemplCode: `@button.Button(button.Props{Variant: button.VariantInfo}) { Info }
+@button.Button(button.Props{Variant: button.VariantSuccess}) { Success }
+@button.Button(button.Props{Variant: button.VariantWarning}) { Warning }
+@button.Button(button.Props{Variant: button.VariantError}) { Error }`,
+			}) {
 				<div class="flex flex-wrap gap-3">
 					@button.Button(button.Props{Variant: button.VariantInfo}) {
 						Info
@@ -60,10 +72,15 @@ templ Buttons() {
 						Error
 					}
 				</div>
-			</div>
+			}
 
-			<div class="space-y-4">
-				<h2 class="text-xl font-semibold">Sizes</h2>
+			@components.Example(components.ExampleProps{
+				Title: "Sizes",
+				TemplCode: `@button.Button(button.Props{Variant: button.VariantPrimary, Size: button.SizeLg}) { Large }
+@button.Button(button.Props{Variant: button.VariantPrimary, Size: button.SizeMd}) { Medium }
+@button.Button(button.Props{Variant: button.VariantPrimary, Size: button.SizeSm}) { Small }
+@button.Button(button.Props{Variant: button.VariantPrimary, Size: button.SizeXs}) { Tiny }`,
+			}) {
 				<div class="flex flex-wrap items-center gap-3">
 					@button.Button(button.Props{Variant: button.VariantPrimary, Size: button.SizeLg}) {
 						Large
@@ -78,10 +95,13 @@ templ Buttons() {
 						Tiny
 					}
 				</div>
-			</div>
+			}
 
-			<div class="space-y-4">
-				<h2 class="text-xl font-semibold">Outline + Disabled</h2>
+			@components.Example(components.ExampleProps{
+				Title: "Outline + Disabled",
+				TemplCode: `@button.Button(button.Props{Variant: button.VariantOutline}) { Outline }
+@button.Button(button.Props{Variant: button.VariantPrimary, Disabled: true}) { Disabled }`,
+			}) {
 				<div class="flex flex-wrap gap-3">
 					@button.Button(button.Props{Variant: button.VariantOutline}) {
 						Outline
@@ -90,7 +110,7 @@ templ Buttons() {
 						Disabled
 					}
 				</div>
-			</div>
+			}
 		</div>
 	}
 }

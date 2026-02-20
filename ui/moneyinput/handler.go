@@ -21,13 +21,19 @@ type moneyHandlerSignals struct {
 	Error    string `json:"error"`
 }
 
+// DecimalPath is the standard handler path for decimal parsing.
+const DecimalPath = "/api/parse/decimal"
+
+// MoneyPath is the standard handler path for money parsing.
+const MoneyPath = "/api/parse/money"
+
 // DecimalHandler returns an http.HandlerFunc that parses a numeric value
 // (supporting shorthand like 5k, 1.5M) and patches the signals with the
 // formatted result.
 //
 // Mount at a dedicated path:
 //
-//	r.Get("/api/parse/decimal", moneyinput.DecimalHandler())
+//	r.Get(moneyinput.DecimalPath, moneyinput.DecimalHandler())
 func DecimalHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		componentID := r.URL.Query().Get("id")
@@ -76,7 +82,7 @@ func DecimalHandler() http.HandlerFunc {
 //
 // Mount at a dedicated path:
 //
-//	r.Get("/api/parse/money", moneyinput.MoneyHandler("USD", "EUR"))
+//	r.Get(moneyinput.MoneyPath, moneyinput.MoneyHandler("USD", "EUR"))
 func MoneyHandler(allowedCurrencies ...string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		componentID := r.URL.Query().Get("id")

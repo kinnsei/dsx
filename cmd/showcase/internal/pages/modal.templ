@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/modal"
 )
 
@@ -19,153 +19,202 @@ templ Modals() {
 					Modal dialogs controlled by Datastar signals with DaisyUI styling.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
-					}
-					<div class="py-4">
-						@modal.OpenButton("basic-modal") {
-							Open Modal
-						}
-						@modal.Modal(modal.Props{ID: "basic-modal"}) {
-							@modal.Box() {
-								<h3 class="text-lg font-bold">Hello!</h3>
-								<p class="py-4">This is a basic modal dialog.</p>
-								@modal.Action() {
-									@modal.CloseButton("basic-modal") {
-										Close
-									}
-								}
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@modal.OpenButton("basic-modal") {
+  Open Modal
+}
+@modal.Modal(modal.Props{ID: "basic-modal"}) {
+  @modal.Box() {
+    <h3 class="text-lg font-bold">Hello!</h3>
+    <p class="py-4">This is a basic modal dialog.</p>
+    @modal.Action() {
+      @modal.CloseButton("basic-modal") {
+        Close
+      }
+    }
+  }
+}`,
+			}) {
+				@modal.OpenButton("basic-modal") {
+					Open Modal
+				}
+				@modal.Modal(modal.Props{ID: "basic-modal"}) {
+					@modal.Box() {
+						<h3 class="text-lg font-bold">Hello!</h3>
+						<p class="py-4">This is a basic modal dialog.</p>
+						@modal.Action() {
+							@modal.CloseButton("basic-modal") {
+								Close
 							}
 						}
-					</div>
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Backdrop Close
-					}
-					<div class="py-4">
-						@modal.OpenButton("backdrop-modal") {
-							Open Modal
-						}
-						@modal.Modal(modal.Props{ID: "backdrop-modal"}) {
-							@modal.Box() {
-								<h3 class="text-lg font-bold">Click Outside</h3>
-								<p class="py-4">Click the backdrop or press the close button to dismiss.</p>
-								@modal.Action() {
-									@modal.CloseButton("backdrop-modal") {
-										Close
-									}
-								}
+			@components.Example(components.ExampleProps{
+				Title: "With Backdrop Close",
+				TemplCode: `@modal.OpenButton("backdrop-modal") {
+  Open Modal
+}
+@modal.Modal(modal.Props{ID: "backdrop-modal"}) {
+  @modal.Box() {
+    <h3 class="text-lg font-bold">Click Outside</h3>
+    <p class="py-4">Click the backdrop or press the close button to dismiss.</p>
+    @modal.Action() {
+      @modal.CloseButton("backdrop-modal") {
+        Close
+      }
+    }
+  }
+  @modal.Backdrop("backdrop-modal")
+}`,
+			}) {
+				@modal.OpenButton("backdrop-modal") {
+					Open Modal
+				}
+				@modal.Modal(modal.Props{ID: "backdrop-modal"}) {
+					@modal.Box() {
+						<h3 class="text-lg font-bold">Click Outside</h3>
+						<p class="py-4">Click the backdrop or press the close button to dismiss.</p>
+						@modal.Action() {
+							@modal.CloseButton("backdrop-modal") {
+								Close
 							}
-							@modal.Backdrop("backdrop-modal")
 						}
-					</div>
+					}
+					@modal.Backdrop("backdrop-modal")
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Corner Close Button
+			@components.Example(components.ExampleProps{
+				Title: "Corner Close Button",
+				TemplCode: `@modal.OpenButton("corner-modal") {
+  Open Modal
+}
+@modal.Modal(modal.Props{ID: "corner-modal"}) {
+  @modal.Box() {
+    @modal.CloseButton("corner-modal", modal.CloseButtonProps{
+      Class: "btn-sm btn-circle btn-ghost absolute right-2 top-2",
+    }) {
+      X
+    }
+    <h3 class="text-lg font-bold">Corner Close</h3>
+    <p class="py-4">Use the X button in the top-right corner to close.</p>
+  }
+  @modal.Backdrop("corner-modal")
+}`,
+			}) {
+				@modal.OpenButton("corner-modal") {
+					Open Modal
+				}
+				@modal.Modal(modal.Props{ID: "corner-modal"}) {
+					@modal.Box() {
+						@modal.CloseButton("corner-modal", modal.CloseButtonProps{
+							Class: "btn-sm btn-circle btn-ghost absolute right-2 top-2",
+						}) {
+							✕
+						}
+						<h3 class="text-lg font-bold">Corner Close</h3>
+						<p class="py-4">Use the ✕ button in the top-right corner to close.</p>
 					}
-					<div class="py-4">
-						@modal.OpenButton("corner-modal") {
-							Open Modal
-						}
-						@modal.Modal(modal.Props{ID: "corner-modal"}) {
-							@modal.Box() {
-								@modal.CloseButton("corner-modal", modal.CloseButtonProps{
-									Class: "btn-sm btn-circle btn-ghost absolute right-2 top-2",
-								}) {
-									✕
-								}
-								<h3 class="text-lg font-bold">Corner Close</h3>
-								<p class="py-4">Use the ✕ button in the top-right corner to close.</p>
-							}
-							@modal.Backdrop("corner-modal")
-						}
-					</div>
+					@modal.Backdrop("corner-modal")
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Positions
+			@components.Example(components.ExampleProps{
+				Title: "Positions",
+				TemplCode: `@modal.OpenButton("top-modal", modal.OpenButtonProps{Class: "btn-sm"}) {
+  Top
+}
+@modal.Modal(modal.Props{ID: "top-modal", Position: modal.PositionTop}) {
+  @modal.Box() {
+    <h3 class="text-lg font-bold">Top Position</h3>
+    <p class="py-4">This modal appears at the top.</p>
+    @modal.Action() {
+      @modal.CloseButton("top-modal") { Close }
+    }
+  }
+  @modal.Backdrop("top-modal")
+}`,
+			}) {
+				<div class="flex flex-wrap gap-2">
+					@modal.OpenButton("top-modal", modal.OpenButtonProps{Class: "btn-sm"}) {
+						Top
 					}
-					<div class="flex flex-wrap gap-2 py-4">
-						@modal.OpenButton("top-modal", modal.OpenButtonProps{Class: "btn-sm"}) {
-							Top
-						}
-						@modal.Modal(modal.Props{ID: "top-modal", Position: modal.PositionTop}) {
-							@modal.Box() {
-								<h3 class="text-lg font-bold">Top Position</h3>
-								<p class="py-4">This modal appears at the top.</p>
-								@modal.Action() {
-									@modal.CloseButton("top-modal") {
-										Close
-									}
+					@modal.Modal(modal.Props{ID: "top-modal", Position: modal.PositionTop}) {
+						@modal.Box() {
+							<h3 class="text-lg font-bold">Top Position</h3>
+							<p class="py-4">This modal appears at the top.</p>
+							@modal.Action() {
+								@modal.CloseButton("top-modal") {
+									Close
 								}
 							}
-							@modal.Backdrop("top-modal")
 						}
-						@modal.OpenButton("middle-modal", modal.OpenButtonProps{Class: "btn-sm"}) {
-							Middle
-						}
-						@modal.Modal(modal.Props{ID: "middle-modal", Position: modal.PositionMiddle}) {
-							@modal.Box() {
-								<h3 class="text-lg font-bold">Middle Position</h3>
-								<p class="py-4">This modal appears centered.</p>
-								@modal.Action() {
-									@modal.CloseButton("middle-modal") {
-										Close
-									}
+						@modal.Backdrop("top-modal")
+					}
+					@modal.OpenButton("middle-modal", modal.OpenButtonProps{Class: "btn-sm"}) {
+						Middle
+					}
+					@modal.Modal(modal.Props{ID: "middle-modal", Position: modal.PositionMiddle}) {
+						@modal.Box() {
+							<h3 class="text-lg font-bold">Middle Position</h3>
+							<p class="py-4">This modal appears centered.</p>
+							@modal.Action() {
+								@modal.CloseButton("middle-modal") {
+									Close
 								}
 							}
-							@modal.Backdrop("middle-modal")
 						}
-						@modal.OpenButton("bottom-modal", modal.OpenButtonProps{Class: "btn-sm"}) {
-							Bottom
-						}
-						@modal.Modal(modal.Props{ID: "bottom-modal", Position: modal.PositionBottom}) {
-							@modal.Box() {
-								<h3 class="text-lg font-bold">Bottom Position</h3>
-								<p class="py-4">This modal appears at the bottom.</p>
-								@modal.Action() {
-									@modal.CloseButton("bottom-modal") {
-										Close
-									}
+						@modal.Backdrop("middle-modal")
+					}
+					@modal.OpenButton("bottom-modal", modal.OpenButtonProps{Class: "btn-sm"}) {
+						Bottom
+					}
+					@modal.Modal(modal.Props{ID: "bottom-modal", Position: modal.PositionBottom}) {
+						@modal.Box() {
+							<h3 class="text-lg font-bold">Bottom Position</h3>
+							<p class="py-4">This modal appears at the bottom.</p>
+							@modal.Action() {
+								@modal.CloseButton("bottom-modal") {
+									Close
 								}
 							}
-							@modal.Backdrop("bottom-modal")
 						}
-					</div>
-				}
+						@modal.Backdrop("bottom-modal")
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Responsive
-					}
-					<div class="py-4">
-						@modal.OpenButton("responsive-modal") {
-							Open Modal
-						}
-						@modal.Modal(modal.Props{ID: "responsive-modal", Class: "modal-bottom sm:modal-middle"}) {
-							@modal.Box() {
-								<h3 class="text-lg font-bold">Responsive Modal</h3>
-								<p class="py-4">Bottom on small screens, centered on larger screens.</p>
-								@modal.Action() {
-									@modal.CloseButton("responsive-modal") {
-										Close
-									}
-								}
+			@components.Example(components.ExampleProps{
+				Title: "Responsive",
+				TemplCode: `@modal.OpenButton("responsive-modal") {
+  Open Modal
+}
+@modal.Modal(modal.Props{ID: "responsive-modal", Class: "modal-bottom sm:modal-middle"}) {
+  @modal.Box() {
+    <h3 class="text-lg font-bold">Responsive Modal</h3>
+    <p class="py-4">Bottom on small screens, centered on larger screens.</p>
+    @modal.Action() {
+      @modal.CloseButton("responsive-modal") {
+        Close
+      }
+    }
+  }
+  @modal.Backdrop("responsive-modal")
+}`,
+			}) {
+				@modal.OpenButton("responsive-modal") {
+					Open Modal
+				}
+				@modal.Modal(modal.Props{ID: "responsive-modal", Class: "modal-bottom sm:modal-middle"}) {
+					@modal.Box() {
+						<h3 class="text-lg font-bold">Responsive Modal</h3>
+						<p class="py-4">Bottom on small screens, centered on larger screens.</p>
+						@modal.Action() {
+							@modal.CloseButton("responsive-modal") {
+								Close
 							}
-							@modal.Backdrop("responsive-modal")
 						}
-					</div>
+					}
+					@modal.Backdrop("responsive-modal")
 				}
 			}
 		</div>

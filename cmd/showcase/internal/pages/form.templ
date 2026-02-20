@@ -1,9 +1,9 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/form"
 )
 
@@ -38,111 +38,220 @@ templ Forms() {
 					Forms submit via Datastar SSE. The backend responds with signal patches for validation errors and success state. No page reloads.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Login Form
-					}
-					<p class="text-sm mb-4">
-						A simple login form with email and password fields. Submit triggers server-side validation via SSE.
-					</p>
-					<div class="w-full max-w-sm">
-						@form.Form(form.Props{
-							ID:      "login",
-							Action:  "/showcase/api/form/login",
-							Signals: loginSignals{},
-						}) {
-							@form.FormError("login")
-							@form.Field() {
-								@form.Label() {
-									Email
-								}
-								<input
-									type="email"
-									class="input input-bordered w-full"
-									placeholder="email@example.com"
-									{ ds.Bind("$login.email")... }
-								/>
-								@form.Error("$login.email_error")
+			@components.Example(components.ExampleProps{
+				Title: "Login Form",
+				TemplCode: `@form.Form(form.Props{
+    ID:      "login",
+    Action:  "/api/form/login",
+    Signals: loginSignals{},
+}) {
+    @form.FormError("login")
+    @form.Field() {
+        @form.Label() { Email }
+        <input type="email" class="input input-bordered w-full"
+            { ds.Bind("$login.email")... } />
+        @form.Error("$login.email_error")
+    }
+    @form.Field() {
+        @form.Label() { Password }
+        <input type="password" class="input input-bordered w-full"
+            { ds.Bind("$login.password")... } />
+        @form.Error("$login.password_error")
+    }
+    @form.Submit(form.SubmitProps{FormID: "login"}) {
+        Sign In
+    }
+    @form.Success("$login.success")
+}`,
+				HandlerCode: `func (f *formHandlers) login() http.HandlerFunc {
+    return form.Handler(
+        func(formID string, r *http.Request) []form.FieldError {
+            var signals loginFormSignals
+            if err := form.ReadSignals(formID, r, &signals); err != nil {
+                return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
+            }
+
+            var errs []form.FieldError
+            if signals.Email == "" {
+                errs = append(errs, form.FieldError{Field: "email_error", Message: "Email is required"})
+            } else {
+                res := validators.Email(signals.Email, false)
+                if !res.Valid {
+                    errs = append(errs, form.FieldError{Field: "email_error", Message: res.Error})
+                }
+            }
+            if signals.Password == "" {
+                errs = append(errs, form.FieldError{Field: "password_error", Message: "Password is required"})
+            } else if len(signals.Password) < 8 {
+                errs = append(errs, form.FieldError{Field: "password_error", Message: "Password must be at least 8 characters"})
+            }
+            return errs
+        },
+        func(formID string, sse *datastar.ServerSentEventGenerator) {
+            sse.MarshalAndPatchSignals(map[string]any{
+                formID: map[string]any{"success": "Login successful!"},
+            })
+        },
+    )
+}`,
+			}) {
+				<p class="text-sm mb-4">
+					A simple login form with email and password fields. Submit triggers server-side validation via SSE.
+				</p>
+				<div class="w-full max-w-sm">
+					@form.Form(form.Props{
+						ID:      "login",
+						Action:  "/showcase/api/form/login",
+						Signals: loginSignals{},
+					}) {
+						@form.FormError("login")
+						@form.Field() {
+							@form.Label() {
+								Email
 							}
-							@form.Field() {
-								@form.Label() {
-									Password
-								}
-								<input
-									type="password"
-									class="input input-bordered w-full"
-									placeholder="Enter password"
-									{ ds.Bind("$login.password")... }
-								/>
-								@form.Error("$login.password_error")
-							}
-							@form.Submit(form.SubmitProps{FormID: "login"}) {
-								Sign In
-							}
-							@form.Success("$login.success")
+							<input
+								type="email"
+								class="input input-bordered w-full"
+								placeholder="email@example.com"
+								{ ds.Bind("$login.email")... }
+							/>
+							@form.Error("$login.email_error")
 						}
-					</div>
-				}
+						@form.Field() {
+							@form.Label() {
+								Password
+							}
+							<input
+								type="password"
+								class="input input-bordered w-full"
+								placeholder="Enter password"
+								{ ds.Bind("$login.password")... }
+							/>
+							@form.Error("$login.password_error")
+						}
+						@form.Submit(form.SubmitProps{FormID: "login"}) {
+							Sign In
+						}
+						@form.Success("$login.success")
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Contact Form
-					}
-					<p class="text-sm mb-4">
-						A contact form with name, email, and message. Demonstrates multi-field validation and success feedback.
-					</p>
-					<div class="w-full max-w-md">
-						@form.Form(form.Props{
-							ID:      "contact",
-							Action:  "/showcase/api/form/contact",
-							Signals: contactSignals{},
-						}) {
-							@form.FormError("contact")
-							@form.Field() {
-								@form.Label() {
-									Name
-								}
-								<input
-									type="text"
-									class="input input-bordered w-full"
-									placeholder="Your name"
-									{ ds.Bind("$contact.name")... }
-								/>
-								@form.Error("$contact.name_error")
+			@components.Example(components.ExampleProps{
+				Title: "Contact Form",
+				TemplCode: `@form.Form(form.Props{
+    ID:      "contact",
+    Action:  "/api/form/contact",
+    Signals: contactSignals{},
+}) {
+    @form.FormError("contact")
+    @form.Field() {
+        @form.Label() { Name }
+        <input type="text" class="input input-bordered w-full"
+            { ds.Bind("$contact.name")... } />
+        @form.Error("$contact.name_error")
+    }
+    @form.Field() {
+        @form.Label() { Email }
+        <input type="email" class="input input-bordered w-full"
+            { ds.Bind("$contact.email")... } />
+        @form.Error("$contact.email_error")
+    }
+    @form.Field() {
+        @form.Label() { Message }
+        <textarea class="textarea textarea-bordered w-full" rows="4"
+            { ds.Bind("$contact.message")... }></textarea>
+        @form.Error("$contact.message_error")
+    }
+    @form.Submit(form.SubmitProps{FormID: "contact"}) {
+        Send Message
+    }
+    @form.Success("$contact.success")
+}`,
+				HandlerCode: `func (f *formHandlers) contact() http.HandlerFunc {
+    return form.Handler(
+        func(formID string, r *http.Request) []form.FieldError {
+            var signals contactFormSignals
+            if err := form.ReadSignals(formID, r, &signals); err != nil {
+                return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
+            }
+
+            var errs []form.FieldError
+            if signals.Name == "" {
+                errs = append(errs, form.FieldError{Field: "name_error", Message: "Name is required"})
+            }
+            if signals.Email == "" {
+                errs = append(errs, form.FieldError{Field: "email_error", Message: "Email is required"})
+            } else {
+                res := validators.Email(signals.Email, false)
+                if !res.Valid {
+                    errs = append(errs, form.FieldError{Field: "email_error", Message: res.Error})
+                }
+            }
+            if signals.Message == "" {
+                errs = append(errs, form.FieldError{Field: "message_error", Message: "Message is required"})
+            }
+            return errs
+        },
+        func(formID string, sse *datastar.ServerSentEventGenerator) {
+            sse.MarshalAndPatchSignals(map[string]any{
+                formID: map[string]any{"success": "Message sent successfully!"},
+            })
+        },
+    )
+}`,
+			}) {
+				<p class="text-sm mb-4">
+					A contact form with name, email, and message. Demonstrates multi-field validation and success feedback.
+				</p>
+				<div class="w-full max-w-md">
+					@form.Form(form.Props{
+						ID:      "contact",
+						Action:  "/showcase/api/form/contact",
+						Signals: contactSignals{},
+					}) {
+						@form.FormError("contact")
+						@form.Field() {
+							@form.Label() {
+								Name
 							}
-							@form.Field() {
-								@form.Label() {
-									Email
-								}
-								<input
-									type="email"
-									class="input input-bordered w-full"
-									placeholder="email@example.com"
-									{ ds.Bind("$contact.email")... }
-								/>
-								@form.Error("$contact.email_error")
-							}
-							@form.Field() {
-								@form.Label() {
-									Message
-								}
-								<textarea
-									class="textarea textarea-bordered w-full"
-									rows="4"
-									placeholder="Your message..."
-									{ ds.Bind("$contact.message")... }
-								></textarea>
-								@form.Error("$contact.message_error")
-							}
-							@form.Submit(form.SubmitProps{FormID: "contact"}) {
-								Send Message
-							}
-							@form.Success("$contact.success")
+							<input
+								type="text"
+								class="input input-bordered w-full"
+								placeholder="Your name"
+								{ ds.Bind("$contact.name")... }
+							/>
+							@form.Error("$contact.name_error")
 						}
-					</div>
-				}
+						@form.Field() {
+							@form.Label() {
+								Email
+							}
+							<input
+								type="email"
+								class="input input-bordered w-full"
+								placeholder="email@example.com"
+								{ ds.Bind("$contact.email")... }
+							/>
+							@form.Error("$contact.email_error")
+						}
+						@form.Field() {
+							@form.Label() {
+								Message
+							}
+							<textarea
+								class="textarea textarea-bordered w-full"
+								rows="4"
+								placeholder="Your message..."
+								{ ds.Bind("$contact.message")... }
+							></textarea>
+							@form.Error("$contact.message_error")
+						}
+						@form.Submit(form.SubmitProps{FormID: "contact"}) {
+							Send Message
+						}
+						@form.Success("$contact.success")
+					}
+				</div>
 			}
 		</div>
 	}

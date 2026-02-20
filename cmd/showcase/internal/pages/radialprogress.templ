@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	rp "github.com/plaenen/webx/ui/radialprogress"
 )
 
@@ -19,92 +19,110 @@ templ RadialProgresses() {
 					Radial progress shows a circular progress indicator with a percentage value.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic
+			@components.Example(components.ExampleProps{
+				Title: "Basic",
+				TemplCode: `@rp.RadialProgress(rp.Props{Value: 0}) {
+    0%
+}
+@rp.RadialProgress(rp.Props{Value: 50}) {
+    50%
+}
+@rp.RadialProgress(rp.Props{Value: 100}) {
+    100%
+}`,
+			}) {
+				<div class="flex flex-wrap items-center gap-8 py-4">
+					@rp.RadialProgress(rp.Props{Value: 0}) {
+						0%
 					}
-					<div class="flex flex-wrap items-center gap-8 py-4">
-						@rp.RadialProgress(rp.Props{Value: 0}) {
-							0%
-						}
-						@rp.RadialProgress(rp.Props{Value: 25}) {
-							25%
-						}
-						@rp.RadialProgress(rp.Props{Value: 50}) {
-							50%
-						}
-						@rp.RadialProgress(rp.Props{Value: 75}) {
-							75%
-						}
-						@rp.RadialProgress(rp.Props{Value: 100}) {
-							100%
-						}
-					</div>
-				}
+					@rp.RadialProgress(rp.Props{Value: 25}) {
+						25%
+					}
+					@rp.RadialProgress(rp.Props{Value: 50}) {
+						50%
+					}
+					@rp.RadialProgress(rp.Props{Value: 75}) {
+						75%
+					}
+					@rp.RadialProgress(rp.Props{Value: 100}) {
+						100%
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Colors
+			@components.Example(components.ExampleProps{
+				Title: "Colors",
+				TemplCode: `@rp.RadialProgress(rp.Props{Value: 70, Class: "text-primary"}) {
+    70%
+}
+@rp.RadialProgress(rp.Props{Value: 70, Class: "text-secondary"}) {
+    70%
+}
+@rp.RadialProgress(rp.Props{Value: 70, Class: "text-success"}) {
+    70%
+}`,
+			}) {
+				<div class="flex flex-wrap items-center gap-8 py-4">
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "text-primary"}) {
+						70%
 					}
-					<div class="flex flex-wrap items-center gap-8 py-4">
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "text-primary"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "text-secondary"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "text-accent"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "text-info"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "text-success"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "text-warning"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "text-error"}) {
-							70%
-						}
-					</div>
-				}
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "text-secondary"}) {
+						70%
+					}
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "text-accent"}) {
+						70%
+					}
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "text-info"}) {
+						70%
+					}
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "text-success"}) {
+						70%
+					}
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "text-warning"}) {
+						70%
+					}
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "text-error"}) {
+						70%
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Background and Border
+			@components.Example(components.ExampleProps{
+				Title: "With Background and Border",
+				TemplCode: `@rp.RadialProgress(rp.Props{Value: 70, Class: "bg-primary text-primary-content border-primary border-4"}) {
+    70%
+}`,
+			}) {
+				<div class="flex flex-wrap items-center gap-8 py-4">
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "bg-primary text-primary-content border-primary border-4"}) {
+						70%
 					}
-					<div class="flex flex-wrap items-center gap-8 py-4">
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "bg-primary text-primary-content border-primary border-4"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Class: "bg-secondary text-secondary-content border-secondary border-4"}) {
-							70%
-						}
-					</div>
-				}
+					@rp.RadialProgress(rp.Props{Value: 70, Class: "bg-secondary text-secondary-content border-secondary border-4"}) {
+						70%
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Custom Sizes
+			@components.Example(components.ExampleProps{
+				Title: "Custom Sizes",
+				TemplCode: `@rp.RadialProgress(rp.Props{Value: 70, Size: "4rem", Thickness: "2px"}) {
+    70%
+}
+@rp.RadialProgress(rp.Props{Value: 70, Size: "8rem"}) {
+    70%
+}
+@rp.RadialProgress(rp.Props{Value: 70, Size: "12rem", Thickness: "2rem"}) {
+    70%
+}`,
+			}) {
+				<div class="flex flex-wrap items-center gap-8 py-4">
+					@rp.RadialProgress(rp.Props{Value: 70, Size: "4rem", Thickness: "2px"}) {
+						70%
 					}
-					<div class="flex flex-wrap items-center gap-8 py-4">
-						@rp.RadialProgress(rp.Props{Value: 70, Size: "4rem", Thickness: "2px"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Size: "8rem"}) {
-							70%
-						}
-						@rp.RadialProgress(rp.Props{Value: 70, Size: "12rem", Thickness: "2rem"}) {
-							70%
-						}
-					</div>
-				}
+					@rp.RadialProgress(rp.Props{Value: 70, Size: "8rem"}) {
+						70%
+					}
+					@rp.RadialProgress(rp.Props{Value: 70, Size: "12rem", Thickness: "2rem"}) {
+						70%
+					}
+				</div>
 			}
 		</div>
 	}

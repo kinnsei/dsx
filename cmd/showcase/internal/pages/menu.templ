@@ -1,8 +1,8 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/ui/menu"
 )
 
@@ -19,146 +19,197 @@ templ Menus() {
 					Menu is used to display a list of links vertically or horizontally.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Basic Vertical
+			@components.Example(components.ExampleProps{
+				Title: "Basic Vertical",
+				TemplCode: `@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 1
+  }
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 2
+  }
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 3
+  }
+}`,
+			}) {
+				@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 1
 					}
-					<div class="py-4">
-						@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 1
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 2
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 3
-							}
-						}
-					</div>
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 2
+					}
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 3
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Horizontal
+			@components.Example(components.ExampleProps{
+				Title: "Horizontal",
+				TemplCode: `@menu.Menu(menu.Props{Direction: menu.DirectionHorizontal, Class: "bg-base-200 rounded-box"}) {
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 1
+  }
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 2
+  }
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 3
+  }
+}`,
+			}) {
+				@menu.Menu(menu.Props{Direction: menu.DirectionHorizontal, Class: "bg-base-200 rounded-box"}) {
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 1
 					}
-					<div class="py-4">
-						@menu.Menu(menu.Props{Direction: menu.DirectionHorizontal, Class: "bg-base-200 rounded-box"}) {
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 1
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 2
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 3
-							}
-						}
-					</div>
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 2
+					}
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 3
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						With Title and Active
+			@components.Example(components.ExampleProps{
+				Title: "With Title and Active",
+				TemplCode: `@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+  @menu.Title() {
+    Navigation
+  }
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Home
+  }
+  @menu.Item(menu.ItemProps{Href: "#", Active: true}) {
+    About
+  }
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Contact
+  }
+}`,
+			}) {
+				@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+					@menu.Title() {
+						Navigation
 					}
-					<div class="py-4">
-						@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
-							@menu.Title() {
-								Navigation
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Home
-							}
-							@menu.Item(menu.ItemProps{Href: "#", Active: true}) {
-								About
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Contact
-							}
-						}
-					</div>
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Home
+					}
+					@menu.Item(menu.ItemProps{Href: "#", Active: true}) {
+						About
+					}
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Contact
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Disabled Item
+			@components.Example(components.ExampleProps{
+				Title: "Disabled Item",
+				TemplCode: `@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Active item
+  }
+  @menu.Item(menu.ItemProps{Disabled: true}) {
+    Disabled item
+  }
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Another item
+  }
+}`,
+			}) {
+				@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Active item
 					}
-					<div class="py-4">
-						@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Active item
-							}
-							@menu.Item(menu.ItemProps{Disabled: true}) {
-								Disabled item
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Another item
-							}
-						}
-					</div>
+					@menu.Item(menu.ItemProps{Disabled: true}) {
+						Disabled item
+					}
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Another item
+					}
 				}
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Sizes
+			@components.Example(components.ExampleProps{
+				Title: "Sizes",
+				TemplCode: `@menu.Menu(menu.Props{Size: menu.SizeXs, Class: "bg-base-200 rounded-box w-48"}) {
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Extra Small
+  }
+}
+@menu.Menu(menu.Props{Size: menu.SizeSm, Class: "bg-base-200 rounded-box w-48"}) {
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Small
+  }
+}
+@menu.Menu(menu.Props{Size: menu.SizeLg, Class: "bg-base-200 rounded-box w-48"}) {
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Large
+  }
+}`,
+			}) {
+				<div class="flex flex-wrap gap-8">
+					@menu.Menu(menu.Props{Size: menu.SizeXs, Class: "bg-base-200 rounded-box w-48"}) {
+						@menu.Item(menu.ItemProps{Href: "#"}) {
+							Extra Small
+						}
+						@menu.Item(menu.ItemProps{Href: "#"}) {
+							Item 2
+						}
 					}
-					<div class="flex flex-wrap gap-8 py-4">
-						@menu.Menu(menu.Props{Size: menu.SizeXs, Class: "bg-base-200 rounded-box w-48"}) {
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Extra Small
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 2
-							}
+					@menu.Menu(menu.Props{Size: menu.SizeSm, Class: "bg-base-200 rounded-box w-48"}) {
+						@menu.Item(menu.ItemProps{Href: "#"}) {
+							Small
 						}
-						@menu.Menu(menu.Props{Size: menu.SizeSm, Class: "bg-base-200 rounded-box w-48"}) {
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Small
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 2
-							}
+						@menu.Item(menu.ItemProps{Href: "#"}) {
+							Item 2
 						}
-						@menu.Menu(menu.Props{Size: menu.SizeLg, Class: "bg-base-200 rounded-box w-48"}) {
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Large
-							}
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 2
-							}
+					}
+					@menu.Menu(menu.Props{Size: menu.SizeLg, Class: "bg-base-200 rounded-box w-48"}) {
+						@menu.Item(menu.ItemProps{Href: "#"}) {
+							Large
 						}
-					</div>
-				}
+						@menu.Item(menu.ItemProps{Href: "#"}) {
+							Item 2
+						}
+					}
+				</div>
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Collapsible Submenu
+			@components.Example(components.ExampleProps{
+				Title: "Collapsible Submenu",
+				TemplCode: `@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 1
+  }
+  <li>
+    <details open>
+      <summary>Parent</summary>
+      <ul>
+        <li><a href="#">Submenu 1</a></li>
+        <li><a href="#">Submenu 2</a></li>
+      </ul>
+    </details>
+  </li>
+  @menu.Item(menu.ItemProps{Href: "#"}) {
+    Item 3
+  }
+}`,
+			}) {
+				@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 1
 					}
-					<div class="py-4">
-						@menu.Menu(menu.Props{Class: "bg-base-200 rounded-box w-56"}) {
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 1
-							}
-							<li>
-								<details open>
-									<summary>Parent</summary>
-									<ul>
-										<li><a href="#">Submenu 1</a></li>
-										<li><a href="#">Submenu 2</a></li>
-									</ul>
-								</details>
-							</li>
-							@menu.Item(menu.ItemProps{Href: "#"}) {
-								Item 3
-							}
-						}
-					</div>
+					<li>
+						<details open>
+							<summary>Parent</summary>
+							<ul>
+								<li><a href="#">Submenu 1</a></li>
+								<li><a href="#">Submenu 2</a></li>
+							</ul>
+						</details>
+					</li>
+					@menu.Item(menu.ItemProps{Href: "#"}) {
+						Item 3
+					}
 				}
 			}
 		</div>

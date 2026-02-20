@@ -1,9 +1,9 @@
 package pages
 
 import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/accordion"
-	"github.com/plaenen/webx/ui/card"
 	"github.com/plaenen/webx/utils"
 )
 
@@ -21,50 +21,92 @@ templ Accordions() {
 					Only one item can be open at a time. Click an open item to close it.
 				</p>
 			</div>
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Arrow Accordion
-					}
-					<p class="mb-4 text-sm">Uses the arrow modifier for a rotating chevron indicator.</p>
-					@arrowDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Arrow Accordion",
+				TemplCode: `@accordion.Accordion(accordion.Props{ID: "my-accordion"}) {
+    @accordion.Item(accordion.ItemProps{
+        AccordionID: "my-accordion",
+        Value:       "item1",
+        Title:       "First Item",
+        Modifier:    accordion.ModifierArrow,
+    }) {
+        <p>Content for the first item.</p>
+    }
+}`,
+			}) {
+				<p class="mb-4 text-sm">Uses the arrow modifier for a rotating chevron indicator.</p>
+				@arrowDemo()
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Plus/Minus Accordion
-					}
-					<p class="mb-4 text-sm">Uses the plus modifier for a plus/minus indicator.</p>
-					@plusDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Plus/Minus Accordion",
+				TemplCode: `@accordion.Accordion(accordion.Props{ID: "my-accordion"}) {
+    @accordion.Item(accordion.ItemProps{
+        AccordionID: "my-accordion",
+        Value:       "item1",
+        Title:       "First Item",
+        Modifier:    accordion.ModifierPlus,
+    }) {
+        <p>Content for the first item.</p>
+    }
+}`,
+			}) {
+				<p class="mb-4 text-sm">Uses the plus modifier for a plus/minus indicator.</p>
+				@plusDemo()
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Default Open
-					}
-					<p class="mb-4 text-sm">The second item starts open via DefaultValue.</p>
-					@defaultOpenDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Default Open",
+				TemplCode: `@accordion.Accordion(accordion.Props{
+    ID: "my-accordion",
+    DefaultValue: "item2",
+}) {
+    @accordion.Item(accordion.ItemProps{
+        AccordionID: "my-accordion",
+        Value:       "item2",
+        Title:       "Open by default",
+        Modifier:    accordion.ModifierArrow,
+    }) {
+        <p>This item starts open.</p>
+    }
+}`,
+			}) {
+				<p class="mb-4 text-sm">The second item starts open via DefaultValue.</p>
+				@defaultOpenDemo()
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						Joined Accordion
-					}
-					<p class="mb-4 text-sm">Items joined seamlessly using DaisyUI join classes.</p>
-					@joinedDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "Joined Accordion",
+				TemplCode: `@accordion.Accordion(accordion.Props{
+    ID:    "joined",
+    Class: "join join-vertical",
+}) {
+    @accordion.Item(accordion.ItemProps{
+        AccordionID: "joined",
+        Value:       "item1",
+        Title:       "Item One",
+        Modifier:    accordion.ModifierArrow,
+        Class:       "join-item",
+    }) {
+        <p>Joined items.</p>
+    }
+}`,
+			}) {
+				<p class="mb-4 text-sm">Items joined seamlessly using DaisyUI join classes.</p>
+				@joinedDemo()
 			}
-			@card.Card() {
-				@card.Body() {
-					@card.Title() {
-						State Indicator
-					}
-					<p class="mb-4 text-sm">Shows the active signal value in real time.</p>
-					@accordionStateDemo()
-				}
+			@components.Example(components.ExampleProps{
+				Title: "State Indicator",
+				TemplCode: `@accordion.Accordion(accordion.Props{ID: "state-accordion"}) {
+    @accordion.Item(accordion.ItemProps{
+        AccordionID: "state-accordion",
+        Value:       "alpha",
+        Title:       "Alpha",
+        Modifier:    accordion.ModifierArrow,
+    }) {
+        <p>Content here.</p>
+    }
+}`,
+			}) {
+				<p class="mb-4 text-sm">Shows the active signal value in real time.</p>
+				@accordionStateDemo()
 			}
 		</div>
 	}
