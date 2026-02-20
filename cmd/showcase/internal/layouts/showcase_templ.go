@@ -88,6 +88,7 @@ var showcaseNav = []layouts.NavGroup{
 			{Label: "Toast", Href: "/components/toast", Icon: icon.Bell},
 			{Label: "Toggle", Href: "/components/toggle", Icon: icon.ToggleLeft},
 			{Label: "Tooltip", Href: "/components/tooltip", Icon: icon.MessageCircleQuestionMark},
+			{Label: "SSE SDK", Href: "/components/sse-sdk", Icon: icon.Bolt},
 			{Label: "Validator", Href: "/components/validator", Icon: icon.ShieldCheck},
 		},
 	},

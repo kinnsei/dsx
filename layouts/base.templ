@@ -37,6 +37,7 @@ templ Base(props BaseProps) {
 		<body class="min-h-screen bg-base-100 text-base-content antialiased font-sans">
 			{ children... }
 			<div id="drawer-panel"></div>
+			<div id="modal-panel"></div>
 			@stream.Connect()
 			<div id="toast-container" class="toast toast-end toast-bottom z-50"></div>
 			for _, bt := range wctx.BodyTags {

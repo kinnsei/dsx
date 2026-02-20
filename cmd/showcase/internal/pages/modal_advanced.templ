@@ -1,0 +1,178 @@
+package pages
+
+import (
+	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/card"
+)
+
+templ ModalAdvanced() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "SSE SDK — WebX Showcase",
+		Description: "Backend SDK helpers: Modal, Confirm, Redirect, Patch, Download",
+		CurrentPath: "/components/sse-sdk",
+	}) {
+		{{
+			wctx := webx.FromContext(ctx)
+		}}
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">SSE SDK</h1>
+				<p class="text-base-content/70 mt-2">
+					Backend helpers that send SSE events to the browser via
+					<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">ds.Send.XXX</code>.
+					All interactions are server-driven — no client-side JavaScript.
+				</p>
+			</div>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<!-- Modal -->
+				@card.Card() {
+					@card.Body() {
+						@card.Title() {
+							Modal
+						}
+						<p class="text-sm text-base-content/70">
+							Opens a centered dialog with server-rendered content. Closes via overlay click, close button, or server-side HideModal.
+						</p>
+						<div class="card-actions mt-4">
+							<button
+								class="btn btn-primary btn-sm"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show")))... }
+							>
+								Open Modal
+							</button>
+							<button
+								class="btn btn-sm"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show-wide")))... }
+							>
+								Wide Modal
+							</button>
+						</div>
+					}
+				}
+				<!-- Confirm -->
+				@card.Card() {
+					@card.Body() {
+						@card.Title() {
+							Confirm
+						}
+						<p class="text-sm text-base-content/70">
+							A confirmation dialog with confirm/cancel buttons. Confirm triggers a server action, cancel closes the dialog.
+						</p>
+						<div class="card-actions mt-4">
+							<button
+								class="btn btn-primary btn-sm"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm")))... }
+							>
+								Ask Confirmation
+							</button>
+							<button
+								class="btn btn-error btn-sm"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm-danger")))... }
+							>
+								Danger Confirm
+							</button>
+						</div>
+					}
+				}
+				<!-- Patch -->
+				@card.Card() {
+					@card.Body() {
+						@card.Title() {
+							Patch
+						}
+						<p class="text-sm text-base-content/70">
+							Renders a templ component server-side and patches it into the DOM by ID.
+						</p>
+						<div id="patch-target" class="mt-4 p-3 bg-base-200 rounded-box text-sm">
+							Click the button to patch this element with server-rendered content.
+						</div>
+						<div class="card-actions mt-4">
+							<button
+								class="btn btn-primary btn-sm"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/patch")))... }
+							>
+								Patch Content
+							</button>
+						</div>
+					}
+				}
+				<!-- Redirect -->
+				@card.Card() {
+					@card.Body() {
+						@card.Title() {
+							Redirect
+						}
+						<p class="text-sm text-base-content/70">
+							Navigates the browser to a new URL via SSE. Useful after form submissions or actions.
+						</p>
+						<div class="card-actions mt-4">
+							<button
+								class="btn btn-primary btn-sm"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/redirect")))... }
+							>
+								Redirect to Home
+							</button>
+						</div>
+					}
+				}
+				<!-- Download -->
+				@card.Card() {
+					@card.Body() {
+						@card.Title() {
+							Download
+						}
+						<p class="text-sm text-base-content/70">
+							Triggers a file download without navigating away from the page.
+						</p>
+						<div class="card-actions mt-4">
+							<button
+								class="btn btn-primary btn-sm"
+								{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/download")))... }
+							>
+								Download File
+							</button>
+						</div>
+					}
+				}
+			</div>
+		</div>
+	}
+}
+
+templ ModalContent() {
+	<h2 class="text-2xl font-bold">Modal Title</h2>
+	<p class="text-base-content/70 mt-2">
+		This content was rendered server-side and delivered via SSE.
+		The modal shell (overlay, dialog, close button) is added automatically by
+		<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">ds.Send.Modal</code>.
+	</p>
+	<div class="mt-4 space-y-2 text-sm">
+		<p>You can put any templ component here — forms, tables, detail views, etc.</p>
+		<p>Click the ✕ button or the overlay to close.</p>
+	</div>
+}
+
+templ ModalContentWide() {
+	<h2 class="text-2xl font-bold">Wide Modal</h2>
+	<p class="text-base-content/70 mt-2">
+		This modal uses <code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `ds.WithModalMaxWidth("max-w-2xl")` }</code> { "for" } a wider dialog.
+	</p>
+	<div class="grid grid-cols-2 gap-4 mt-4">
+		<div class="bg-base-200 rounded-box p-4">
+			<h3 class="font-semibold">Left Column</h3>
+			<p class="text-sm text-base-content/70 mt-1">Server-rendered content in a two-column layout.</p>
+		</div>
+		<div class="bg-base-200 rounded-box p-4">
+			<h3 class="font-semibold">Right Column</h3>
+			<p class="text-sm text-base-content/70 mt-1">Works naturally with any Tailwind grid or flex layout.</p>
+		</div>
+	</div>
+}
+
+templ PatchedContent(timestamp string) {
+	<div id="patch-target" class="mt-4 p-3 bg-success/10 rounded-box text-sm text-success">
+		This content was patched from the server at { timestamp }.
+	</div>
+}

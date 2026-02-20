@@ -138,6 +138,7 @@ The base layout (`layouts/base.templ`) must include container elements:
 <body>
     { children... }
     <div id="drawer-panel"></div>        <!-- drawer container -->
+    <div id="modal-panel"></div>         <!-- modal container -->
     <div id="toast-container" class="toast toast-end toast-bottom z-50"></div>  <!-- toast container -->
 </body>
 ```
@@ -247,6 +248,132 @@ ds.Send.ToastComponent(sse, myCustomToast(data))
 | `ds.WithToastAction(label, url)` | Action button + auto-persistent |
 | `ds.WithToastLink(text, url)` | Clickable link in message |
 
+### Modal
+
+Opens a centered modal dialog. Content is a templ component rendered server-side.
+
+```go
+func (s *Sender) Modal(sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...ModalOption) error
+func (s *Sender) HideModal(sse *datastar.ServerSentEventGenerator) error
+```
+
+**Handler example:**
+
+```go
+sse := datastar.NewSSE(w, r)
+ds.Send.Modal(sse, editForm(item))
+
+// With options
+ds.Send.Modal(sse, editForm(item), ds.WithModalMaxWidth("max-w-2xl"))
+```
+
+**Server-initiated close** (e.g. after form submit inside modal):
+
+```go
+sse := datastar.NewSSE(w, r)
+ds.Send.HideModal(sse)
+ds.Send.Toast(sse, ds.ToastSuccess, "Saved!")
+```
+
+**How close works:** Same as drawer — the close button and overlay use an inline Datastar expression. `HideModal` is only needed for server-initiated close.
+
+**Options:**
+
+| Option | Description |
+|---|---|
+| `ds.WithModalMaxWidth(class)` | Max-width class (default "max-w-lg") |
+
+### Confirm
+
+Shows a confirmation dialog with confirm/cancel buttons. Built on the modal container.
+
+```go
+func (s *Sender) Confirm(sse *datastar.ServerSentEventGenerator, message string, confirmURL string, opts ...ConfirmOption) error
+```
+
+**Handler example:**
+
+```go
+sse := datastar.NewSSE(w, r)
+ds.Send.Confirm(sse, "Are you sure you want to delete this item?",
+    wctx.APIPath("/api/items/"+id+"/delete"),
+)
+
+// With options
+ds.Send.Confirm(sse, "Delete all data?",
+    wctx.APIPath("/api/data/purge"),
+    ds.WithConfirmTitle("Warning"),
+    ds.WithConfirmLabel("Delete"),
+    ds.WithConfirmClass("btn btn-error"),
+)
+```
+
+When the user clicks confirm, a GET request is triggered to the `confirmURL`. Cancel closes the dialog without any request.
+
+**Options:**
+
+| Option | Description |
+|---|---|
+| `ds.WithConfirmTitle(title)` | Dialog title (default "Confirm") |
+| `ds.WithConfirmLabel(label)` | Confirm button text (default "Confirm") |
+| `ds.WithCancelLabel(label)` | Cancel button text (default "Cancel") |
+| `ds.WithConfirmClass(class)` | Confirm button class (default "btn btn-primary") |
+| `ds.WithConfirmMaxWidth(class)` | Max-width class (default "max-w-sm") |
+
+### Redirect
+
+Navigates the browser to a URL via SSE. Handles Firefox quirks automatically.
+
+```go
+func (s *Sender) Redirect(sse *datastar.ServerSentEventGenerator, url string) error
+```
+
+**Handler example:**
+
+```go
+sse := datastar.NewSSE(w, r)
+// Save data, then redirect
+ds.Send.Redirect(sse, wctx.APIPath("/dashboard"))
+```
+
+### Patch
+
+Renders a templ component and patches it into the DOM via SSE. The component's root element must have an `id` attribute.
+
+```go
+func (s *Sender) Patch(sse *datastar.ServerSentEventGenerator, component templ.Component, opts ...datastar.PatchElementOption) error
+```
+
+**Handler example:**
+
+```go
+sse := datastar.NewSSE(w, r)
+
+// Patch by component's root element ID (default)
+ds.Send.Patch(sse, itemList(items))
+
+// Patch into a specific selector
+ds.Send.Patch(sse, itemList(items), datastar.WithSelector("#content"))
+
+// Append mode
+ds.Send.Patch(sse, newItem(item), datastar.WithModeAppend())
+```
+
+### Download
+
+Triggers a file download in the browser without navigating away.
+
+```go
+func (s *Sender) Download(sse *datastar.ServerSentEventGenerator, url string, filename string) error
+```
+
+**Handler example:**
+
+```go
+sse := datastar.NewSSE(w, r)
+ds.Send.Download(sse, wctx.APIPath("/api/reports/export.csv"), "report.csv")
+```
+
 ---
 
 ## Best Practices
@@ -285,9 +412,9 @@ sse.PatchElements(`<div id="my-element">Updated content</div>`)
 sse.PatchElements(`<div>Updated content</div>`)
 ```
 
-### 5. Drawer content is just a templ component
+### 5. Drawer and Modal content is just a templ component
 
-The `ds.Send.Drawer` helper wraps your component in the drawer shell (overlay, panel, close button). Your templ component should only contain the **content** — no wrapper divs, no close buttons:
+The `ds.Send.Drawer` and `ds.Send.Modal` helpers wrap your component in a shell (overlay, panel/dialog, close button). Your templ component should only contain the **content** — no wrapper divs, no close buttons:
 
 ```templ
 templ itemDetail(item Item) {
@@ -331,7 +458,12 @@ Datastar's morph preserves attributes on morphed elements, but if you replace an
 ds/
   ds.go             — Frontend attribute helpers (ds.OnClick, ds.Show, ds.Get, etc.)
   send.go           — Sender type + Send var
+  send_confirm.go   — ds.Send.Confirm
+  send_download.go  — ds.Send.Download
   send_drawer.go    — ds.Send.Drawer, ds.Send.HideDrawer
+  send_modal.go     — ds.Send.Modal, ds.Send.HideModal
+  send_patch.go     — ds.Send.Patch
+  send_redirect.go  — ds.Send.Redirect
   send_toast.go     — ds.Send.Toast, ds.Send.ToastComponent
 ```
 
@@ -340,6 +472,7 @@ ds/
 | Container | ID | Purpose |
 |---|---|---|
 | Drawer | `drawer-panel` | Slide-in detail panel |
+| Modal | `modal-panel` | Centered dialog / confirm |
 | Toast | `toast-container` | Stacked notifications |
 
-Both containers are in the base layout and must exist in the DOM before any `Send` operations target them.
+All containers are in the base layout and must exist in the DOM before any `Send` operations target them.

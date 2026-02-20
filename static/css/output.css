@@ -5495,6 +5495,9 @@
   .h-full {
     height: 100%;
   }
+  .max-h-\[90vh\] {
+    max-height: 90vh;
+  }
   .min-h-\[200px\] {
     min-height: 200px;
   }
@@ -6416,6 +6419,12 @@
   }
   .bg-success {
     background-color: var(--color-success);
+  }
+  .bg-success\/10 {
+    background-color: var(--color-success);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-success) 10%, transparent);
+    }
   }
   .bg-warning {
     background-color: var(--color-warning);

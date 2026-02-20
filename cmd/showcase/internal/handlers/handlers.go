@@ -15,6 +15,7 @@ type Handlers struct {
 	toast    *toastHandlers
 	stream   *streamHandlers
 	drawer   *drawerHandlers
+	modal    *modalHandlers
 }
 
 func New(broker *stream.Broker) *Handlers {
@@ -28,6 +29,7 @@ func New(broker *stream.Broker) *Handlers {
 		toast:    newToastHandlers(),
 		stream:   newStreamHandlers(broker),
 		drawer:   newDrawerHandlers(),
+		modal:    newModalHandlers(),
 	}
 }
 
@@ -41,4 +43,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.toast.register(r)
 	h.stream.register(r)
 	h.drawer.register(r)
+	h.modal.register(r)
 }
