@@ -180,7 +180,7 @@ func (h *handler) saveAndClose() http.HandlerFunc {
         // ... save data ...
         sse := datastar.NewSSE(w, r)
         ds.Send.HideDrawer(sse)
-        toast.Show(sse, toast.LevelSuccess, "Saved!", 3000)
+        ds.Send.Toast(sse, ds.ToastSuccess, "Saved!")
     }
 }
 ```
@@ -198,30 +198,54 @@ func (h *handler) saveAndClose() http.HandlerFunc {
 </button>
 ```
 
-### Toast (current API — will move to `ds.Send.Toast` in future)
+### Toast
 
-Toasts currently live in `ui/toast/handler.go` as `toast.Show(...)`. The API will move to `ds.Send.Toast(...)` in a future release. Current usage:
+Appends a toast notification to `#toast-container` via SSE.
 
 ```go
-import "github.com/plaenen/webx/ui/toast"
-
-// Auto-dismiss (3 seconds)
-toast.Show(sse, toast.LevelSuccess, "Saved!", 3000)
-
-// Persistent (stays until user closes)
-toast.ShowPersistent(sse, toast.LevelWarning, "Check your input.")
-
-// With action button
-toast.ShowAction(sse, toast.LevelError, "Deleted.", "Undo", wctx.APIPath("/api/undo"))
-
-// With link
-toast.ShowLink(sse, toast.LevelInfo, "New version available.", "Update", "/changelog", 5000)
-
-// Custom templ component
-toast.ShowComponent(sse, myCustomToast(data))
+func (s *Sender) Toast(sse, level ToastLevel, message string, opts ...ToastOption) error
+func (s *Sender) ToastComponent(sse, component templ.Component) error
 ```
 
-**Levels:** `toast.LevelInfo`, `toast.LevelSuccess`, `toast.LevelWarning`, `toast.LevelError`
+**Basic usage:**
+
+```go
+sse := datastar.NewSSE(w, r)
+
+// Auto-dismiss (default 3 seconds)
+ds.Send.Toast(sse, ds.ToastSuccess, "Saved!")
+
+// Custom duration
+ds.Send.Toast(sse, ds.ToastInfo, "Processing...", ds.WithToastDuration(5000))
+
+// Persistent (stays until user closes)
+ds.Send.Toast(sse, ds.ToastWarning, "Check your input.", ds.WithToastPersistent())
+
+// With action button (auto-persistent)
+ds.Send.Toast(sse, ds.ToastError, "Item deleted.",
+    ds.WithToastAction("Undo", wctx.APIPath("/api/undo")),
+)
+
+// With link
+ds.Send.Toast(sse, ds.ToastInfo, "New version available.",
+    ds.WithToastLink("Update", "/changelog"),
+    ds.WithToastDuration(5000),
+)
+
+// Custom templ component
+ds.Send.ToastComponent(sse, myCustomToast(data))
+```
+
+**Levels:** `ds.ToastInfo`, `ds.ToastSuccess`, `ds.ToastWarning`, `ds.ToastError`
+
+**Options:**
+
+| Option | Description |
+|---|---|
+| `ds.WithToastDuration(ms)` | Auto-dismiss after ms (default 3000) |
+| `ds.WithToastPersistent()` | Stay until user closes |
+| `ds.WithToastAction(label, url)` | Action button + auto-persistent |
+| `ds.WithToastLink(text, url)` | Clickable link in message |
 
 ---
 
@@ -280,7 +304,7 @@ A single SSE response can contain multiple events. Show a drawer and a toast in 
 ```go
 sse := datastar.NewSSE(w, r)
 ds.Send.Drawer(sse, editForm(item))
-toast.Show(sse, toast.LevelInfo, "Editing item", 2000)
+ds.Send.Toast(sse, ds.ToastInfo, "Editing item", ds.WithToastDuration(2000))
 ```
 
 ### 7. Drawer close + follow-up action
@@ -290,7 +314,7 @@ After a form submission inside a drawer, close the drawer and show feedback:
 ```go
 sse := datastar.NewSSE(w, r)
 ds.Send.HideDrawer(sse)
-toast.Show(sse, toast.LevelSuccess, "Changes saved!", 3000)
+ds.Send.Toast(sse, ds.ToastSuccess, "Changes saved!")
 // Optionally patch another element to refresh the list
 sse.PatchElements(`<div id="item-list">...updated list...</div>`)
 ```
@@ -308,7 +332,7 @@ ds/
   ds.go             — Frontend attribute helpers (ds.OnClick, ds.Show, ds.Get, etc.)
   send.go           — Sender type + Send var
   send_drawer.go    — ds.Send.Drawer, ds.Send.HideDrawer
-  send_toast.go     — (future) ds.Send.Toast, ds.Send.ToastPersistent, etc.
+  send_toast.go     — ds.Send.Toast, ds.Send.ToastComponent
 ```
 
 ## Container IDs
