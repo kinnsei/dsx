@@ -1,0 +1,137 @@
+package feeditem
+
+import (
+	"fmt"
+
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/utils"
+)
+
+// Urgency controls the visual indicator color.
+type Urgency string
+
+const (
+	UrgencyNone     Urgency = ""
+	UrgencyCritical Urgency = "critical"
+	UrgencyAction   Urgency = "action"
+	UrgencyInfo     Urgency = "info"
+)
+
+// FeedItemSignals holds the reactive state for a single feed item.
+type FeedItemSignals struct {
+	Open bool `json:"open"`
+}
+
+// Props configures the feed item container.
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+}
+
+// FeedItem renders an expandable feed/inbox item with a clickable header
+// and collapsible content area. Uses Datastar signals for expand/collapse.
+templ FeedItem(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{
+		id := p.ID
+		if id == "" {
+			id = utils.RandomID()
+		}
+		signals := utils.Signals(id, FeedItemSignals{Open: false})
+	}}
+	<div
+		id={ id }
+		data-signals={ signals.DataSignals }
+		class={ utils.TwMerge("rounded-box border border-base-300 bg-base-100 overflow-hidden transition-all", p.Class) }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// HeaderProps configures the clickable header area.
+type HeaderProps struct {
+	FeedItemID string // must match the parent FeedItem's ID
+	Class      string
+	Attributes templ.Attributes
+}
+
+// Header renders the clickable header that toggles the feed item open/closed.
+templ Header(props HeaderProps) {
+	{{
+		signals := utils.Signals(props.FeedItemID, FeedItemSignals{})
+		toggleExpr := signals.Toggle("open")
+	}}
+	<div
+		class={ utils.TwMerge("flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-base-200/50 transition-colors", props.Class) }
+		{ ds.OnClick(toggleExpr)... }
+		{ props.Attributes... }
+	>
+		{ children... }
+		<span
+			class="text-xs text-base-content/30 transition-transform inline-block flex-shrink-0"
+			data-class={ fmt.Sprintf("{'rotate-180': %s}", signals.Signal("open")) }
+		>
+			▾
+		</span>
+	</div>
+}
+
+// ContentProps configures the expandable content area.
+type ContentProps struct {
+	FeedItemID string // must match the parent FeedItem's ID
+	Class      string
+	Attributes templ.Attributes
+}
+
+// Content renders the expandable content section, hidden by default.
+templ Content(props ContentProps) {
+	{{
+		signals := utils.Signals(props.FeedItemID, FeedItemSignals{})
+	}}
+	<div
+		class={ utils.TwMerge("px-3 pb-3", props.Class) }
+		style="display: none;"
+		{ ds.Show(signals.Signal("open"))... }
+		{ props.Attributes... }
+	>
+		{ children... }
+	</div>
+}
+
+// UrgencyDot renders a small colored dot indicating urgency level.
+templ UrgencyDot(urgency Urgency) {
+	{{
+		colorClass := "bg-base-content/20"
+		switch urgency {
+		case UrgencyCritical:
+			colorClass = "bg-error"
+		case UrgencyAction:
+			colorClass = "bg-warning"
+		case UrgencyInfo:
+			colorClass = "bg-base-content/30"
+		}
+	}}
+	<div class={ utils.TwMerge("w-1.5 h-1.5 rounded-full flex-shrink-0", colorClass) }></div>
+}
+
+// ThreadPillProps configures the thread pill badge.
+type ThreadPillProps struct {
+	Label string
+	Icon  string // emoji or short text
+	Class string
+}
+
+// ThreadPill renders a small pill badge linking an item to a thread/topic.
+templ ThreadPill(props ThreadPillProps) {
+	<span class={ utils.TwMerge("inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-semibold bg-primary/10 text-primary flex-shrink-0", props.Class) }>
+		if props.Icon != "" {
+			<span class="text-[10px]">{ props.Icon }</span>
+		}
+		{ props.Label }
+	</span>
+}

@@ -1,0 +1,140 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/scrollstrip"
+)
+
+templ ScrollStrips() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Scroll Strip — WebX Showcase",
+		Description: "Horizontal scrollable strip component",
+		CurrentPath: "/components/scroll-strip",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Scroll Strip</h1>
+				<p class="text-base-content/70 mt-2">
+					A horizontal scrollable container for cards and compact items. Useful for pinned items, quick actions, or category navigation.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Basic Scroll Strip",
+				TemplCode: `@scrollstrip.ScrollStrip() {
+    @scrollstrip.Card() {
+        <div class="text-sm font-semibold">Item 1</div>
+        <div class="text-xs text-base-content/50">Description</div>
+    }
+    @scrollstrip.Card() {
+        <div class="text-sm font-semibold">Item 2</div>
+        <div class="text-xs text-base-content/50">Description</div>
+    }
+    @scrollstrip.Card() {
+        <div class="text-sm font-semibold">Item 3</div>
+        <div class="text-xs text-base-content/50">Description</div>
+    }
+}`,
+			}) {
+				<div class="max-w-lg">
+					@scrollstrip.ScrollStrip() {
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Item 1</div>
+							<div class="text-xs text-base-content/50">Description</div>
+						}
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Item 2</div>
+							<div class="text-xs text-base-content/50">Description</div>
+						}
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Item 3</div>
+							<div class="text-xs text-base-content/50">Description</div>
+						}
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Title",
+				TemplCode: `@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Pinned cases"}) {
+    @scrollstrip.Card() { ... }
+    @scrollstrip.Card() { ... }
+}`,
+			}) {
+				<div class="max-w-lg">
+					@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Pinned cases"}) {
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">KYC Review</div>
+							<div class="text-xs text-base-content/50">Due tomorrow</div>
+						}
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Wire Transfer</div>
+							<div class="text-xs text-base-content/50">Pending approval</div>
+						}
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Loan Application</div>
+							<div class="text-xs text-base-content/50">Under review</div>
+						}
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Card Dispute</div>
+							<div class="text-xs text-base-content/50">Waiting on docs</div>
+						}
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Active Card",
+				TemplCode: `@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Categories"}) {
+    @scrollstrip.Card(scrollstrip.CardProps{Active: true}) {
+        <div class="text-sm font-semibold">All</div>
+        <div class="text-xs opacity-70">42 items</div>
+    }
+    @scrollstrip.Card() {
+        <div class="text-sm font-semibold">Open</div>
+        <div class="text-xs text-base-content/50">18 items</div>
+    }
+    @scrollstrip.Card() {
+        <div class="text-sm font-semibold">Closed</div>
+        <div class="text-xs text-base-content/50">24 items</div>
+    }
+}`,
+			}) {
+				<div class="max-w-lg">
+					@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Categories"}) {
+						@scrollstrip.Card(scrollstrip.CardProps{Active: true}) {
+							<div class="text-sm font-semibold">All</div>
+							<div class="text-xs opacity-70">42 items</div>
+						}
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Open</div>
+							<div class="text-xs text-base-content/50">18 items</div>
+						}
+						@scrollstrip.Card() {
+							<div class="text-sm font-semibold">Closed</div>
+							<div class="text-xs text-base-content/50">24 items</div>
+						}
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Many Items (Scrollable)",
+				TemplCode: `@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Quick actions"}) {
+    for _, label := range []string{"Dashboard", "Reports", "Settings", "Users", "Billing", "Support", "Analytics", "Logs"} {
+        @scrollstrip.Card() {
+            <div class="text-sm font-semibold">{ label }</div>
+        }
+    }
+}`,
+			}) {
+				<div class="max-w-lg">
+					@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Quick actions"}) {
+						for _, label := range []string{"Dashboard", "Reports", "Settings", "Users", "Billing", "Support", "Analytics", "Logs"} {
+							@scrollstrip.Card() {
+								<div class="text-sm font-semibold">{ label }</div>
+							}
+						}
+					}
+				</div>
+			}
+		</div>
+	}
+}

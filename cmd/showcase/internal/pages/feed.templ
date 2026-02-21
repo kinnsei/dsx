@@ -1,0 +1,96 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/feed"
+)
+
+templ Feeds() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Feed — WebX Showcase",
+		Description: "Centered feed container component",
+		CurrentPath: "/components/feed",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Feed</h1>
+				<p class="text-base-content/70 mt-2">
+					A centered, narrow-column container for feed-style content. Use inside a dashboard layout or any page to constrain content width and create a social-media or inbox-like feed layout.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Basic Feed",
+				TemplCode: `@feed.Feed() {
+    <div class="rounded-box border border-base-300 bg-base-100 p-4">
+        <p class="text-sm">First feed item</p>
+    </div>
+    <div class="rounded-box border border-base-300 bg-base-100 p-4">
+        <p class="text-sm">Second feed item</p>
+    </div>
+    <div class="rounded-box border border-base-300 bg-base-100 p-4">
+        <p class="text-sm">Third feed item</p>
+    </div>
+}`,
+			}) {
+				@feed.Feed() {
+					<div class="rounded-box border border-base-300 bg-base-100 p-4">
+						<p class="text-sm">First feed item</p>
+					</div>
+					<div class="rounded-box border border-base-300 bg-base-100 p-4">
+						<p class="text-sm">Second feed item</p>
+					</div>
+					<div class="rounded-box border border-base-300 bg-base-100 p-4">
+						<p class="text-sm">Third feed item</p>
+					</div>
+				}
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Custom Max Width",
+				TemplCode: `@feed.Feed(feed.Props{MaxWidth: "max-w-xl"}) {
+    <div class="rounded-box border border-base-300 bg-base-100 p-4">
+        <p class="text-sm">Narrower feed (max-w-xl)</p>
+    </div>
+}
+@feed.Feed(feed.Props{MaxWidth: "max-w-4xl"}) {
+    <div class="rounded-box border border-base-300 bg-base-100 p-4">
+        <p class="text-sm">Wider feed (max-w-4xl)</p>
+    </div>
+}`,
+			}) {
+				<div class="space-y-6">
+					@feed.Feed(feed.Props{MaxWidth: "max-w-xl"}) {
+						<div class="rounded-box border border-base-300 bg-base-100 p-4">
+							<p class="text-sm">Narrower feed (max-w-xl)</p>
+						</div>
+					}
+					@feed.Feed(feed.Props{MaxWidth: "max-w-4xl"}) {
+						<div class="rounded-box border border-base-300 bg-base-100 p-4">
+							<p class="text-sm">Wider feed (max-w-4xl)</p>
+						</div>
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Custom Styling",
+				TemplCode: `@feed.Feed(feed.Props{Class: "space-y-6 p-4 bg-base-200 rounded-box"}) {
+    <div class="rounded-box border border-base-300 bg-base-100 p-4">
+        <p class="text-sm">Custom gap and background</p>
+    </div>
+    <div class="rounded-box border border-base-300 bg-base-100 p-4">
+        <p class="text-sm">Another item</p>
+    </div>
+}`,
+			}) {
+				@feed.Feed(feed.Props{Class: "space-y-6 p-4 bg-base-200 rounded-box"}) {
+					<div class="rounded-box border border-base-300 bg-base-100 p-4">
+						<p class="text-sm">Custom gap and background</p>
+					</div>
+					<div class="rounded-box border border-base-300 bg-base-100 p-4">
+						<p class="text-sm">Another item</p>
+					</div>
+				}
+			}
+		</div>
+	}
+}

@@ -1,0 +1,615 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/avatar"
+	"github.com/plaenen/webx/ui/badge"
+	"github.com/plaenen/webx/ui/briefing"
+	"github.com/plaenen/webx/ui/commandbar"
+	"github.com/plaenen/webx/ui/feed"
+	"github.com/plaenen/webx/ui/feeditem"
+	"github.com/plaenen/webx/ui/icon"
+	"github.com/plaenen/webx/ui/scrollstrip"
+	"github.com/plaenen/webx/ui/sparkline"
+	"github.com/plaenen/webx/ui/timeline"
+)
+
+templ Butler() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Customer Care Hub — WebX Showcase",
+		Description: "Feed-style agent workspace built with WebX components",
+		CurrentPath: "/examples/butler",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Customer Care Hub</h1>
+				<p class="text-base-content/70 mt-2">
+					A bank mid-office agent workspace built from WebX components.
+					Shows Feed, Briefing, CommandBar (with Type/File/Voice), ScrollStrip, FeedItem, Sparkline, and Timeline composed together.
+				</p>
+			</div>
+			<!-- Full composed demo -->
+			@components.Example(components.ExampleProps{
+				Title:       "Composed Demo",
+				TemplCode:   composedCode,
+				HandlerCode: handlerCode,
+			}) {
+				@feed.Feed() {
+					@briefing.Briefing(briefing.Props{Title: "Monday morning briefing"}) {
+						<span class="text-error font-semibold">3 escalated</span>, <span class="text-warning font-semibold">12 pending review</span>.
+						AI resolved 28 tickets overnight. SLA compliance at 94.2%.
+					}
+					@commandbar.CommandBar(commandbar.Props{
+						Placeholder: "Search client, create case, attach document...",
+						SubmitURL:   "/showcase/api/butler/capture",
+						UploadURL:   "/showcase/api/butler/capture",
+						VoiceURL:    "/showcase/api/butler/capture",
+						Suggestions: []string{
+							"KYC renewal for Müller GmbH",
+							"Escalate wire transfer #4491",
+							"Check compliance status ACME Ltd",
+						},
+						FileHint: "Drop a document, scan, or upload",
+					})
+					@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Active Cases"}) {
+						@scrollstrip.Card(scrollstrip.CardProps{Active: true}) {
+							<div class="flex items-center gap-1.5 mb-0.5">
+								@icon.Shield(icon.Props{Size: 14})
+								<span class="text-xs font-semibold">KYC — Müller GmbH</span>
+							</div>
+							<div class="text-[11px] opacity-60">3 pending · SLA 48h</div>
+						}
+						@scrollstrip.Card() {
+							<div class="flex items-center gap-1.5 mb-0.5">
+								@icon.ArrowLeftRight(icon.Props{Size: 14})
+								<span class="text-xs font-semibold">Wire #4491</span>
+							</div>
+							<div class="text-[11px] opacity-60">Blocked · AML flag</div>
+						}
+						@scrollstrip.Card() {
+							<div class="flex items-center gap-1.5 mb-0.5">
+								@icon.FileText(icon.Props{Size: 14})
+								<span class="text-xs font-semibold">Loan — ACME Ltd</span>
+							</div>
+							<div class="text-[11px] opacity-60">2 docs missing</div>
+						}
+						@scrollstrip.Card() {
+							<div class="flex items-center gap-1.5 mb-0.5">
+								@icon.CreditCard(icon.Props{Size: 14})
+								<span class="text-xs font-semibold">Card dispute #782</span>
+							</div>
+							<div class="text-[11px] opacity-60">Chargeback review</div>
+						}
+					}
+					@caseThreadPanel()
+					@caseInboxItems()
+					@autoResolvedCases()
+				}
+			}
+			<!-- Individual component demos -->
+			@components.Example(components.ExampleProps{
+				Title:     "Feed Container",
+				TemplCode: feedCode,
+			}) {
+				@feed.Feed(feed.Props{Class: "bg-base-200/50 rounded-box p-4"}) {
+					<div class="bg-base-100 rounded-box p-4 border border-base-300">Content is centered and constrained</div>
+					<div class="bg-base-100 rounded-box p-4 border border-base-300">Items stack vertically with spacing</div>
+				}
+			}
+			@components.Example(components.ExampleProps{
+				Title:     "Briefing Card",
+				TemplCode: briefingCode,
+			}) {
+				<div class="space-y-4 max-w-md">
+					@briefing.Briefing(briefing.Props{Title: "Shift handover"}) {
+						<span class="text-error font-semibold">3 escalated</span> cases,
+						<span class="text-success font-semibold">28 resolved</span> by AI overnight.
+						SLA compliance at 94.2%.
+					}
+					@briefing.Briefing(briefing.Props{Title: "Compliance alert", Class: "bg-error text-error-content"}) {
+						2 KYC renewals expire this week. Regulatory deadline: Friday.
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title:     "Scroll Strip",
+				TemplCode: scrollstripCode,
+			}) {
+				@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Active Cases"}) {
+					@scrollstrip.Card(scrollstrip.CardProps{Active: true}) {
+						<div class="text-xs font-semibold">KYC Review</div>
+						<div class="text-[11px] opacity-60">3 pending</div>
+					}
+					@scrollstrip.Card() {
+						<div class="text-xs font-semibold">Wire Transfers</div>
+						<div class="text-[11px] opacity-60">1 blocked</div>
+					}
+					@scrollstrip.Card() {
+						<div class="text-xs font-semibold">Loan Applications</div>
+						<div class="text-[11px] opacity-60">5 in review</div>
+					}
+					@scrollstrip.Card() {
+						<div class="text-xs font-semibold">Card Disputes</div>
+						<div class="text-[11px] opacity-60">2 open</div>
+					}
+					@scrollstrip.Card() {
+						<div class="text-xs font-semibold">Account Closures</div>
+						<div class="text-[11px] opacity-60">4 processing</div>
+					}
+				}
+			}
+			@components.Example(components.ExampleProps{
+				Title:     "Feed Item",
+				TemplCode: feeditemCode,
+			}) {
+				<div class="space-y-2 max-w-lg">
+					@demoFeedItem("demo1", feeditem.UrgencyCritical, "Wire transfer #4491 blocked by AML", "€42,000 · ACME Ltd → Cayman National Bank", "Flagged by automated screening. Beneficiary on PEP watchlist.")
+					@demoFeedItem("demo2", feeditem.UrgencyAction, "KYC renewal — Müller GmbH overdue", "3 documents pending · SLA expires in 6h", "Annual review triggered. Trade registry extract missing.")
+					@demoFeedItem("demo3", feeditem.UrgencyInfo, "New compliance bulletin — PSD3 draft", "EU regulatory update · No action required", "AI summary: extends strong customer authentication to new payment types.")
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title:     "Sparkline",
+				TemplCode: sparklineCode,
+			}) {
+				<div class="flex items-center gap-8 flex-wrap">
+					<div class="flex items-center gap-2">
+						<span class="text-sm">SLA breaches:</span>
+						@sparkline.Sparkline(sparkline.Props{
+							Data:    []float64{8, 12, 6, 15, 22},
+							Color:   "oklch(var(--er))",
+							ShowDot: true,
+						})
+						<span class="text-xs text-error">↑ 47%</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<span class="text-sm">Resolution rate:</span>
+						@sparkline.Sparkline(sparkline.Props{
+							Data:    []float64{82, 85, 88, 91, 94},
+							Color:   "oklch(var(--su))",
+							ShowDot: true,
+						})
+						<span class="text-xs text-success">94%</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<span class="text-sm">Volume:</span>
+						@sparkline.Sparkline(sparkline.Props{
+							Data:    []float64{120, 135, 142, 158, 175, 190},
+							Color:   "oklch(var(--in))",
+							ShowDot: true,
+							Width:   80,
+							Height:  32,
+						})
+					</div>
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title:       "Command Bar",
+				TemplCode:   commandbarCode,
+				HandlerCode: handlerCode,
+			}) {
+				<div class="max-w-lg">
+					@commandbar.CommandBar(commandbar.Props{
+						Placeholder: "Search client, create case, attach document...",
+						SubmitURL:   "/showcase/api/butler/capture",
+						UploadURL:   "/showcase/api/butler/capture",
+						VoiceURL:    "/showcase/api/butler/capture",
+						Suggestions: []string{"Check KYC status", "Escalate to compliance"},
+					})
+				</div>
+			}
+		</div>
+	}
+}
+
+templ caseThreadPanel() {
+	<div class="rounded-box border border-base-300 bg-base-100 overflow-hidden shadow-sm">
+		<div class="p-3 border-b border-base-200 flex items-start justify-between">
+			<div class="flex items-center gap-2">
+				@icon.Shield(icon.Props{Size: 24, Class: "text-primary"})
+				<div>
+					<div class="text-sm font-semibold">KYC — Müller GmbH</div>
+					<div class="flex gap-1 mt-1 flex-wrap">
+						@badge.Badge(badge.Props{Size: badge.SizeXs, Style: badge.StyleGhost}) {
+							Client: DE-2847
+						}
+						@badge.Badge(badge.Props{Size: badge.SizeXs, Style: badge.StyleGhost}) {
+							Relationship Mgr: K. Weber
+						}
+						@badge.Badge(badge.Props{Size: badge.SizeXs, Variant: badge.VariantWarning, Style: badge.StyleSoft}) {
+							SLA: 48h
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="p-3 bg-base-200/30 border-b border-base-200">
+			<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-1">AI Summary</div>
+			<div class="text-xs text-base-content/80 leading-relaxed">
+				Annual KYC renewal for Müller GmbH (manufacturing, DE). Trade registry extract and updated UBO declaration
+				still missing. Client contacted twice. Relationship manager notified. Compliance deadline: Friday.
+			</div>
+		</div>
+		<div class="p-3">
+			@timeline.Timeline(timeline.Props{Direction: timeline.DirectionVertical, Compact: true}) {
+				@timeline.Item() {
+					@timeline.Middle() {
+						<div class="w-2 h-2 rounded-full bg-base-content/30"></div>
+					}
+					@timeline.End(timeline.EndProps{Class: "text-xs text-base-content/40"}) {
+						Jan 15 — Annual review triggered automatically
+					}
+					@timeline.Hr()
+				}
+				@timeline.Item() {
+					@timeline.Middle() {
+						<div class="w-2 h-2 rounded-full bg-secondary"></div>
+					}
+					@timeline.End(timeline.EndProps{Class: "text-xs"}) {
+						Feb 1 — AI sent document request to client
+						@badge.Badge(badge.Props{Size: badge.SizeXs, Variant: badge.VariantSecondary, Style: badge.StyleSoft, Class: "ml-1"}) {
+							Auto
+						}
+					}
+					@timeline.Hr()
+				}
+				@timeline.Item() {
+					@timeline.Middle() {
+						<div class="w-2 h-2 rounded-full bg-success"></div>
+					}
+					@timeline.End(timeline.EndProps{Class: "text-xs"}) {
+						Feb 10 — Financial statements received and verified
+					}
+					@timeline.Hr()
+				}
+				@timeline.Item() {
+					@timeline.Middle() {
+						<div class="w-2 h-2 rounded-full bg-secondary"></div>
+					}
+					@timeline.End(timeline.EndProps{Class: "text-xs"}) {
+						Feb 15 — AI sent follow-up for missing documents
+						@badge.Badge(badge.Props{Size: badge.SizeXs, Variant: badge.VariantSecondary, Style: badge.StyleSoft, Class: "ml-1"}) {
+							Auto
+						}
+					}
+					@timeline.Hr()
+				}
+				@timeline.Item() {
+					@timeline.Middle() {
+						<div class="w-2 h-2 rounded-full border border-error bg-base-100"></div>
+					}
+					@timeline.End(timeline.EndProps{Class: "text-xs font-medium"}) {
+						Pending — Trade registry extract + UBO declaration
+					}
+				}
+			}
+		</div>
+	</div>
+}
+
+templ caseInboxItems() {
+	<div class="space-y-1.5">
+		@feeditem.FeedItem(feeditem.Props{ID: "case-1"}) {
+			@feeditem.Header(feeditem.HeaderProps{FeedItemID: "case-1"}) {
+				@feeditem.UrgencyDot(feeditem.UrgencyCritical)
+				@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "AML"})
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium truncate">Wire transfer #4491 blocked — AML flag</div>
+					<div class="text-xs text-base-content/50 truncate">€42,000 · ACME Ltd → Cayman National Bank</div>
+				</div>
+				@badge.Badge(badge.Props{Size: badge.SizeXs, Variant: badge.VariantError, Style: badge.StyleSoft}) {
+					PEP match
+				}
+				@avatar.Avatar(avatar.Props{Size: avatar.SizeXs, Shape: avatar.ShapeCircle, Placeholder: true}) {
+					<span class="text-[10px]">JD</span>
+				}
+				<span class="text-[10px] text-base-content/30 min-w-6 text-right flex-shrink-0">12m</span>
+			}
+			@feeditem.Content(feeditem.ContentProps{FeedItemID: "case-1"}) {
+				<div class="bg-base-200/50 rounded-lg p-2.5 border-l-2 border-error mb-2">
+					<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-1">AI Analysis</div>
+					<div class="text-xs text-base-content/80 leading-relaxed">
+						Beneficiary "Cayman National Bank Ltd" matched PEP watchlist entry with 87% confidence.
+						Originator ACME Ltd (DE) has clean history — 14 prior transfers, all cleared.
+						Recommend manual review of beneficiary relationship.
+					</div>
+				</div>
+				<div class="flex items-center gap-2">
+					<button class="btn btn-xs btn-error">Escalate to compliance</button>
+					<button class="btn btn-xs btn-ghost">Release with note</button>
+					<button class="btn btn-xs btn-ghost">Request more info</button>
+				</div>
+			}
+		}
+		@feeditem.FeedItem(feeditem.Props{ID: "case-2"}) {
+			@feeditem.Header(feeditem.HeaderProps{FeedItemID: "case-2"}) {
+				@feeditem.UrgencyDot(feeditem.UrgencyCritical)
+				@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "KYC"})
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium truncate">KYC overdue — Müller GmbH</div>
+					<div class="text-xs text-base-content/50 truncate">3 documents pending · SLA expires in 6h</div>
+				</div>
+				@badge.Badge(badge.Props{Size: badge.SizeXs, Variant: badge.VariantWarning, Style: badge.StyleSoft}) {
+					SLA 6h
+				}
+				<span class="text-[10px] text-base-content/30 min-w-6 text-right flex-shrink-0">2h</span>
+			}
+			@feeditem.Content(feeditem.ContentProps{FeedItemID: "case-2"}) {
+				<div class="bg-base-200/50 rounded-lg p-2.5 border-l-2 border-warning mb-2">
+					<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-1">AI Analysis</div>
+					<div class="text-xs text-base-content/80 leading-relaxed">
+						Trade registry extract and UBO declaration still missing. Client contacted twice
+						(Feb 1, Feb 15). Financial statements received and verified.
+						Relationship manager K. Weber notified.
+					</div>
+				</div>
+				<div class="flex items-center gap-2">
+					<button class="btn btn-xs btn-primary">Contact client</button>
+					<button class="btn btn-xs btn-ghost">Extend SLA</button>
+					<button class="btn btn-xs btn-ghost">Assign to RM</button>
+				</div>
+			}
+		}
+		@feeditem.FeedItem(feeditem.Props{ID: "case-3"}) {
+			@feeditem.Header(feeditem.HeaderProps{FeedItemID: "case-3"}) {
+				@feeditem.UrgencyDot(feeditem.UrgencyAction)
+				@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "Dispute"})
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium truncate">Card dispute #782 — chargeback review</div>
+					<div class="text-xs text-base-content/50 truncate">€2,340 · Visa Classic · Merchant: TechStore EU</div>
+				</div>
+				<div class="flex items-center gap-2">
+					@sparkline.Sparkline(sparkline.Props{
+						Data:    []float64{1, 0, 2, 1, 3, 5},
+						Color:   "oklch(var(--wa))",
+						ShowDot: true,
+						Width:   40,
+						Height:  16,
+					})
+				</div>
+				<span class="text-[10px] text-base-content/30 min-w-6 text-right flex-shrink-0">4h</span>
+			}
+			@feeditem.Content(feeditem.ContentProps{FeedItemID: "case-3"}) {
+				<div class="bg-base-200/50 rounded-lg p-2.5 border-l-2 border-warning mb-2">
+					<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-1">AI Analysis</div>
+					<div class="text-xs text-base-content/80 leading-relaxed">
+						Customer reports unauthorized purchase at TechStore EU. Transaction pattern shows
+						5 disputes in 6 months (trend above). Merchant has 2.3% dispute rate (above avg).
+						AI recommends provisional credit while investigating.
+					</div>
+				</div>
+				<div class="flex items-center gap-2">
+					<button class="btn btn-xs btn-primary">Issue provisional credit</button>
+					<button class="btn btn-xs btn-ghost">Request documentation</button>
+					<button class="btn btn-xs btn-ghost">Deny</button>
+				</div>
+			}
+		}
+		@feeditem.FeedItem(feeditem.Props{ID: "case-4"}) {
+			@feeditem.Header(feeditem.HeaderProps{FeedItemID: "case-4"}) {
+				@feeditem.UrgencyDot(feeditem.UrgencyAction)
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium truncate">Loan application — ACME Ltd</div>
+					<div class="text-xs text-base-content/50 truncate">€500K credit facility · 2 documents missing</div>
+				</div>
+				@badge.Badge(badge.Props{Size: badge.SizeXs, Style: badge.StyleGhost}) {
+					Score: B+
+				}
+				<span class="text-[10px] text-base-content/30 min-w-6 text-right flex-shrink-0">1d</span>
+			}
+			@feeditem.Content(feeditem.ContentProps{FeedItemID: "case-4"}) {
+				<div class="bg-base-200/50 rounded-lg p-2.5 border-l-2 border-primary mb-2">
+					<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-1">AI Analysis</div>
+					<div class="text-xs text-base-content/80 leading-relaxed">
+						€500K revolving credit facility request. AI credit score: B+ (stable).
+						Audited financials received, collateral assessment pending.
+						Missing: management accounts Q4 and board resolution.
+					</div>
+				</div>
+				<div class="flex items-center gap-2">
+					<button class="btn btn-xs btn-primary">Request missing docs</button>
+					<button class="btn btn-xs btn-ghost">Forward to credit committee</button>
+				</div>
+			}
+		}
+		@feeditem.FeedItem(feeditem.Props{ID: "case-5"}) {
+			@feeditem.Header(feeditem.HeaderProps{FeedItemID: "case-5"}) {
+				@feeditem.UrgencyDot(feeditem.UrgencyInfo)
+				<div class="flex-1 min-w-0">
+					<div class="text-sm font-medium truncate">PSD3 regulatory update — no action required</div>
+					<div class="text-xs text-base-content/50 truncate">EU compliance bulletin · Published today</div>
+				</div>
+				<span class="text-[10px] text-base-content/30 min-w-6 text-right flex-shrink-0">5h</span>
+			}
+			@feeditem.Content(feeditem.ContentProps{FeedItemID: "case-5"}) {
+				<div class="bg-base-200/50 rounded-lg p-2.5 border-l-2 border-base-content/20 mb-2">
+					<div class="text-[10px] font-bold uppercase tracking-wider text-base-content/50 mb-1">AI Summary</div>
+					<div class="text-xs text-base-content/80 leading-relaxed">
+						EU PSD3 draft extends strong customer authentication to new payment types.
+						Implementation timeline: 2027. No immediate action needed.
+						Flagged for quarterly compliance review.
+					</div>
+				</div>
+				<div class="flex items-center gap-2">
+					<button class="btn btn-xs btn-primary">View bulletin</button>
+					<button class="btn btn-xs btn-ghost">Dismiss</button>
+				</div>
+			}
+		}
+	</div>
+}
+
+templ autoResolvedCases() {
+	<div class="collapse collapse-arrow bg-base-200/50 border border-base-300 rounded-box">
+		<input type="checkbox"/>
+		<div class="collapse-title text-xs font-bold uppercase tracking-wider text-base-content/50">
+			<span class="text-success">✓</span> 28 auto-resolved overnight
+		</div>
+		<div class="collapse-content">
+			<ul class="space-y-1">
+				<li class="text-xs text-base-content/60 flex items-center gap-1.5">
+					<span class="text-success text-[8px]">●</span> Verified 12 incoming SEPA transfers
+				</li>
+				<li class="text-xs text-base-content/60 flex items-center gap-1.5">
+					<span class="text-success text-[8px]">●</span> Processed 5 standing order updates
+				</li>
+				<li class="text-xs text-base-content/60 flex items-center gap-1.5">
+					<span class="text-success text-[8px]">●</span> Cleared 4 low-risk AML screenings
+				</li>
+				<li class="text-xs text-base-content/60 flex items-center gap-1.5">
+					<span class="text-success text-[8px]">●</span> Auto-responded to 3 balance inquiries
+				</li>
+				<li class="text-xs text-base-content/60 flex items-center gap-1.5">
+					<span class="text-success text-[8px]">●</span> Filed 2 regulatory reports (FATCA)
+				</li>
+				<li class="text-xs text-base-content/60 flex items-center gap-1.5">
+					<span class="text-success text-[8px]">●</span> Updated 2 client contact records
+				</li>
+			</ul>
+		</div>
+	</div>
+}
+
+templ demoFeedItem(id string, urgency feeditem.Urgency, title string, subtitle string, context string) {
+	@feeditem.FeedItem(feeditem.Props{ID: id}) {
+		@feeditem.Header(feeditem.HeaderProps{FeedItemID: id}) {
+			@feeditem.UrgencyDot(urgency)
+			<div class="flex-1 min-w-0">
+				<div class="text-sm font-medium truncate">{ title }</div>
+				<div class="text-xs text-base-content/50 truncate">{ subtitle }</div>
+			</div>
+		}
+		@feeditem.Content(feeditem.ContentProps{FeedItemID: id}) {
+			<div class="bg-base-200/50 rounded-lg p-2.5 border-l-2 border-primary mb-2">
+				<div class="text-xs text-base-content/80 leading-relaxed">{ context }</div>
+			</div>
+			<div class="flex items-center gap-2">
+				<button class="btn btn-xs btn-primary">Action</button>
+				<button class="btn btn-xs btn-ghost">Dismiss</button>
+			</div>
+		}
+	}
+}
+
+// Code examples for showcase tabs
+
+var composedCode = `@feed.Feed() {
+  @briefing.Briefing(briefing.Props{Title: "Monday briefing"}) {
+    <span class="text-error font-semibold">3 escalated</span>,
+    <span class="text-warning font-semibold">12 pending</span>.
+    AI resolved 28 tickets overnight.
+  }
+
+  @commandbar.CommandBar(commandbar.Props{
+    Placeholder: "Search client, create case...",
+    SubmitURL:   "/api/capture",
+    UploadURL:   "/api/upload",
+    VoiceURL:    "/api/voice",
+    Suggestions: []string{"KYC renewal", "Escalate wire"},
+    FileHint:    "Drop a document, scan, or upload",
+  })
+
+  @scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Active Cases"}) {
+    @scrollstrip.Card(scrollstrip.CardProps{Active: true}) {
+      <span class="text-xs font-semibold">KYC — Müller GmbH</span>
+      <div class="text-[11px] opacity-60">3 pending</div>
+    }
+    @scrollstrip.Card() { ... }
+  }
+
+  @feeditem.FeedItem(feeditem.Props{ID: "case-1"}) {
+    @feeditem.Header(feeditem.HeaderProps{FeedItemID: "case-1"}) {
+      @feeditem.UrgencyDot(feeditem.UrgencyCritical)
+      @feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "AML"})
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium">Title</div>
+        <div class="text-xs text-base-content/50">Subtitle</div>
+      </div>
+    }
+    @feeditem.Content(feeditem.ContentProps{FeedItemID: "case-1"}) {
+      Expandable AI analysis and actions...
+    }
+  }
+}`
+
+var handlerCode = `func (h *butlerHandlers) capture() http.HandlerFunc {
+  return func(w http.ResponseWriter, r *http.Request) {
+    sse := datastar.NewSSE(w, r)
+    ds.Send.Toast(sse, ds.ToastSuccess, "Message received!")
+  }
+}`
+
+var feedCode = `@feed.Feed() {
+  <div>Item 1</div>
+  <div>Item 2</div>
+}
+
+// With custom max width:
+@feed.Feed(feed.Props{MaxWidth: "max-w-xl"}) {
+  <div>Narrower content</div>
+}`
+
+var briefingCode = `@briefing.Briefing(briefing.Props{Title: "Shift handover"}) {
+  <span class="text-error font-semibold">3 escalated</span>,
+  <span class="text-success font-semibold">28 resolved</span>.
+}
+
+// Custom color:
+@briefing.Briefing(briefing.Props{
+  Title: "Compliance alert",
+  Class: "bg-error text-error-content",
+}) {
+  2 KYC renewals expire this week.
+}`
+
+var scrollstripCode = `@scrollstrip.ScrollStrip(scrollstrip.Props{Title: "Active Cases"}) {
+  @scrollstrip.Card(scrollstrip.CardProps{Active: true}) {
+    <div class="text-xs font-semibold">KYC Review</div>
+    <div class="text-[11px] opacity-60">3 pending</div>
+  }
+  @scrollstrip.Card() {
+    <div class="text-xs font-semibold">Wire Transfers</div>
+    <div class="text-[11px] opacity-60">1 blocked</div>
+  }
+}`
+
+var feeditemCode = `@feeditem.FeedItem(feeditem.Props{ID: "case-1"}) {
+  @feeditem.Header(feeditem.HeaderProps{FeedItemID: "case-1"}) {
+    @feeditem.UrgencyDot(feeditem.UrgencyCritical)
+    @feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "AML"})
+    <div class="flex-1 min-w-0">
+      <div class="text-sm font-medium">Title</div>
+      <div class="text-xs text-base-content/50">Subtitle</div>
+    </div>
+  }
+  @feeditem.Content(feeditem.ContentProps{FeedItemID: "case-1"}) {
+    <div class="bg-base-200/50 rounded-lg p-2.5 border-l-2">
+      AI analysis content...
+    </div>
+    <button class="btn btn-xs btn-primary">Action</button>
+  }
+}`
+
+var sparklineCode = `@sparkline.Sparkline(sparkline.Props{
+  Data:    []float64{8, 12, 6, 15, 22},
+  Color:   "oklch(var(--er))",
+  ShowDot: true,
+})
+
+// Custom size:
+@sparkline.Sparkline(sparkline.Props{
+  Data:   []float64{82, 85, 88, 91, 94},
+  Color:  "oklch(var(--su))",
+  Width:  80,
+  Height: 32,
+})`
+
+var commandbarCode = `@commandbar.CommandBar(commandbar.Props{
+  Placeholder: "Search client, create case...",
+  SubmitURL:   "/api/capture",
+  UploadURL:   "/api/upload",   // enables File tab
+  VoiceURL:    "/api/voice",    // enables Voice tab
+  Suggestions: []string{"Check KYC", "Escalate"},
+  FileHint:    "Drop a document, scan, or upload",
+})`

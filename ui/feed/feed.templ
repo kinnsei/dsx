@@ -1,0 +1,35 @@
+package feed
+
+import "github.com/plaenen/webx/utils"
+
+// Props configures the feed container.
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	MaxWidth   string // Tailwind max-width class (default "max-w-2xl")
+}
+
+// Feed renders a centered, narrow-column container for feed-style content.
+// Use inside a dashboard layout or any page to constrain content width.
+templ Feed(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	{{
+		maxW := p.MaxWidth
+		if maxW == "" {
+			maxW = "max-w-2xl"
+		}
+	}}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge(maxW, "mx-auto space-y-4", p.Class) }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

@@ -14,6 +14,7 @@ type Handlers struct {
 	stream   *streamHandlers
 	drawer   *drawerHandlers
 	modal    *modalHandlers
+	butler   *butlerHandlers
 }
 
 func New(broker *stream.Broker) *Handlers {
@@ -26,6 +27,7 @@ func New(broker *stream.Broker) *Handlers {
 		stream:   newStreamHandlers(broker),
 		drawer:   newDrawerHandlers(),
 		modal:    newModalHandlers(),
+		butler:   newButlerHandlers(),
 	}
 }
 
@@ -38,4 +40,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.stream.register(r)
 	h.drawer.register(r)
 	h.modal.register(r)
+	h.butler.register(r)
 }

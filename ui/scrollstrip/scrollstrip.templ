@@ -1,0 +1,64 @@
+package scrollstrip
+
+import "github.com/plaenen/webx/utils"
+
+// Props configures the scroll strip container.
+type Props struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Title      string // optional section title above the strip
+}
+
+// ScrollStrip renders a horizontal scrollable container for cards or items.
+templ ScrollStrip(props ...Props) {
+	{{ var p Props }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		{ p.Attributes... }
+	>
+		if p.Title != "" {
+			<div class="text-xs font-bold uppercase tracking-wider text-base-content/50 mb-2 px-0.5">
+				{ p.Title }
+			</div>
+		}
+		<div class={ utils.TwMerge("flex gap-2 overflow-x-auto pb-1 scrollbar-none", p.Class) }>
+			{ children... }
+		</div>
+	</div>
+}
+
+// CardProps configures a single card inside the scroll strip.
+type CardProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Active     bool
+}
+
+// Card renders a compact card item inside the scroll strip.
+templ Card(props ...CardProps) {
+	{{ var p CardProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ utils.TwMerge(
+			"rounded-box border px-3 py-2 min-w-36 flex-shrink-0 cursor-pointer transition-all",
+			utils.If(p.Active, "bg-neutral text-neutral-content border-neutral shadow-md -translate-y-0.5"),
+			utils.If(!p.Active, "bg-base-100 border-base-300 hover:border-base-content/30"),
+			p.Class,
+		) }
+		{ p.Attributes... }
+	>
+		{ children... }
+	</div>
+}

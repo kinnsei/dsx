@@ -1,0 +1,175 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/feeditem"
+)
+
+templ FeedItems() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Feed Item — WebX Showcase",
+		Description: "Expandable feed/inbox item component",
+		CurrentPath: "/components/feed-item",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Feed Item</h1>
+				<p class="text-base-content/70 mt-2">
+					An expandable feed/inbox item with a clickable header and collapsible content area. Uses Datastar signals for reactive expand/collapse.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Basic Feed Item",
+				TemplCode: `@feeditem.FeedItem(feeditem.Props{ID: "demo-basic"}) {
+    @feeditem.Header(feeditem.HeaderProps{FeedItemID: "demo-basic"}) {
+        <span class="text-sm font-semibold flex-1">Click to expand</span>
+    }
+    @feeditem.Content(feeditem.ContentProps{FeedItemID: "demo-basic"}) {
+        <p class="text-sm text-base-content/70">
+            This is the expanded content area. It can contain any content.
+        </p>
+    }
+}`,
+			}) {
+				<div class="max-w-lg">
+					@feeditem.FeedItem(feeditem.Props{ID: "demo-basic"}) {
+						@feeditem.Header(feeditem.HeaderProps{FeedItemID: "demo-basic"}) {
+							<span class="text-sm font-semibold flex-1">Click to expand</span>
+						}
+						@feeditem.Content(feeditem.ContentProps{FeedItemID: "demo-basic"}) {
+							<p class="text-sm text-base-content/70">
+								This is the expanded content area. It can contain any content.
+							</p>
+						}
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Urgency Dots",
+				TemplCode: `@feeditem.UrgencyDot(feeditem.UrgencyCritical)
+@feeditem.UrgencyDot(feeditem.UrgencyAction)
+@feeditem.UrgencyDot(feeditem.UrgencyInfo)
+@feeditem.UrgencyDot(feeditem.UrgencyNone)`,
+			}) {
+				<div class="flex items-center gap-4">
+					<div class="flex items-center gap-2">
+						@feeditem.UrgencyDot(feeditem.UrgencyCritical)
+						<span class="text-xs text-base-content/70">Critical</span>
+					</div>
+					<div class="flex items-center gap-2">
+						@feeditem.UrgencyDot(feeditem.UrgencyAction)
+						<span class="text-xs text-base-content/70">Action needed</span>
+					</div>
+					<div class="flex items-center gap-2">
+						@feeditem.UrgencyDot(feeditem.UrgencyInfo)
+						<span class="text-xs text-base-content/70">Info</span>
+					</div>
+					<div class="flex items-center gap-2">
+						@feeditem.UrgencyDot(feeditem.UrgencyNone)
+						<span class="text-xs text-base-content/70">None</span>
+					</div>
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Thread Pills",
+				TemplCode: `@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "KYC", Icon: "🔍"})
+@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "AML"})
+@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "Compliance", Icon: "⚖️"})`,
+			}) {
+				<div class="flex flex-wrap gap-2">
+					@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "KYC", Icon: "🔍"})
+					@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "AML"})
+					@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "Compliance", Icon: "⚖️"})
+					@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "Payments", Icon: "💳"})
+					@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "Support"})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Composed Feed Item",
+				TemplCode: `@feeditem.FeedItem(feeditem.Props{ID: "demo-composed"}) {
+    @feeditem.Header(feeditem.HeaderProps{FeedItemID: "demo-composed"}) {
+        @feeditem.UrgencyDot(feeditem.UrgencyCritical)
+        <span class="text-sm font-semibold flex-1">
+            AML flag — Wire transfer blocked
+        </span>
+        @feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "AML"})
+        <span class="text-xs text-base-content/40">2m ago</span>
+    }
+    @feeditem.Content(feeditem.ContentProps{FeedItemID: "demo-composed"}) {
+        <p class="text-sm text-base-content/70">
+            Wire transfer of €48,000 to Acme Corp flagged by automated
+            screening. Manual review required within 4 hours.
+        </p>
+    }
+}`,
+			}) {
+				<div class="max-w-lg">
+					@feeditem.FeedItem(feeditem.Props{ID: "demo-composed"}) {
+						@feeditem.Header(feeditem.HeaderProps{FeedItemID: "demo-composed"}) {
+							@feeditem.UrgencyDot(feeditem.UrgencyCritical)
+							<span class="text-sm font-semibold flex-1">
+								AML flag — Wire transfer blocked
+							</span>
+							@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "AML"})
+							<span class="text-xs text-base-content/40">2m ago</span>
+						}
+						@feeditem.Content(feeditem.ContentProps{FeedItemID: "demo-composed"}) {
+							<p class="text-sm text-base-content/70">
+								Wire transfer of €48,000 to Acme Corp flagged by automated
+								screening. Manual review required within 4 hours.
+							</p>
+						}
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Multiple Feed Items",
+				TemplCode: `<div class="space-y-2">
+    @feeditem.FeedItem(feeditem.Props{ID: "demo-multi-1"}) {
+        @feeditem.Header(...) { ... }
+        @feeditem.Content(...) { ... }
+    }
+    @feeditem.FeedItem(feeditem.Props{ID: "demo-multi-2"}) {
+        @feeditem.Header(...) { ... }
+        @feeditem.Content(...) { ... }
+    }
+</div>`,
+			}) {
+				<div class="max-w-lg space-y-2">
+					@feeditem.FeedItem(feeditem.Props{ID: "demo-multi-1"}) {
+						@feeditem.Header(feeditem.HeaderProps{FeedItemID: "demo-multi-1"}) {
+							@feeditem.UrgencyDot(feeditem.UrgencyCritical)
+							<span class="text-sm font-semibold flex-1">Critical: Server overload detected</span>
+							<span class="text-xs text-base-content/40">1m ago</span>
+						}
+						@feeditem.Content(feeditem.ContentProps{FeedItemID: "demo-multi-1"}) {
+							<p class="text-sm text-base-content/70">CPU usage at 95% on production server. Auto-scaling triggered.</p>
+						}
+					}
+					@feeditem.FeedItem(feeditem.Props{ID: "demo-multi-2"}) {
+						@feeditem.Header(feeditem.HeaderProps{FeedItemID: "demo-multi-2"}) {
+							@feeditem.UrgencyDot(feeditem.UrgencyAction)
+							<span class="text-sm font-semibold flex-1">Deploy approval needed</span>
+							@feeditem.ThreadPill(feeditem.ThreadPillProps{Label: "DevOps"})
+							<span class="text-xs text-base-content/40">15m ago</span>
+						}
+						@feeditem.Content(feeditem.ContentProps{FeedItemID: "demo-multi-2"}) {
+							<p class="text-sm text-base-content/70">Release v2.4.1 is ready for production deployment. 3 reviewers approved.</p>
+						}
+					}
+					@feeditem.FeedItem(feeditem.Props{ID: "demo-multi-3"}) {
+						@feeditem.Header(feeditem.HeaderProps{FeedItemID: "demo-multi-3"}) {
+							@feeditem.UrgencyDot(feeditem.UrgencyInfo)
+							<span class="text-sm font-semibold flex-1">Weekly report generated</span>
+							<span class="text-xs text-base-content/40">1h ago</span>
+						}
+						@feeditem.Content(feeditem.ContentProps{FeedItemID: "demo-multi-3"}) {
+							<p class="text-sm text-base-content/70">Performance metrics report for the past week is ready for review.</p>
+						}
+					}
+				</div>
+			}
+		</div>
+	}
+}

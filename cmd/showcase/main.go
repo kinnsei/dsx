@@ -189,6 +189,13 @@ func serve(port int, pro bool) error {
 	r.Get("/components/json-view", templ.Handler(pages.JSONViews()).ServeHTTP)
 	r.Get("/components/sse-sdk", templ.Handler(pages.ModalAdvanced()).ServeHTTP)
 	r.Get("/components/code-view", templ.Handler(pages.CodeViews()).ServeHTTP)
+	r.Get("/components/sparkline", templ.Handler(pages.Sparklines()).ServeHTTP)
+	r.Get("/components/briefing", templ.Handler(pages.Briefings()).ServeHTTP)
+	r.Get("/components/scroll-strip", templ.Handler(pages.ScrollStrips()).ServeHTTP)
+	r.Get("/components/feed", templ.Handler(pages.Feeds()).ServeHTTP)
+	r.Get("/components/feed-item", templ.Handler(pages.FeedItems()).ServeHTTP)
+	r.Get("/components/command-bar", templ.Handler(pages.CommandBars()).ServeHTTP)
+	r.Get("/examples/butler", templ.Handler(pages.Butler()).ServeHTTP)
 
 	// SSE API endpoints
 	h := handlers.New(broker)

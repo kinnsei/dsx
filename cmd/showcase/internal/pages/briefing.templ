@@ -1,0 +1,151 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/briefing"
+	"github.com/plaenen/webx/ui/sparkline"
+)
+
+templ Briefings() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Briefing — WebX Showcase",
+		Description: "Dark gradient summary card component",
+		CurrentPath: "/components/briefing",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Briefing</h1>
+				<p class="text-base-content/70 mt-2">
+					A dark gradient summary card for AI briefings, status overviews, or highlighted announcements.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Basic Briefing",
+				TemplCode: `@briefing.Briefing(briefing.Props{Title: "Morning briefing"}) {
+    <p>3 new tasks assigned, 1 deadline today. All systems operational.</p>
+}`,
+			}) {
+				<div class="max-w-lg">
+					@briefing.Briefing(briefing.Props{Title: "Morning briefing"}) {
+						<p>3 new tasks assigned, 1 deadline today. All systems operational.</p>
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Title",
+				TemplCode: `@briefing.Briefing(briefing.Props{Title: "Monday morning briefing"}) {
+    <p>
+        <strong>4 escalated</strong> cases need attention.
+        <strong>12 pending</strong> reviews in queue.
+        AI auto-resolved <strong>38 items</strong> over the weekend.
+    </p>
+}`,
+			}) {
+				<div class="max-w-lg">
+					@briefing.Briefing(briefing.Props{Title: "Monday morning briefing"}) {
+						<p>
+							<strong>4 escalated</strong> cases need attention.
+							<strong>12 pending</strong> reviews in queue.
+							AI auto-resolved <strong>38 items</strong> over the weekend.
+						</p>
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Without Title",
+				TemplCode: `@briefing.Briefing() {
+    <p>All systems are operational. No incidents reported in the last 24 hours.</p>
+}`,
+			}) {
+				<div class="max-w-lg">
+					@briefing.Briefing() {
+						<p>All systems are operational. No incidents reported in the last 24 hours.</p>
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Rich Content",
+				TemplCode: `@briefing.Briefing(briefing.Props{Title: "Weekly performance"}) {
+    <div class="space-y-2">
+        <div class="flex items-center justify-between">
+            <span>Tickets resolved</span>
+            <div class="flex items-center gap-2">
+                @sparkline.Sparkline(sparkline.Props{
+                    Data: []float64{12, 18, 15, 22, 20, 28, 25},
+                    Color: "oklch(var(--su))",
+                    ShowDot: true,
+                })
+                <span class="font-bold">142</span>
+            </div>
+        </div>
+        <div class="flex items-center justify-between">
+            <span>Avg response time</span>
+            <span class="font-bold">2.4 min</span>
+        </div>
+        <div class="flex items-center justify-between">
+            <span>Customer satisfaction</span>
+            <span class="font-bold">96%</span>
+        </div>
+    </div>
+}`,
+			}) {
+				<div class="max-w-lg">
+					@briefing.Briefing(briefing.Props{Title: "Weekly performance"}) {
+						<div class="space-y-2">
+							<div class="flex items-center justify-between">
+								<span>Tickets resolved</span>
+								<div class="flex items-center gap-2">
+									@sparkline.Sparkline(sparkline.Props{
+										Data:    []float64{12, 18, 15, 22, 20, 28, 25},
+										Color:   "oklch(var(--su))",
+										ShowDot: true,
+									})
+									<span class="font-bold">142</span>
+								</div>
+							</div>
+							<div class="flex items-center justify-between">
+								<span>Avg response time</span>
+								<span class="font-bold">2.4 min</span>
+							</div>
+							<div class="flex items-center justify-between">
+								<span>Customer satisfaction</span>
+								<span class="font-bold">96%</span>
+							</div>
+						</div>
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Custom Styling",
+				TemplCode: `@briefing.Briefing(briefing.Props{
+    Title: "Alert",
+    Class: "bg-error text-error-content",
+}) {
+    <p><strong>2 critical</strong> issues require immediate attention.</p>
+}`,
+			}) {
+				<div class="max-w-lg space-y-3">
+					@briefing.Briefing(briefing.Props{
+						Title: "Alert",
+						Class: "bg-error text-error-content",
+					}) {
+						<p><strong>2 critical</strong> issues require immediate attention.</p>
+					}
+					@briefing.Briefing(briefing.Props{
+						Title: "Success",
+						Class: "bg-success text-success-content",
+					}) {
+						<p>All deployments completed successfully.</p>
+					}
+					@briefing.Briefing(briefing.Props{
+						Title: "Info",
+						Class: "bg-info text-info-content",
+					}) {
+						<p>Scheduled maintenance window: Saturday 2am-4am UTC.</p>
+					}
+				</div>
+			}
+		</div>
+	}
+}

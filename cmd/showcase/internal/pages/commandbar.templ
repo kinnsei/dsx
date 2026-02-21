@@ -1,0 +1,117 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/commandbar"
+)
+
+templ CommandBars() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Command Bar — WebX Showcase",
+		Description: "Multi-mode expandable command input component",
+		CurrentPath: "/components/command-bar",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Command Bar</h1>
+				<p class="text-base-content/70 mt-2">
+					An expandable multi-mode command input supporting text, file upload, and voice recording. Collapsed by default as a compact bar, expanding to a tabbed interface on interaction.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Text Only",
+				TemplCode: `@commandbar.CommandBar(commandbar.Props{
+    Placeholder: "Type a message...",
+    SubmitURL:   "/showcase/api/butler/capture",
+})`,
+			}) {
+				<div class="max-w-lg">
+					@commandbar.CommandBar(commandbar.Props{
+						ID:          "demo-text-only",
+						Placeholder: "Type a message...",
+						SubmitURL:   "/showcase/api/butler/capture",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Suggestions",
+				TemplCode: `@commandbar.CommandBar(commandbar.Props{
+    Placeholder: "How can I help?",
+    SubmitURL:   "/showcase/api/butler/capture",
+    Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
+})`,
+			}) {
+				<div class="max-w-lg">
+					@commandbar.CommandBar(commandbar.Props{
+						ID:          "demo-suggestions",
+						Placeholder: "How can I help?",
+						SubmitURL:   "/showcase/api/butler/capture",
+						Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "All Modes (Text + File + Voice)",
+				TemplCode: `@commandbar.CommandBar(commandbar.Props{
+    Placeholder: "Type, upload, or record...",
+    SubmitURL:   "/showcase/api/butler/capture",
+    UploadURL:   "/showcase/api/butler/capture",
+    VoiceURL:    "/showcase/api/butler/capture",
+    Suggestions: []string{"Open a case", "Upload document", "Quick note"},
+})`,
+			}) {
+				<div class="max-w-lg">
+					@commandbar.CommandBar(commandbar.Props{
+						ID:          "demo-all-modes",
+						Placeholder: "Type, upload, or record...",
+						SubmitURL:   "/showcase/api/butler/capture",
+						UploadURL:   "/showcase/api/butler/capture",
+						VoiceURL:    "/showcase/api/butler/capture",
+						Suggestions: []string{"Open a case", "Upload document", "Quick note"},
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Text + File (No Voice)",
+				TemplCode: `@commandbar.CommandBar(commandbar.Props{
+    Placeholder: "Type or attach a file...",
+    SubmitURL:   "/showcase/api/butler/capture",
+    UploadURL:   "/showcase/api/butler/capture",
+    FileHint:    "Drop a receipt or invoice",
+})`,
+			}) {
+				<div class="max-w-lg">
+					@commandbar.CommandBar(commandbar.Props{
+						ID:          "demo-text-file",
+						Placeholder: "Type or attach a file...",
+						SubmitURL:   "/showcase/api/butler/capture",
+						UploadURL:   "/showcase/api/butler/capture",
+						FileHint:    "Drop a receipt or invoice",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Custom Placeholder & File Hint",
+				TemplCode: `@commandbar.CommandBar(commandbar.Props{
+    Placeholder: "Ask the AI assistant...",
+    SubmitURL:   "/showcase/api/butler/capture",
+    UploadURL:   "/showcase/api/butler/capture",
+    VoiceURL:    "/showcase/api/butler/capture",
+    FileHint:    "Upload compliance documents here",
+})`,
+			}) {
+				<div class="max-w-lg">
+					@commandbar.CommandBar(commandbar.Props{
+						ID:          "demo-custom",
+						Placeholder: "Ask the AI assistant...",
+						SubmitURL:   "/showcase/api/butler/capture",
+						UploadURL:   "/showcase/api/butler/capture",
+						VoiceURL:    "/showcase/api/butler/capture",
+						FileHint:    "Upload compliance documents here",
+					})
+				</div>
+			}
+		</div>
+	}
+}
