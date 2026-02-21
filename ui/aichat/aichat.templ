@@ -18,10 +18,11 @@ type Props struct {
 	ID               string
 	Class            string
 	Attributes       templ.Attributes
-	Placeholder      string // collapsed placeholder (default "Tell your butler something...")
-	ReplyPlaceholder string // reply input placeholder (default "Type a reply...")
-	SubmitURL        string // POST endpoint for user messages
-	Shortcut         string // keyboard shortcut hint (default "⌘K")
+	Placeholder      string          // collapsed placeholder (default "Tell your butler something...")
+	ReplyPlaceholder string          // reply input placeholder (default "Type a reply...")
+	SubmitURL        string          // POST endpoint for user messages
+	Shortcut         string          // keyboard shortcut hint (default "⌘K")
+	InputSlot        templ.Component // optional: replaces default input row (e.g. embedded CommandBar)
 }
 
 // MessagesID returns the ID of the messages container for SSE targeting.
@@ -87,24 +88,8 @@ templ AIChat(props Props) {
 			{ ds.Show(isOpen)... }
 			class="flex flex-col"
 		>
-			<!-- Messages area -->
-			<div
-				id={ messagesID }
-				class="flex flex-col gap-3 p-4 max-h-96 overflow-y-auto"
-			></div>
-			<!-- Reply input -->
-			<div class="flex items-center gap-2 border-t border-base-200 px-4 py-3">
-				<input
-					type="text"
-					class="input input-ghost input-sm text-sm flex-1 focus:outline-none"
-					placeholder={ replyPlaceholder }
-					{ ds.Bind(inputSignal)... }
-					data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && %s.trim() ? (evt.preventDefault(), %s) : evt.key === 'Escape' ? (%s) : void 0",
-						inputSignal,
-						submitExpr,
-						closeExpr,
-					) }
-				/>
+			<!-- Close button -->
+			<div class="flex justify-end px-3 pt-2">
 				<button
 					class="btn btn-ghost btn-xs btn-square text-base-content/30 hover:text-base-content"
 					{ ds.OnClick(closeExpr)... }
@@ -112,6 +97,32 @@ templ AIChat(props Props) {
 					×
 				</button>
 			</div>
+			<!-- Messages area -->
+			<div
+				id={ messagesID }
+				class="flex flex-col gap-3 px-4 pb-4 max-h-96 overflow-y-auto"
+			></div>
+			<!-- Input area -->
+			if props.InputSlot != nil {
+				<div class="border-t border-base-200">
+					@props.InputSlot
+				</div>
+			} else {
+				<!-- Default reply input -->
+				<div class="flex items-center gap-2 border-t border-base-200 px-4 py-3">
+					<input
+						type="text"
+						class="input input-ghost input-sm text-sm flex-1 focus:outline-none"
+						placeholder={ replyPlaceholder }
+						{ ds.Bind(inputSignal)... }
+						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && %s.trim() ? (evt.preventDefault(), %s) : evt.key === 'Escape' ? (%s) : void 0",
+							inputSignal,
+							submitExpr,
+							closeExpr,
+						) }
+					/>
+				</div>
+			}
 		</div>
 	</div>
 }

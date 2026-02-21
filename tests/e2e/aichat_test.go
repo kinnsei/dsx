@@ -199,3 +199,56 @@ func TestAIChatPage_ActionBarRendered(t *testing.T) {
 		t.Fatal("action bar primary button not found")
 	}
 }
+
+func TestAIChatPage_CombinedWithCommandBar(t *testing.T) {
+	page := newPage(t)
+	if _, err := page.Goto(baseURL+"/components/ai-chat", pw.PageGotoOptions{
+		WaitUntil: pw.WaitUntilStateNetworkidle,
+	}); err != nil {
+		t.Fatalf("goto: %v", err)
+	}
+
+	// The combined demo should have the command bar embedded.
+	combined := page.Locator("#demo-combined")
+	if err := combined.WaitFor(); err != nil {
+		t.Fatalf("combined demo not found: %v", err)
+	}
+
+	// The embedded command bar should show mode tabs (Type, File, Voice).
+	typeTab := combined.Locator("button", pw.LocatorLocatorOptions{HasText: "Type"})
+	count, err := typeTab.Count()
+	if err != nil {
+		t.Fatalf("count Type tab: %v", err)
+	}
+	if count == 0 {
+		t.Fatal("Type tab not found in combined demo")
+	}
+
+	fileTab := combined.Locator("button", pw.LocatorLocatorOptions{HasText: "File"})
+	count, err = fileTab.Count()
+	if err != nil {
+		t.Fatalf("count File tab: %v", err)
+	}
+	if count == 0 {
+		t.Fatal("File tab not found in combined demo")
+	}
+
+	voiceTab := combined.Locator("button", pw.LocatorLocatorOptions{HasText: "Voice"})
+	count, err = voiceTab.Count()
+	if err != nil {
+		t.Fatalf("count Voice tab: %v", err)
+	}
+	if count == 0 {
+		t.Fatal("Voice tab not found in combined demo")
+	}
+
+	// Suggestion chips should be present.
+	suggestion := combined.Locator("button", pw.LocatorLocatorOptions{HasText: "Cancel a subscription"})
+	count, err = suggestion.Count()
+	if err != nil {
+		t.Fatalf("count suggestion: %v", err)
+	}
+	if count == 0 {
+		t.Fatal("suggestion chip not found in combined demo")
+	}
+}

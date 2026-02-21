@@ -70,3 +70,4 @@ Import utils as: `"github.com/plaenen/webx/utils"`
 - **Showcase should be production grade** — follow best practices for security, performance, and maintainability
 - **Datastar On** - use all Datastar features correctly, the latest version uses for example `data-on:click` instead of `data-on-click`
 - **App agnostic library** - the library should not be tied to any specific application, it should be usable by any application, cmd/dashboard is just an example of how to use the library and can show how to use it
+- **Use the Theme** - use the theme tokens and colours do NOT use hardcoded colours / tokens

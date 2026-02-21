@@ -12,6 +12,7 @@ import (
 	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/aichat"
+	"github.com/plaenen/webx/ui/commandbar"
 )
 
 func AIChats() templ.Component {
@@ -86,6 +87,39 @@ func AIChats() templ.Component {
     ID:        "demo-aichat",
     SubmitURL: "/showcase/api/aichat/send",
 })`,
+				HandlerCode: `func (h *handler) send() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        var signals aichat.AIChatSignals
+        if err := aichat.ReadSignals("demo-aichat", r, &signals); err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        input := strings.TrimSpace(signals.Input)
+        if input == "" {
+            return
+        }
+
+        // Use the ChatSender helper for all SSE operations
+        sse := datastar.NewSSE(w, r)
+        chat := aichat.Chat(sse, "demo-aichat")
+
+        _ = chat.UserMessage(input)
+        _ = chat.ShowTyping()
+        time.Sleep(800 * time.Millisecond)
+        _ = chat.HideTyping()
+
+        // Simple text reply
+        _ = chat.AssistantText("Here's what I found.")
+
+        // Or append any component (cards, quick replies, etc.)
+        _ = chat.Append(aichat.QuickReplies(aichat.QuickRepliesProps{
+            ChatID:    "demo-aichat",
+            SubmitURL: "/api/chat/send",
+            Options:   []aichat.QuickReply{{Label: "Yes", Value: "yes"}},
+        }))
+    }
+}`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -442,7 +476,91 @@ func AIChats() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
+			templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"max-w-lg mx-auto\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = aichat.AIChat(aichat.Props{
+					ID: "demo-combined",
+					InputSlot: commandbar.CommandBar(commandbar.Props{
+						ID:          "combined-bar",
+						Embedded:    true,
+						Placeholder: "Type, upload, or record...",
+						SubmitURL:   "/showcase/api/aichat/send-combined",
+						UploadURL:   "/showcase/api/aichat/upload",
+						VoiceURL:    "/showcase/api/aichat/voice",
+						Suggestions: []string{"Cancel a subscription", "Plan date night"},
+					}),
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = components.Example(components.ExampleProps{
+				Title: "With Command Bar",
+				TemplCode: `@aichat.AIChat(aichat.Props{
+    ID: "demo-combined",
+    InputSlot: commandbar.CommandBar(commandbar.Props{
+        ID:          "combined-bar",
+        Embedded:    true,
+        Placeholder: "Type, upload, or record...",
+        SubmitURL:   "/showcase/api/aichat/send-combined",
+        UploadURL:   "/showcase/api/aichat/upload",
+        VoiceURL:    "/showcase/api/aichat/voice",
+        Suggestions: []string{"Cancel a subscription", "Plan date night"},
+    }),
+})`,
+				HandlerCode: `// When using an embedded CommandBar, input comes from the
+// command bar's "text" signal instead of the AI chat's "input" signal.
+func (h *handler) sendCombined() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        // Read from the command bar's signal namespace
+        var signals commandbar.CommandBarSignals
+        sanitizedID := strings.ReplaceAll("combined-bar", "-", "_")
+        wrapper := map[string]any{sanitizedID: &signals}
+        if err := datastar.ReadSignals(r, &wrapper); err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        input := strings.TrimSpace(signals.Text)
+        if input == "" {
+            return
+        }
+
+        // Use the ChatSender helper — same API regardless of input source
+        sse := datastar.NewSSE(w, r)
+        chat := aichat.Chat(sse, "demo-combined")
+
+        _ = chat.UserMessage(input)
+        _ = chat.ShowTyping()
+        time.Sleep(800 * time.Millisecond)
+        _ = chat.HideTyping()
+        _ = chat.AssistantText("Got it!")
+    }
+}`,
+			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

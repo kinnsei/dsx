@@ -26,6 +26,7 @@ type Props struct {
 	VoiceURL    string   // POST endpoint for voice (enables voice tab)
 	Suggestions []string // quick-fill suggestion chips in text mode
 	FileHint    string   // subtitle in file drop zone (default "Drop a file or click to browse")
+	Embedded    bool     // when true: no collapsed state, no close behavior, no outer chrome
 }
 
 // CommandBar renders an expandable multi-mode command input.
@@ -47,7 +48,11 @@ templ CommandBar(props Props) {
 			fileHint = "Drop a file or click to browse"
 		}
 
-		signals := utils.Signals(id, CommandBarSignals{Mode: "", Text: "", Recording: false})
+		initialMode := ""
+		if props.Embedded {
+			initialMode = "text"
+		}
+		signals := utils.Signals(id, CommandBarSignals{Mode: initialMode, Text: "", Recording: false})
 		modeSignal := signals.Signal("mode")
 		textSignal := signals.Signal("text")
 		recordingSignal := signals.Signal("recording")
@@ -61,11 +66,22 @@ templ CommandBar(props Props) {
 		openText := signals.SetString("mode", "text")
 		openFile := signals.SetString("mode", "file")
 		openVoice := signals.SetString("mode", "voice")
-		closeExpr := fmt.Sprintf("%s; %s; %s",
-			signals.SetString("mode", ""),
-			signals.SetString("text", ""),
-			signals.Set("recording", "false"),
-		)
+
+		// In embedded mode: just clear text, stay in current mode.
+		// In standalone mode: close entirely (reset mode + text + recording).
+		var clearExpr string
+		if props.Embedded {
+			clearExpr = fmt.Sprintf("%s; %s",
+				signals.SetString("text", ""),
+				signals.Set("recording", "false"),
+			)
+		} else {
+			clearExpr = fmt.Sprintf("%s; %s; %s",
+				signals.SetString("mode", ""),
+				signals.SetString("text", ""),
+				signals.Set("recording", "false"),
+			)
+		}
 
 		hasFile := props.UploadURL != ""
 		hasVoice := props.VoiceURL != ""
@@ -76,39 +92,49 @@ templ CommandBar(props Props) {
 		class={ utils.TwMerge(props.Class) }
 		{ props.Attributes... }
 	>
-		<!-- Collapsed state -->
-		<div
-			style="display: none;"
-			{ ds.Show(isClosed)... }
-			class="flex items-center gap-2 bg-base-200 border border-base-300 rounded-box px-3 py-2.5 cursor-text hover:border-base-content/30 transition-colors"
-			{ ds.OnClick(openText)... }
-		>
-			<span class="text-sm text-base-content/40 flex-1">{ placeholder }</span>
-			<div class="flex gap-0.5">
-				if hasFile {
-					<button
-						class="btn btn-ghost btn-xs btn-square"
-						{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openFile))... }
-					>
-						@icon.Paperclip(icon.Props{Size: 14, Class: "text-base-content/40"})
-					</button>
-				}
-				if hasVoice {
-					<button
-						class="btn btn-ghost btn-xs btn-square"
-						{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openVoice))... }
-					>
-						@icon.Mic(icon.Props{Size: 14, Class: "text-base-content/40"})
-					</button>
-				}
+		if !props.Embedded {
+			<!-- Collapsed state -->
+			<div
+				style="display: none;"
+				{ ds.Show(isClosed)... }
+				class="flex items-center gap-2 bg-base-200 border border-base-300 rounded-box px-3 py-2.5 cursor-text hover:border-base-content/30 transition-colors"
+				{ ds.OnClick(openText)... }
+			>
+				<span class="text-sm text-base-content/40 flex-1">{ placeholder }</span>
+				<div class="flex gap-0.5">
+					if hasFile {
+						<button
+							class="btn btn-ghost btn-xs btn-square"
+							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openFile))... }
+						>
+							@icon.Paperclip(icon.Props{Size: 14, Class: "text-base-content/40"})
+						</button>
+					}
+					if hasVoice {
+						<button
+							class="btn btn-ghost btn-xs btn-square"
+							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openVoice))... }
+						>
+							@icon.Mic(icon.Props{Size: 14, Class: "text-base-content/40"})
+						</button>
+					}
+				</div>
+				<kbd class="kbd kbd-xs text-base-content/30">⌘K</kbd>
 			</div>
-			<kbd class="kbd kbd-xs text-base-content/30">⌘K</kbd>
-		</div>
+		}
 		<!-- Expanded state -->
 		<div
-			style="display: none;"
-			{ ds.Show(isOpen)... }
-			class="bg-base-100 rounded-box border border-base-300 shadow-lg overflow-hidden"
+			if !props.Embedded {
+				style="display: none;"
+			}
+			if !props.Embedded {
+				{ ds.Show(isOpen)... }
+			}
+			if props.Embedded {
+				class="overflow-hidden"
+			} else {
+				class="bg-base-100 rounded-box border border-base-300 shadow-lg overflow-hidden"
+			}
 		>
 			<!-- Mode tabs + close -->
 			<div class="flex items-center justify-between px-3 pt-2.5">
@@ -142,12 +168,14 @@ templ CommandBar(props Props) {
 						</button>
 					}
 				</div>
-				<button
-					class="btn btn-ghost btn-xs btn-square"
-					{ ds.OnClick(closeExpr)... }
-				>
-					@icon.X(icon.Props{Size: 14})
-				</button>
+				if !props.Embedded {
+					<button
+						class="btn btn-ghost btn-xs btn-square"
+						{ ds.OnClick(clearExpr)... }
+					>
+						@icon.X(icon.Props{Size: 14})
+					</button>
+				}
 			</div>
 			<!-- Text mode -->
 			<div
@@ -163,8 +191,8 @@ templ CommandBar(props Props) {
 						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? (%s) : void 0",
 							textSignal,
 							actionExpr(props.SubmitURL),
-							closeExpr,
-							closeExpr,
+							clearExpr,
+							clearExpr,
 						) }
 					></textarea>
 				</div>
@@ -187,7 +215,7 @@ templ CommandBar(props Props) {
 							{ ds.OnClick(fmt.Sprintf("%s.trim() && (%s; %s)",
 								textSignal,
 								actionExpr(props.SubmitURL),
-								closeExpr,
+								clearExpr,
 							))... }
 						>
 							Send
@@ -213,7 +241,7 @@ templ CommandBar(props Props) {
 								multiple
 								data-on:change={ fmt.Sprintf("%s; %s",
 									actionExpr(props.UploadURL),
-									closeExpr,
+									clearExpr,
 								) }
 							/>
 						</label>
@@ -233,7 +261,7 @@ templ CommandBar(props Props) {
 								multiple
 								data-on:change={ fmt.Sprintf("%s; %s",
 									actionExpr(props.UploadURL),
-									closeExpr,
+									clearExpr,
 								) }
 							/>
 						</label>
@@ -294,7 +322,7 @@ templ CommandBar(props Props) {
 							{ ds.OnClick(fmt.Sprintf("%s; %s; %s",
 								signals.Set("recording", "false"),
 								actionExpr(props.VoiceURL),
-								closeExpr,
+								clearExpr,
 							))... }
 						>
 							@icon.Square(icon.Props{Size: 18})
