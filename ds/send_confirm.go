@@ -17,6 +17,7 @@ type confirmConfig struct {
 	cancelLabel  string
 	confirmClass string
 	maxWidth     string
+	method       string // HTTP method for confirm action ("get" or "post", default "post")
 }
 
 // WithConfirmTitle sets the dialog title (default: "Confirm").
@@ -44,8 +45,16 @@ func WithConfirmMaxWidth(class string) ConfirmOption {
 	return func(c *confirmConfig) { c.maxWidth = class }
 }
 
+// WithConfirmGet uses GET instead of POST for the confirm action.
+// By default, confirm uses POST with CSRF protection since confirmations
+// typically trigger destructive/mutating operations.
+func WithConfirmGet() ConfirmOption {
+	return func(c *confirmConfig) { c.method = "get" }
+}
+
 // Confirm shows a confirmation dialog via SSE using the modal container.
-// When the user clicks confirm, it triggers a GET request to confirmURL.
+// When the user clicks confirm, it triggers a POST request (with CSRF) to confirmURL.
+// Use WithConfirmGet() to use GET instead.
 // Cancel closes the dialog without any request.
 func (s *Sender) Confirm(sse *datastar.ServerSentEventGenerator, message string, confirmURL string, opts ...ConfirmOption) error {
 	cfg := &confirmConfig{
@@ -54,6 +63,7 @@ func (s *Sender) Confirm(sse *datastar.ServerSentEventGenerator, message string,
 		cancelLabel:  "Cancel",
 		confirmClass: "btn btn-primary",
 		maxWidth:     "max-w-sm",
+		method:       "post",
 	}
 	for _, opt := range opts {
 		opt(cfg)
@@ -98,11 +108,17 @@ func (s *Sender) Confirm(sse *datastar.ServerSentEventGenerator, message string,
 		templ.EscapeString(cfg.cancelLabel),
 	)
 
-	// Confirm button
+	// Confirm button — uses PostOnce (with CSRF) by default, GetOnce if WithConfirmGet.
+	var actionExpr string
+	if cfg.method == "get" {
+		actionExpr = GetOnce(confirmURL)
+	} else {
+		actionExpr = PostOnce(confirmURL)
+	}
 	fmt.Fprintf(&b,
-		`<button class="%s" data-on:click="@get('%s'); %s">%s</button>`,
+		`<button class="%s" data-on:click="%s; %s">%s</button>`,
 		cfg.confirmClass,
-		templ.EscapeString(confirmURL),
+		actionExpr,
 		modalCloseExpr,
 		templ.EscapeString(cfg.confirmLabel),
 	)

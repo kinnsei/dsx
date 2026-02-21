@@ -22,7 +22,7 @@ func (h *modalHandlers) register(r chi.Router) {
 	r.Get("/api/modal/show-wide", h.showWideModal())
 	r.Get("/api/modal/confirm", h.showConfirm())
 	r.Get("/api/modal/confirm-danger", h.showDangerConfirm())
-	r.Get("/api/modal/confirmed", h.confirmed())
+	r.Post("/api/modal/confirmed", h.confirmed())
 	r.Get("/api/modal/patch", h.patchContent())
 	r.Get("/api/modal/redirect", h.redirect())
 	r.Get("/api/modal/download", h.download())
