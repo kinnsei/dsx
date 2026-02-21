@@ -1,0 +1,120 @@
+package aichat
+
+import (
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/utils"
+)
+
+// UserMessageProps configures a user message bubble.
+type UserMessageProps struct {
+	ID    string
+	Class string
+	Text  string
+}
+
+// UserMessage renders a dark pill bubble, right-aligned (user's message).
+templ UserMessage(props UserMessageProps) {
+	<div
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class="flex justify-end"
+	>
+		<div class={ utils.TwMerge("bg-neutral text-neutral-content rounded-2xl px-4 py-2 max-w-[80%] text-sm", props.Class) }>
+			{ props.Text }
+		</div>
+	</div>
+}
+
+// AssistantMessageProps configures an assistant message.
+type AssistantMessageProps struct {
+	ID    string
+	Class string
+}
+
+// AssistantMessage renders a light bubble with sparkle avatar, left-aligned (AI response).
+// Takes children for content (text, cards, quick replies, etc.).
+templ AssistantMessage(props ...AssistantMessageProps) {
+	{{ var p AssistantMessageProps }}
+	if len(props) > 0 {
+		{{ p = props[0] }}
+	}
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class="flex items-start gap-2"
+	>
+		@sparkleAvatar()
+		<div class={ utils.TwMerge("flex flex-col gap-2 max-w-[85%]", p.Class) }>
+			{ children... }
+		</div>
+	</div>
+}
+
+// AssistantText renders a text bubble inside an AssistantMessage.
+templ AssistantText(text string) {
+	<div class="bg-base-200 rounded-2xl px-4 py-2 text-sm">
+		{ text }
+	</div>
+}
+
+// TypingProps configures the typing indicator.
+type TypingProps struct {
+	ID string
+}
+
+// Typing renders a sparkle avatar with animated dots (AI is thinking).
+templ Typing(props TypingProps) {
+	<div
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class="flex items-start gap-2"
+	>
+		@sparkleAvatar()
+		<div class="bg-base-200 rounded-2xl px-4 py-2">
+			<span class="loading loading-dots loading-xs"></span>
+		</div>
+	</div>
+}
+
+// QuickReply represents a single quick-reply option.
+type QuickReply struct {
+	Label string
+	Value string // sent as message text when clicked
+}
+
+// QuickRepliesProps configures quick-reply buttons.
+type QuickRepliesProps struct {
+	ID        string
+	SubmitURL string // POST endpoint — value is sent via signals
+	ChatID    string // parent AIChat ID to set input signal before posting
+	Options   []QuickReply
+}
+
+// QuickReplies renders a row of bordered buttons below an AI message.
+templ QuickReplies(props QuickRepliesProps) {
+	<div
+		if props.ID != "" {
+			id={ props.ID }
+		}
+		class="flex flex-wrap gap-2 ml-8"
+	>
+		for _, opt := range props.Options {
+			<button
+				class="btn btn-sm btn-outline rounded-full"
+				{ ds.OnClick(quickReplyExpr(props.ChatID, opt.Value, props.SubmitURL))... }
+			>
+				{ opt.Label }
+			</button>
+		}
+	</div>
+}
+
+// sparkleAvatar renders the small dark circle with sparkle icon.
+templ sparkleAvatar() {
+	<div class="w-6 h-6 rounded-full bg-neutral text-neutral-content flex items-center justify-center text-xs flex-shrink-0 mt-0.5">
+		✦
+	</div>
+}

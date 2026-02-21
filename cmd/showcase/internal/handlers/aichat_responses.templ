@@ -1,0 +1,127 @@
+package handlers
+
+import (
+	"strings"
+
+	"github.com/plaenen/webx/ui/aichat"
+)
+
+var demoMembers = []aichat.Member{
+	{Initials: "ME", Name: "You", Color: "bg-success", Active: true},
+	{Initials: "SA", Name: "Sarah", Color: "bg-secondary", Active: false},
+	{Initials: "MX", Name: "Max", Color: "bg-warning", Active: false},
+	{Initials: "LI", Name: "Lily", Color: "bg-error", Active: false},
+}
+
+templ subscriptionResponse(chatID, submitURL string) {
+	@aichat.AssistantMessage() {
+		@aichat.AssistantText("You have 8 active subscriptions. Which one?")
+	}
+	@aichat.QuickReplies(aichat.QuickRepliesProps{
+		ChatID:    chatID,
+		SubmitURL: submitURL,
+		Options: []aichat.QuickReply{
+			{Label: "Netflix €12.99", Value: "Netflix"},
+			{Label: "Spotify €17.99", Value: "Spotify"},
+			{Label: "YouTube €11.99", Value: "YouTube"},
+			{Label: "Show all 8", Value: "Show all"},
+		},
+	})
+}
+
+templ subscriptionDetailResponse(input, chatID, submitURL string) {
+	if strings.Contains(input, "show all") {
+		@aichat.AssistantMessage() {
+			@aichat.AssistantText("Here are all active subscriptions:")
+		}
+		@aichat.AssistantMessage() {
+			@aichat.AssistantText("Netflix €12.99 · Spotify €17.99 · YouTube €11.99 · iCloud €2.99 · ADAC Plus €8.90 · Babbel €6.99 · Headspace €4.99 · Blinkist €6.67 — total €73.52/mo")
+		}
+		@aichat.QuickReplies(aichat.QuickRepliesProps{
+			ChatID:    chatID,
+			SubmitURL: submitURL,
+			Options: []aichat.QuickReply{
+				{Label: "Cancel Netflix", Value: "Cancel Netflix"},
+				{Label: "Cancel YouTube", Value: "Cancel YouTube"},
+				{Label: "I'll think about it", Value: "I'll think about it"},
+			},
+		})
+	} else {
+		@aichat.AssistantMessage() {
+			@aichat.AssistantText("I'll prepare the cancellation. You'll keep access until the end of your billing period.")
+		}
+	}
+}
+
+templ dateNightResponse(chatID, submitURL string) {
+	@aichat.AssistantMessage() {
+		@aichat.AssistantText("Love it. When are you thinking?")
+	}
+	@aichat.QuickReplies(aichat.QuickRepliesProps{
+		ChatID:    chatID,
+		SubmitURL: submitURL,
+		Options: []aichat.QuickReply{
+			{Label: "This Friday", Value: "This Friday"},
+			{Label: "This Saturday", Value: "This Saturday"},
+			{Label: "Next week", Value: "Next week"},
+		},
+	})
+}
+
+templ dateConfirmResponse(input string) {
+	{{
+		when := "this weekend"
+		if strings.Contains(input, "friday") {
+			when = "this Friday"
+		} else if strings.Contains(input, "saturday") {
+			when = "this Saturday"
+		} else if strings.Contains(input, "week") {
+			when = "next week"
+		}
+	}}
+	@aichat.AssistantMessage() {
+		@aichat.AssistantText("Perfect! I'll find restaurant options for " + when + " and check babysitter availability. I'll have suggestions ready by tomorrow morning.")
+	}
+}
+
+templ shoppingResponse(input, actionURL string) {
+	@aichat.AssistantMessage() {
+		@aichat.ResponseCard(aichat.ResponseCardProps{
+			Title:       "Buy football boots for Max (size 38)",
+			Description: "Last purchase Aug '24 (size 37). Decathlon has options €35–85. Want me to find the best deals?",
+			Tags: []aichat.CardTag{
+				{Label: "Shopping"},
+				{Label: "Needs input", Variant: "warning"},
+				{Label: "Standalone"},
+			},
+		}) {
+			@aichat.AssignRow(aichat.AssignRowProps{Members: demoMembers})
+			@aichat.ActionBar(aichat.ActionBarProps{
+				PrimaryLabel: "Add to inbox ✦",
+				PrimaryURL:   actionURL,
+				DiscardURL:   actionURL,
+			})
+		}
+	}
+}
+
+templ defaultResponse(input, actionURL string) {
+	@aichat.AssistantMessage() {
+		@aichat.ResponseCard(aichat.ResponseCardProps{
+			Title:       "Noted",
+			Description: "I've captured this. I'll surface it when it becomes relevant.",
+			Tags: []aichat.CardTag{
+				{Label: "Note"},
+				{Label: "FYI"},
+				{Label: "Standalone"},
+			},
+		}) {
+			@aichat.AssignRow(aichat.AssignRowProps{Members: demoMembers})
+			@aichat.ActionBar(aichat.ActionBarProps{
+				PrimaryLabel: "Add to inbox ✦",
+				PrimaryURL:   actionURL,
+				DiscardURL:   actionURL,
+			})
+		}
+	}
+}

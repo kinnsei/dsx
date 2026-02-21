@@ -37,6 +37,7 @@ var showcaseNav = []layouts.NavGroup{
 		Title: "Components",
 		Items: []layouts.NavItem{
 			{Label: "Accordion", Href: "/components/accordion", Icon: icon.ChevronsUpDown},
+			{Label: "AI Chat", Href: "/components/ai-chat", Icon: icon.Sparkles},
 			{Label: "Alert", Href: "/components/alert", Icon: icon.TriangleAlert},
 			{Label: "Avatar", Href: "/components/avatar", Icon: icon.CircleUser},
 			{Label: "Badge", Href: "/components/badge", Icon: icon.Tag},

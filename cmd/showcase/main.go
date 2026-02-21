@@ -129,6 +129,7 @@ func serve(port int, pro bool) error {
 	r.Get("/components/card", templ.Handler(pages.Cards()).ServeHTTP)
 	r.Get("/components/drawer", templ.Handler(pages.Drawers()).ServeHTTP)
 	r.Get("/components/accordion", templ.Handler(pages.Accordions()).ServeHTTP)
+	r.Get("/components/ai-chat", templ.Handler(pages.AIChats()).ServeHTTP)
 	r.Get("/components/alert", templ.Handler(pages.Alerts()).ServeHTTP)
 	r.Get("/components/avatar", templ.Handler(pages.Avatars()).ServeHTTP)
 	r.Get("/components/calendar", templ.Handler(pages.Calendars()).ServeHTTP)

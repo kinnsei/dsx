@@ -1,0 +1,170 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/aichat"
+)
+
+templ AIChats() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "AI Chat — WebX Showcase",
+		Description: "Conversational AI chat widget",
+		CurrentPath: "/components/ai-chat",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">AI Chat</h1>
+				<p class="text-base-content/70 mt-2">
+					A conversational AI chat widget with collapsed/expanded states, multi-turn messaging,
+					quick replies, rich response cards, and member assignment. Messages are delivered via SSE.
+				</p>
+			</div>
+			<p class="text-sm text-base-content/60">
+				Click the bar to open, then try: "cancel a subscription", "plan a date night", "max needs football boots size 38", or any other message.
+			</p>
+			@components.Example(components.ExampleProps{
+				Title: "Live Demo",
+				TemplCode: `@aichat.AIChat(aichat.Props{
+    ID:        "demo-aichat",
+    SubmitURL: "/showcase/api/aichat/send",
+})`,
+			}) {
+				<div class="max-w-lg mx-auto">
+					@aichat.AIChat(aichat.Props{
+						ID:        "demo-aichat",
+						SubmitURL: "/showcase/api/aichat/send",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Custom Placeholder",
+				TemplCode: `@aichat.AIChat(aichat.Props{
+    Placeholder:      "Ask the AI assistant...",
+    ReplyPlaceholder: "Follow up...",
+    Shortcut:         "⌘J",
+    SubmitURL:        "/showcase/api/aichat/send",
+})`,
+			}) {
+				<div class="max-w-lg mx-auto">
+					@aichat.AIChat(aichat.Props{
+						ID:               "demo-custom",
+						Placeholder:      "Ask the AI assistant...",
+						ReplyPlaceholder: "Follow up...",
+						Shortcut:         "⌘J",
+						SubmitURL:        "/showcase/api/aichat/send",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "User Message",
+				TemplCode: `@aichat.UserMessage(aichat.UserMessageProps{
+    Text: "max needs football boots size 38",
+})`,
+			}) {
+				<div class="max-w-lg mx-auto space-y-3 p-4 rounded-box border border-base-300">
+					@aichat.UserMessage(aichat.UserMessageProps{
+						Text: "max needs football boots size 38",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Assistant Message",
+				TemplCode: `@aichat.AssistantMessage() {
+    @aichat.AssistantText("Love it. When are you thinking?")
+}`,
+			}) {
+				<div class="max-w-lg mx-auto space-y-3 p-4 rounded-box border border-base-300">
+					@aichat.AssistantMessage() {
+						@aichat.AssistantText("Love it. When are you thinking?")
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Typing Indicator",
+				TemplCode: `@aichat.Typing(aichat.TypingProps{})`,
+			}) {
+				<div class="max-w-lg mx-auto space-y-3 p-4 rounded-box border border-base-300">
+					@aichat.Typing(aichat.TypingProps{})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Quick Replies",
+				TemplCode: `@aichat.AssistantMessage() {
+    @aichat.AssistantText("You have 8 active subscriptions. Which one?")
+}
+@aichat.QuickReplies(aichat.QuickRepliesProps{
+    ChatID:    "demo-aichat",
+    SubmitURL: "/showcase/api/aichat/send",
+    Options: []aichat.QuickReply{
+        {Label: "Netflix €12.99", Value: "Netflix"},
+        {Label: "Spotify €17.99", Value: "Spotify"},
+        {Label: "YouTube €11.99", Value: "YouTube"},
+        {Label: "Show all 8", Value: "Show all"},
+    },
+})`,
+			}) {
+				<div class="max-w-lg mx-auto space-y-3 p-4 rounded-box border border-base-300">
+					@aichat.AssistantMessage() {
+						@aichat.AssistantText("You have 8 active subscriptions. Which one?")
+					}
+					@aichat.QuickReplies(aichat.QuickRepliesProps{
+						ChatID:    "demo-aichat",
+						SubmitURL: "/showcase/api/aichat/send",
+						Options: []aichat.QuickReply{
+							{Label: "Netflix €12.99", Value: "Netflix"},
+							{Label: "Spotify €17.99", Value: "Spotify"},
+							{Label: "YouTube €11.99", Value: "YouTube"},
+							{Label: "Show all 8", Value: "Show all"},
+						},
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Response Card",
+				TemplCode: `@aichat.AssistantMessage() {
+    @aichat.ResponseCard(aichat.ResponseCardProps{
+        Title:       "Buy football boots for Max (size 38)",
+        Description: "Last purchase Aug '24 (size 37). Decathlon has options €35–85.",
+        Tags: []aichat.CardTag{
+            {Label: "Shopping"},
+            {Label: "Needs input", Variant: "warning"},
+            {Label: "Standalone"},
+        },
+    }) {
+        @aichat.AssignRow(...)
+        @aichat.ActionBar(...)
+    }
+}`,
+			}) {
+				<div class="max-w-lg mx-auto space-y-3 p-4 rounded-box border border-base-300">
+					@aichat.AssistantMessage() {
+						@aichat.ResponseCard(aichat.ResponseCardProps{
+							Title:       "Buy football boots for Max (size 38)",
+							Description: "Last purchase Aug '24 (size 37). Decathlon has options €35–85. Want me to find the best deals?",
+							Tags: []aichat.CardTag{
+								{Label: "Shopping"},
+								{Label: "Needs input", Variant: "warning"},
+								{Label: "Standalone"},
+							},
+						}) {
+							@aichat.AssignRow(aichat.AssignRowProps{
+								Members: []aichat.Member{
+									{Initials: "ME", Name: "You", Color: "bg-success", Active: true},
+									{Initials: "SA", Name: "Sarah", Color: "bg-secondary"},
+									{Initials: "MX", Name: "Max", Color: "bg-warning"},
+									{Initials: "LI", Name: "Lily", Color: "bg-error"},
+								},
+							})
+							@aichat.ActionBar(aichat.ActionBarProps{
+								PrimaryLabel: "Add to inbox ✦",
+								PrimaryURL:   "/showcase/api/aichat/action",
+								DiscardURL:   "/showcase/api/aichat/action",
+							})
+						}
+					}
+				</div>
+			}
+		</div>
+	}
+}

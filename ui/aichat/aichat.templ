@@ -1,0 +1,117 @@
+package aichat
+
+import (
+	"fmt"
+
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/utils"
+)
+
+// AIChatSignals holds the reactive state for the AI chat.
+type AIChatSignals struct {
+	Open  bool   `json:"open"`  // collapsed vs expanded
+	Input string `json:"input"` // current input text
+}
+
+// Props configures the AI chat component.
+type Props struct {
+	ID               string
+	Class            string
+	Attributes       templ.Attributes
+	Placeholder      string // collapsed placeholder (default "Tell your butler something...")
+	ReplyPlaceholder string // reply input placeholder (default "Type a reply...")
+	SubmitURL        string // POST endpoint for user messages
+	Shortcut         string // keyboard shortcut hint (default "⌘K")
+}
+
+// MessagesID returns the ID of the messages container for SSE targeting.
+func MessagesID(chatID string) string {
+	return chatID + "-messages"
+}
+
+// AIChat renders a conversational AI chat widget.
+// Collapsed: sparkle icon + placeholder + keyboard shortcut.
+// Expanded: scrollable message area + reply input.
+templ AIChat(props Props) {
+	{{
+		id := props.ID
+		if id == "" {
+			id = utils.RandomID()
+		}
+		placeholder := props.Placeholder
+		if placeholder == "" {
+			placeholder = "Tell your butler something..."
+		}
+		replyPlaceholder := props.ReplyPlaceholder
+		if replyPlaceholder == "" {
+			replyPlaceholder = "Type a reply..."
+		}
+		shortcut := props.Shortcut
+		if shortcut == "" {
+			shortcut = "⌘K"
+		}
+
+		signals := utils.Signals(id, AIChatSignals{Open: false, Input: ""})
+		inputSignal := signals.Signal("input")
+		isOpen := signals.Signal("open")
+		isClosed := fmt.Sprintf("!%s", isOpen)
+		openExpr := signals.Set("open", "true")
+		closeExpr := fmt.Sprintf("%s; %s", signals.Set("open", "false"), signals.SetString("input", ""))
+		submitExpr := fmt.Sprintf("%s.trim() && (%s; %s)",
+			inputSignal,
+			ds.PostOnce(props.SubmitURL),
+			signals.SetString("input", ""),
+		)
+		messagesID := MessagesID(id)
+	}}
+	<div
+		id={ id }
+		data-signals={ signals.DataSignals }
+		class={ utils.TwMerge("rounded-box border border-base-300 bg-base-100 overflow-hidden", props.Class) }
+		{ props.Attributes... }
+	>
+		<!-- Collapsed state -->
+		<div
+			style="display: none;"
+			{ ds.Show(isClosed)... }
+			class="flex items-center gap-2 px-4 py-3 cursor-text hover:bg-base-200/50 transition-colors"
+			{ ds.OnClick(openExpr)... }
+		>
+			<span class="text-base-content/30 text-sm">✦</span>
+			<span class="text-sm text-base-content/40 flex-1">{ placeholder }</span>
+			<kbd class="kbd kbd-xs text-base-content/30">{ shortcut }</kbd>
+		</div>
+		<!-- Expanded state -->
+		<div
+			style="display: none;"
+			{ ds.Show(isOpen)... }
+			class="flex flex-col"
+		>
+			<!-- Messages area -->
+			<div
+				id={ messagesID }
+				class="flex flex-col gap-3 p-4 max-h-96 overflow-y-auto"
+			></div>
+			<!-- Reply input -->
+			<div class="flex items-center gap-2 border-t border-base-200 px-4 py-3">
+				<input
+					type="text"
+					class="input input-ghost input-sm text-sm flex-1 focus:outline-none"
+					placeholder={ replyPlaceholder }
+					{ ds.Bind(inputSignal)... }
+					data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && %s.trim() ? (evt.preventDefault(), %s) : evt.key === 'Escape' ? (%s) : void 0",
+						inputSignal,
+						submitExpr,
+						closeExpr,
+					) }
+				/>
+				<button
+					class="btn btn-ghost btn-xs btn-square text-base-content/30 hover:text-base-content"
+					{ ds.OnClick(closeExpr)... }
+				>
+					×
+				</button>
+			</div>
+		</div>
+	</div>
+}

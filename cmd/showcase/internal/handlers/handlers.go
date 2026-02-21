@@ -15,6 +15,7 @@ type Handlers struct {
 	drawer   *drawerHandlers
 	modal    *modalHandlers
 	butler   *butlerHandlers
+	aichat   *aichatHandlers
 }
 
 func New(broker *stream.Broker) *Handlers {
@@ -28,6 +29,7 @@ func New(broker *stream.Broker) *Handlers {
 		drawer:   newDrawerHandlers(),
 		modal:    newModalHandlers(),
 		butler:   newButlerHandlers(),
+		aichat:   newAIChatHandlers(),
 	}
 }
 
@@ -41,4 +43,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.drawer.register(r)
 	h.modal.register(r)
 	h.butler.register(r)
+	h.aichat.register(r)
 }
