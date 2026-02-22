@@ -87,6 +87,27 @@ func CommandBars() templ.Component {
     Placeholder: "Type a message...",
     SubmitURL:   "/showcase/api/commandbar/capture",
 })`,
+				HandlerCode: `func (h *handler) capture() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        // Read signals BEFORE creating SSE (SSE consumes the request body).
+        var signals commandbar.CommandBarSignals
+        sanitizedID := strings.ReplaceAll("my-bar", "-", "_")
+        wrapper := map[string]any{sanitizedID: &signals}
+        if err := datastar.ReadSignals(r, &wrapper); err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        input := strings.TrimSpace(signals.Text)
+        if input == "" {
+            return
+        }
+
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Toast(sse, ds.ToastSuccess,
+            fmt.Sprintf("Received: %q", input))
+    }
+}`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -170,11 +191,36 @@ func CommandBars() templ.Component {
 				Title: "All Modes (Text + File + Voice)",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type, upload, or record...",
-    SubmitURL:   "/showcase/api/commandbar/capture",
-    UploadURL:   "/showcase/api/commandbar/capture",
-    VoiceURL:    "/showcase/api/commandbar/capture",
+    SubmitURL:   "/api/command/send",
+    UploadURL:   "/api/command/upload",
+    VoiceURL:    "/api/command/voice",
     Suggestions: []string{"Open a case", "Upload document", "Quick note"},
 })`,
+				HandlerCode: `// All modes can share one handler or use separate endpoints.
+// Signals always include mode, text, and recording state.
+func (h *handler) capture() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        var signals commandbar.CommandBarSignals
+        sanitizedID := strings.ReplaceAll("my-bar", "-", "_")
+        wrapper := map[string]any{sanitizedID: &signals}
+        if err := datastar.ReadSignals(r, &wrapper); err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+        }
+
+        sse := datastar.NewSSE(w, r)
+
+        switch {
+        case strings.TrimSpace(signals.Text) != "":
+            ds.Send.Toast(sse, ds.ToastSuccess,
+                fmt.Sprintf("Text: %q", signals.Text))
+        case signals.Mode == "file":
+            ds.Send.Toast(sse, ds.ToastSuccess, "File upload received")
+        case signals.Mode == "voice":
+            ds.Send.Toast(sse, ds.ToastSuccess, "Voice recording received")
+        }
+    }
+}`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
