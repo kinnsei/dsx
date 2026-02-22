@@ -98,12 +98,12 @@ func CommandBar(props Props) templ.Component {
 		// In standalone mode: close entirely (reset mode + text + recording).
 		var clearExpr string
 		if props.Embedded {
-			clearExpr = fmt.Sprintf("%s; %s",
+			clearExpr = fmt.Sprintf("%s, %s",
 				signals.SetString("text", ""),
 				signals.Set("recording", "false"),
 			)
 		} else {
-			clearExpr = fmt.Sprintf("%s; %s; %s",
+			clearExpr = fmt.Sprintf("%s, %s, %s",
 				signals.SetString("mode", ""),
 				signals.SetString("text", ""),
 				signals.Set("recording", "false"),
@@ -207,7 +207,7 @@ func CommandBar(props Props) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openFile)))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(), %s", openFile)))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -229,7 +229,7 @@ func CommandBar(props Props) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openVoice)))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(), %s", openVoice)))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -441,7 +441,7 @@ func CommandBar(props Props) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? (%s) : void 0",
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? %s : void 0",
 			textSignal,
 			actionExpr(props.SubmitURL),
 			clearExpr,
@@ -504,7 +504,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s.trim() && (%s; %s)",
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s.trim() && (%s, %s)",
 				textSignal,
 				actionExpr(props.SubmitURL),
 				clearExpr,
@@ -512,25 +512,17 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, ">Send")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = icon.CornerDownLeft(icon.Props{Size: 12, Class: "opacity-50"}).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, ">Send</button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "</div></div><!-- File mode -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 50, "</div></div><!-- File mode -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if hasFile {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<div style=\"display: none;\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 51, "<div style=\"display: none;\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -538,7 +530,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "><div class=\"p-3\"><label class=\"flex flex-col items-center justify-center gap-2 border-2 border-dashed border-base-300 rounded-box p-8 cursor-pointer hover:border-base-content/30 hover:bg-base-200/30 transition-colors\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "><div class=\"p-3\"><label class=\"flex flex-col items-center justify-center gap-2 border-2 border-dashed border-base-300 rounded-box p-8 cursor-pointer hover:border-base-content/30 hover:bg-base-200/30 transition-colors\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -546,36 +538,36 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "<div class=\"text-sm font-semibold text-base-content/70\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 53, "<div class=\"text-sm font-semibold text-base-content/70\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fileHint)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 236, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 235, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "</div><div class=\"text-xs text-base-content/40\">PDF, photo, receipt, document</div><input type=\"file\" class=\"hidden\" multiple data-on:change=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div><div class=\"text-xs text-base-content/40\">PDF, photo, receipt, document</div><input type=\"file\" class=\"hidden\" multiple data-on:change=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s; %s",
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s, %s",
 				actionExpr(props.UploadURL),
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 245, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 244, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "\"></label></div><div class=\"flex items-center justify-center gap-2 px-3 pb-3\"><label class=\"btn btn-sm btn-ghost\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 55, "\"></label></div><div class=\"flex items-center justify-center gap-2 px-3 pb-3\"><label class=\"btn btn-sm btn-ghost\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -583,7 +575,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "Camera <input type=\"file\" accept=\"image/*\" capture=\"environment\" class=\"hidden\"></label> <label class=\"btn btn-sm btn-ghost\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "Camera <input type=\"file\" accept=\"image/*\" capture=\"environment\" class=\"hidden\"></label> <label class=\"btn btn-sm btn-ghost\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -591,33 +583,33 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "Browse <input type=\"file\" class=\"hidden\" multiple data-on:change=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "Browse <input type=\"file\" class=\"hidden\" multiple data-on:change=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s; %s",
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s, %s",
 				actionExpr(props.UploadURL),
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 265, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 264, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "\"></label></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\"></label></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<!-- Voice mode -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<!-- Voice mode -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if hasVoice {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "<div style=\"display: none;\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 60, "<div style=\"display: none;\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -625,7 +617,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "><!-- Idle state --><div class=\"p-6 text-center\" style=\"display: none;\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 61, "><!-- Idle state --><div class=\"p-6 text-center\" style=\"display: none;\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -633,7 +625,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, "><div class=\"text-sm text-base-content/50 mb-4\">Tap to start recording</div><button class=\"btn btn-circle btn-lg bg-secondary text-secondary-content hover:bg-secondary/80 mx-auto\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 62, "><div class=\"text-sm text-base-content/50 mb-4\">Tap to start recording</div><button class=\"btn btn-circle btn-lg bg-secondary text-secondary-content hover:bg-secondary/80 mx-auto\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -641,7 +633,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, ">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 63, ">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -649,7 +641,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "</button></div><!-- Recording state --><div class=\"p-6 text-center\" style=\"display: none;\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "</button></div><!-- Recording state --><div class=\"p-6 text-center\" style=\"display: none;\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -657,11 +649,11 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, "><div class=\"flex items-center justify-center gap-2 text-sm font-semibold text-secondary mb-4\"><span class=\"w-2 h-2 rounded-full bg-error animate-pulse\"></span> Recording...</div><!-- Waveform visualization --><div class=\"flex items-center justify-center gap-0.5 h-8 mb-4\"><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-2\" style=\"animation-delay: 0ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-5\" style=\"animation-delay: 50ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-3\" style=\"animation-delay: 100ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-7\" style=\"animation-delay: 150ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-4\" style=\"animation-delay: 200ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-6\" style=\"animation-delay: 250ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-2\" style=\"animation-delay: 300ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-5\" style=\"animation-delay: 350ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-3\" style=\"animation-delay: 400ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-7\" style=\"animation-delay: 450ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-4\" style=\"animation-delay: 500ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-6\" style=\"animation-delay: 550ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-2\" style=\"animation-delay: 600ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-5\" style=\"animation-delay: 650ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-3\" style=\"animation-delay: 700ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-7\" style=\"animation-delay: 750ms;\"></div></div><button class=\"btn btn-circle btn-lg bg-error text-error-content hover:bg-error/80 mx-auto\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 65, "><div class=\"flex items-center justify-center gap-2 text-sm font-semibold text-secondary mb-4\"><span class=\"w-2 h-2 rounded-full bg-error animate-pulse\"></span> Recording...</div><!-- Waveform visualization --><div class=\"flex items-center justify-center gap-0.5 h-8 mb-4\"><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-2\" style=\"animation-delay: 0ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-5\" style=\"animation-delay: 50ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-3\" style=\"animation-delay: 100ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-7\" style=\"animation-delay: 150ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-4\" style=\"animation-delay: 200ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-6\" style=\"animation-delay: 250ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-2\" style=\"animation-delay: 300ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-5\" style=\"animation-delay: 350ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-3\" style=\"animation-delay: 400ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-7\" style=\"animation-delay: 450ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-4\" style=\"animation-delay: 500ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-6\" style=\"animation-delay: 550ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-2\" style=\"animation-delay: 600ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-5\" style=\"animation-delay: 650ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-3\" style=\"animation-delay: 700ms;\"></div><div class=\"w-1 bg-secondary/60 rounded-full animate-pulse h-7\" style=\"animation-delay: 750ms;\"></div></div><button class=\"btn btn-circle btn-lg bg-error text-error-content hover:bg-error/80 mx-auto\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s; %s; %s",
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s, %s, %s",
 				signals.Set("recording", "false"),
 				actionExpr(props.VoiceURL),
 				clearExpr,
@@ -669,7 +661,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, ">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 66, ">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -677,12 +669,12 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 67, "</button></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 69, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 68, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

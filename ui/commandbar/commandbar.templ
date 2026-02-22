@@ -71,12 +71,12 @@ templ CommandBar(props Props) {
 		// In standalone mode: close entirely (reset mode + text + recording).
 		var clearExpr string
 		if props.Embedded {
-			clearExpr = fmt.Sprintf("%s; %s",
+			clearExpr = fmt.Sprintf("%s, %s",
 				signals.SetString("text", ""),
 				signals.Set("recording", "false"),
 			)
 		} else {
-			clearExpr = fmt.Sprintf("%s; %s; %s",
+			clearExpr = fmt.Sprintf("%s, %s, %s",
 				signals.SetString("mode", ""),
 				signals.SetString("text", ""),
 				signals.Set("recording", "false"),
@@ -105,7 +105,7 @@ templ CommandBar(props Props) {
 					if hasFile {
 						<button
 							class="btn btn-ghost btn-xs btn-square"
-							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openFile))... }
+							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(), %s", openFile))... }
 						>
 							@icon.Paperclip(icon.Props{Size: 14, Class: "text-base-content/40"})
 						</button>
@@ -113,7 +113,7 @@ templ CommandBar(props Props) {
 					if hasVoice {
 						<button
 							class="btn btn-ghost btn-xs btn-square"
-							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openVoice))... }
+							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(), %s", openVoice))... }
 						>
 							@icon.Mic(icon.Props{Size: 14, Class: "text-base-content/40"})
 						</button>
@@ -188,7 +188,7 @@ templ CommandBar(props Props) {
 						placeholder={ placeholder }
 						rows="2"
 						{ ds.Bind(textSignal)... }
-						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? (%s) : void 0",
+						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? %s : void 0",
 							textSignal,
 							actionExpr(props.SubmitURL),
 							clearExpr,
@@ -212,14 +212,13 @@ templ CommandBar(props Props) {
 					if props.SubmitURL != "" {
 						<button
 							class="btn btn-sm btn-neutral"
-							{ ds.OnClick(fmt.Sprintf("%s.trim() && (%s; %s)",
+							{ ds.OnClick(fmt.Sprintf("%s.trim() && (%s, %s)",
 								textSignal,
 								actionExpr(props.SubmitURL),
 								clearExpr,
 							))... }
 						>
 							Send
-							@icon.CornerDownLeft(icon.Props{Size: 12, Class: "opacity-50"})
 						</button>
 					}
 				</div>
@@ -239,7 +238,7 @@ templ CommandBar(props Props) {
 								type="file"
 								class="hidden"
 								multiple
-								data-on:change={ fmt.Sprintf("%s; %s",
+								data-on:change={ fmt.Sprintf("%s, %s",
 									actionExpr(props.UploadURL),
 									clearExpr,
 								) }
@@ -259,7 +258,7 @@ templ CommandBar(props Props) {
 								type="file"
 								class="hidden"
 								multiple
-								data-on:change={ fmt.Sprintf("%s; %s",
+								data-on:change={ fmt.Sprintf("%s, %s",
 									actionExpr(props.UploadURL),
 									clearExpr,
 								) }
@@ -319,7 +318,7 @@ templ CommandBar(props Props) {
 						</div>
 						<button
 							class="btn btn-circle btn-lg bg-error text-error-content hover:bg-error/80 mx-auto"
-							{ ds.OnClick(fmt.Sprintf("%s; %s; %s",
+							{ ds.OnClick(fmt.Sprintf("%s, %s, %s",
 								signals.Set("recording", "false"),
 								actionExpr(props.VoiceURL),
 								clearExpr,
