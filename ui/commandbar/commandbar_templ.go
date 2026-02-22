@@ -96,14 +96,15 @@ func CommandBar(props Props) templ.Component {
 
 		// In embedded mode: just clear text, stay in current mode.
 		// In standalone mode: close entirely (reset mode + text + recording).
+		// Uses semicolons — Datastar supports them at the top level and inside {} blocks.
 		var clearExpr string
 		if props.Embedded {
-			clearExpr = fmt.Sprintf("%s, %s",
+			clearExpr = fmt.Sprintf("%s; %s",
 				signals.SetString("text", ""),
 				signals.Set("recording", "false"),
 			)
 		} else {
-			clearExpr = fmt.Sprintf("%s, %s, %s",
+			clearExpr = fmt.Sprintf("%s; %s; %s",
 				signals.SetString("mode", ""),
 				signals.SetString("text", ""),
 				signals.Set("recording", "false"),
@@ -124,7 +125,7 @@ func CommandBar(props Props) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 90, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 91, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -137,7 +138,7 @@ func CommandBar(props Props) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(signals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 91, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 92, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -192,7 +193,7 @@ func CommandBar(props Props) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 103, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 104, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -207,7 +208,7 @@ func CommandBar(props Props) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(), %s", openFile)))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openFile)))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -229,7 +230,7 @@ func CommandBar(props Props) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(), %s", openVoice)))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openVoice)))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -285,7 +286,7 @@ func CommandBar(props Props) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("{'btn-neutral': %s, 'btn-ghost': !(%s)}", isText, isText))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 144, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 145, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -319,7 +320,7 @@ func CommandBar(props Props) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("{'btn-neutral': %s, 'btn-ghost': !(%s)}", isFile, isFile))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 153, Col: 90}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 154, Col: 90}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -354,7 +355,7 @@ func CommandBar(props Props) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("{'btn-neutral': %s, 'btn-ghost': !(%s)}", isVoice, isVoice))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 163, Col: 92}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 164, Col: 92}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -422,7 +423,7 @@ func CommandBar(props Props) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(placeholder)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 188, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 189, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
@@ -441,14 +442,14 @@ func CommandBar(props Props) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? (%s) : void 0",
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("if(evt.key==='Enter'&&!evt.shiftKey&&%s.trim()){evt.preventDefault(); %s; %s} if(evt.key==='Escape'){%s}",
 			textSignal,
 			actionExpr(props.SubmitURL),
 			clearExpr,
 			clearExpr,
 		))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 196, Col: 7}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 197, Col: 7}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -479,7 +480,7 @@ func CommandBar(props Props) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(s)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 206, Col: 11}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 207, Col: 11}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -504,7 +505,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s.trim() && (%s, %s)",
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("if(%s.trim()){%s; %s}",
 				textSignal,
 				actionExpr(props.SubmitURL),
 				clearExpr,
@@ -545,7 +546,7 @@ func CommandBar(props Props) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fileHint)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 235, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 236, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
@@ -556,12 +557,12 @@ func CommandBar(props Props) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var14 string
-			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s, %s",
+			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s; %s",
 				actionExpr(props.UploadURL),
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 244, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 245, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -588,12 +589,12 @@ func CommandBar(props Props) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var15 string
-			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s, %s",
+			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s; %s",
 				actionExpr(props.UploadURL),
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 264, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 265, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
@@ -653,7 +654,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s, %s, %s",
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s; %s; %s",
 				signals.Set("recording", "false"),
 				actionExpr(props.VoiceURL),
 				clearExpr,
