@@ -46,9 +46,7 @@ func (h *aichatHandlers) readAIChatInput(r *http.Request) (string, error) {
 
 func (h *aichatHandlers) readCommandBarInput(r *http.Request) (string, error) {
 	var signals commandbar.CommandBarSignals
-	sanitizedID := strings.ReplaceAll(combinedBarID, "-", "_")
-	wrapper := map[string]any{sanitizedID: &signals}
-	if err := datastar.ReadSignals(r, &wrapper); err != nil {
+	if err := ds.ReadSignals(combinedBarID, r, &signals); err != nil {
 		return "", fmt.Errorf("read commandbar signals: %w", err)
 	}
 	return signals.Text, nil

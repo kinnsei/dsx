@@ -1,10 +1,10 @@
 package form
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/plaenen/webx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -80,10 +80,5 @@ func Handler(validate SubmitFunc, onSuccess func(formID string, sse *datastar.Se
 //	var signals LoginSignals
 //	if err := form.ReadSignals("login", r, &signals); err != nil { ... }
 func ReadSignals(formID string, r *http.Request, dest any) error {
-	sanitizedID := strings.ReplaceAll(formID, "-", "_")
-	wrapper := map[string]any{sanitizedID: dest}
-	if err := datastar.ReadSignals(r, &wrapper); err != nil {
-		return fmt.Errorf("read form signals: %w", err)
-	}
-	return nil
+	return ds.ReadSignals(formID, r, dest)
 }

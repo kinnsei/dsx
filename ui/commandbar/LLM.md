@@ -122,14 +122,13 @@ Signals are namespaced by component ID (hyphens → underscores). A command bar 
 
 ## Reading Signals in Handlers
 
-Signals are sent as a JSON body in the POST request, namespaced by the sanitized component ID.
+Use `ds.ReadSignals()` to read namespaced signals from the request. Pass the component ID (hyphens are automatically converted to underscores).
 
 ```go
 func handler(w http.ResponseWriter, r *http.Request) {
+    // Read signals BEFORE creating SSE (SSE consumes the request body).
     var signals commandbar.CommandBarSignals
-    sanitizedID := strings.ReplaceAll("my-bar", "-", "_")
-    wrapper := map[string]any{sanitizedID: &signals}
-    if err := datastar.ReadSignals(r, &wrapper); err != nil {
+    if err := ds.ReadSignals("my-bar", r, &signals); err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
@@ -142,7 +141,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-**Important**: Call `datastar.ReadSignals()` **before** `datastar.NewSSE()` — creating the SSE consumes the request body.
+**Important**: Call `ds.ReadSignals()` **before** `datastar.NewSSE()` — creating the SSE consumes the request body.
 
 ---
 

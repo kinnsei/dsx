@@ -77,3 +77,4 @@ func (sm *SignalManager) Conditional(property, trueValue, falseValue string) str
 func (sm *SignalManager) ConditionalAction(condition, property, value string) string {
 	return fmt.Sprintf("%s ? (%s) : void 0", condition, sm.Set(property, value))
 }
+

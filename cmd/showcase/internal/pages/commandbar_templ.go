@@ -91,9 +91,7 @@ func CommandBars() templ.Component {
     return func(w http.ResponseWriter, r *http.Request) {
         // Read signals BEFORE creating SSE (SSE consumes the request body).
         var signals commandbar.CommandBarSignals
-        sanitizedID := strings.ReplaceAll("my-bar", "-", "_")
-        wrapper := map[string]any{sanitizedID: &signals}
-        if err := datastar.ReadSignals(r, &wrapper); err != nil {
+        if err := ds.ReadSignals("my-bar", r, &signals); err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }
@@ -201,9 +199,7 @@ func CommandBars() templ.Component {
 func (h *handler) capture() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         var signals commandbar.CommandBarSignals
-        sanitizedID := strings.ReplaceAll("my-bar", "-", "_")
-        wrapper := map[string]any{sanitizedID: &signals}
-        if err := datastar.ReadSignals(r, &wrapper); err != nil {
+        if err := ds.ReadSignals("my-bar", r, &signals); err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }

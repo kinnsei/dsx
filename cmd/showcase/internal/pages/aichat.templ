@@ -219,9 +219,7 @@ func (h *handler) sendCombined() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         // Read from the command bar's signal namespace
         var signals commandbar.CommandBarSignals
-        sanitizedID := strings.ReplaceAll("combined-bar", "-", "_")
-        wrapper := map[string]any{sanitizedID: &signals}
-        if err := datastar.ReadSignals(r, &wrapper); err != nil {
+        if err := ds.ReadSignals("combined-bar", r, &signals); err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }

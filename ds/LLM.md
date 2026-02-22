@@ -126,6 +126,40 @@ ds.Merge(ds.OnClick(expr), ds.Show("$x"))  // combine multiple templ.Attributes
 
 ---
 
+## Reading Signals (`ds.ReadSignals`)
+
+Reads namespaced Datastar signals from an HTTP request. Handles the ID sanitization (hyphens → underscores) and wrapper map automatically.
+
+**Important**: Call `ds.ReadSignals()` **before** `datastar.NewSSE()` — creating the SSE consumes the request body.
+
+```go
+func ds.ReadSignals(componentID string, r *http.Request, dest any) error
+```
+
+**Usage:**
+
+```go
+func handler(w http.ResponseWriter, r *http.Request) {
+    var signals MySignals
+    if err := ds.ReadSignals("my-component", r, &signals); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    sse := datastar.NewSSE(w, r)
+    // use signals...
+}
+```
+
+Component packages also provide typed wrappers that delegate to `ds.ReadSignals`:
+
+```go
+aichat.ReadSignals("my-chat", r, &signals)  // reads AIChatSignals
+form.ReadSignals("login", r, &signals)       // reads form signals
+```
+
+---
+
 ## Backend SSE Operations (`ds.Send.XXX`)
 
 Called from Go HTTP handlers. These create SSE events that update the browser DOM.
