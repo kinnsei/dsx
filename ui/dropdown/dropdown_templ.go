@@ -73,7 +73,7 @@ func Dropdown(props Props) templ.Component {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, DropdownSignals{Open: false})
+		signals := ds.NewSignals(id, DropdownSignals{Open: false})
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("dropdown", string(props.Position), string(props.Align), utils.If(props.Hover, "dropdown-hover"), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
@@ -178,7 +178,7 @@ func Trigger(props TriggerProps) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(props.DropdownID, DropdownSignals{})
+		signals := ds.NewSignals(props.DropdownID, DropdownSignals{})
 		var templ_7745c5c3_Var7 = []any{utils.TwMerge("btn", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
@@ -253,7 +253,7 @@ func Content(props ContentProps) templ.Component {
 			templ_7745c5c3_Var9 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(props.DropdownID, DropdownSignals{})
+		signals := ds.NewSignals(props.DropdownID, DropdownSignals{})
 		var templ_7745c5c3_Var10 = []any{utils.TwMerge("dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var10...)
 		if templ_7745c5c3_Err != nil {

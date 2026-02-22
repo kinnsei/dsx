@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/form"
 	"github.com/plaenen/webx/validators"
 	"github.com/starfederation/datastar-go/datastar"
@@ -30,7 +31,7 @@ func (f *formHandlers) login() http.HandlerFunc {
 	return form.Handler(
 		func(formID string, r *http.Request) []form.FieldError {
 			var signals loginFormSignals
-			if err := form.ReadSignals(formID, r, &signals); err != nil {
+			if err := ds.ReadSignals(formID, r, &signals); err != nil {
 				return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
 			}
 
@@ -71,7 +72,7 @@ func (f *formHandlers) contact() http.HandlerFunc {
 	return form.Handler(
 		func(formID string, r *http.Request) []form.FieldError {
 			var signals contactFormSignals
-			if err := form.ReadSignals(formID, r, &signals); err != nil {
+			if err := ds.ReadSignals(formID, r, &signals); err != nil {
 				return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
 			}
 

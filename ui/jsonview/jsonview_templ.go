@@ -124,7 +124,7 @@ func JSONView(props Props) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if props.Copyable {
-			signals := utils.Signals(id, CopySignals{Copied: false})
+			signals := ds.NewSignals(id, CopySignals{Copied: false})
 			copyExpr := fmt.Sprintf(
 				"navigator.clipboard.writeText(document.getElementById('%s').textContent).then(() => { %s; setTimeout(() => %s, 2000) })",
 				codeID,

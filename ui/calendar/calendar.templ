@@ -68,7 +68,7 @@ templ Calendar(props Props) {
 	}}
 	if props.Mode == ModeRange {
 		{{
-			rangeSigs := utils.Signals(id, RangeCalendarSignals{
+			rangeSigs := ds.NewSignals(id, RangeCalendarSignals{
 				RangeStart: props.RangeStart,
 				RangeEnd:   props.RangeEnd,
 			})
@@ -92,7 +92,7 @@ templ Calendar(props Props) {
 		</div>
 	} else {
 		{{
-			signals := utils.Signals(id, CalendarSignals{Selected: props.Selected})
+			signals := ds.NewSignals(id, CalendarSignals{Selected: props.Selected})
 		}}
 		<div
 			id={ id }
@@ -114,13 +114,13 @@ templ Calendar(props Props) {
 	}
 }
 
-templ dayButton(signals *utils.SignalManager, day calendarDay) {
+templ dayButton(signals *ds.SignalManager, day calendarDay) {
 	{{
 		dateStr := day.DateString()
 		isSelected := signals.Equals("selected", dateStr)
 		isNotSelected := signals.NotEquals("selected", dateStr)
 
-		dc := utils.NewDataClass().
+		dc := ds.NewDataClass().
 			Add("btn-primary", isSelected).
 			Add("btn-ghost", isNotSelected)
 		if !day.InMonth {
@@ -145,7 +145,7 @@ templ dayButton(signals *utils.SignalManager, day calendarDay) {
 	</button>
 }
 
-templ rangeButton(signals *utils.SignalManager, day calendarDay) {
+templ rangeButton(signals *ds.SignalManager, day calendarDay) {
 	{{
 		dateStr := day.DateString()
 
@@ -153,7 +153,7 @@ templ rangeButton(signals *utils.SignalManager, day calendarDay) {
 		// If no rangeStart or rangeEnd exists, set rangeStart.
 		// If rangeStart is set but rangeEnd is empty, set rangeEnd (swap if needed).
 		// If both are set, start a new range.
-		clickExpr := utils.NewExpression().
+		clickExpr := ds.NewExpression().
 			Statement(fmt.Sprintf(
 				"(() => { const d = '%s'; const rs = %s; const re = %s; "+
 					"if (rs === '' || (rs !== '' && re !== '')) { %s; %s; } "+
@@ -198,7 +198,7 @@ templ rangeButton(signals *utils.SignalManager, day calendarDay) {
 			isStart, isEnd, isInRange,
 		)
 
-		dc := utils.NewDataClass().
+		dc := ds.NewDataClass().
 			Add("btn-primary", fmt.Sprintf("(%s) || (%s)", isStart, isEnd)).
 			Add("btn-accent btn-outline", isInRange).
 			Add("btn-ghost", isNotHighlighted)

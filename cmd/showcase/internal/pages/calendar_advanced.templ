@@ -9,7 +9,6 @@ import (
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/calendar"
-	"github.com/plaenen/webx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -28,7 +27,7 @@ templ CalendarAdvanced() {
 			</div>
 			@components.Example(components.ExampleProps{
 				Title: "Month Navigation",
-				TemplCode: `navSignals := utils.Signals(calID, calendar.NavigableSignals{
+				TemplCode: `navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
     Year:  now.Year(),
     Month: int(now.Month()),
 })
@@ -62,7 +61,7 @@ navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
 			}
 			@components.Example(components.ExampleProps{
 				Title: "Date Range Selection",
-				TemplCode: `rangeSigs := utils.Signals(calID, calendar.RangeCalendarSignals{})
+				TemplCode: `rangeSigs := ds.NewSignals(calID, calendar.RangeCalendarSignals{})
 
 <div data-signals={ rangeSigs.DataSignals }>
     <span>
@@ -89,7 +88,7 @@ navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
 			}
 			@components.Example(components.ExampleProps{
 				Title: "Navigation + Range Combined",
-				TemplCode: `navSignals := utils.Signals(calID, calendar.NavigableSignals{
+				TemplCode: `navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
     Year:  now.Year(),
     Month: int(now.Month()),
 })
@@ -129,7 +128,7 @@ templ navigableCalendarDemo() {
 		wctx := webx.FromContext(ctx)
 		now := time.Now()
 		calID := "nav-cal"
-		navSignals := utils.Signals(calID, calendar.NavigableSignals{
+		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
 			Year:  now.Year(),
 			Month: int(now.Month()),
 		})
@@ -167,7 +166,7 @@ templ rangeCalendarDemo() {
 	{{
 		now := time.Now()
 		calID := "range-cal"
-		rangeSigs := utils.Signals(calID, calendar.RangeCalendarSignals{})
+		rangeSigs := ds.NewSignals(calID, calendar.RangeCalendarSignals{})
 	}}
 	<div data-signals={ rangeSigs.DataSignals }>
 		<div class="mb-4">
@@ -199,7 +198,7 @@ templ combinedCalendarDemo() {
 		wctx := webx.FromContext(ctx)
 		now := time.Now()
 		calID := "combo-cal"
-		navSignals := utils.Signals(calID, calendar.NavigableSignals{
+		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
 			Year:  now.Year(),
 			Month: int(now.Month()),
 		})

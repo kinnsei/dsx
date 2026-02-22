@@ -18,8 +18,13 @@ func TestOnClick(t *testing.T) {
 }
 
 func TestBind(t *testing.T) {
-	attrs := ds.Bind("value")
-	assertKey(t, attrs, "data-bind:value")
+	attrs := ds.Bind("my-form", "value")
+	assertKey(t, attrs, "data-bind:my_form.value")
+}
+
+func TestBindSanitizesHyphens(t *testing.T) {
+	attrs := ds.Bind("create-workspace", "name")
+	assertKey(t, attrs, "data-bind:create_workspace.name")
 }
 
 func TestClassToggle(t *testing.T) {
@@ -52,8 +57,8 @@ func TestRef(t *testing.T) {
 	assertKey(t, attrs, "data-ref:input")
 }
 
-func TestSignals(t *testing.T) {
-	attrs := ds.Signals(`{"open": false}`)
+func TestRawSignals(t *testing.T) {
+	attrs := ds.RawSignals(`{"open": false}`)
 	assertAttr(t, attrs, "data-signals", `{"open": false}`)
 }
 
@@ -107,7 +112,7 @@ func TestNoHyphenInParameterizedAttrs(t *testing.T) {
 	}{
 		{"On", ds.On("click", "x")},
 		{"OnClick", ds.OnClick("x")},
-		{"Bind", ds.Bind("val")},
+		{"Bind", ds.Bind("comp", "val")},
 		{"ClassToggle", ds.ClassToggle("active", "x")},
 		{"Attr", ds.Attr("disabled", "x")},
 		{"Style", ds.Style("color", "x")},

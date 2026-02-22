@@ -52,7 +52,7 @@ templ CommandBar(props Props) {
 		if props.Embedded {
 			initialMode = "text"
 		}
-		signals := utils.Signals(id, CommandBarSignals{Mode: initialMode, Text: "", Recording: false})
+		signals := ds.NewSignals(id, CommandBarSignals{Mode: initialMode, Text: "", Recording: false})
 		modeSignal := signals.Signal("mode")
 		textSignal := signals.Signal("text")
 		recordingSignal := signals.Signal("recording")
@@ -188,7 +188,7 @@ templ CommandBar(props Props) {
 						class="textarea textarea-ghost w-full min-h-16 text-sm p-0 focus:outline-none"
 						placeholder={ placeholder }
 						rows="2"
-						{ ds.Bind(textSignal)... }
+						{ ds.Bind(id, "text")... }
 						data-on:keydown={ fmt.Sprintf("if(evt.key==='Enter'&&!evt.shiftKey&&%s.trim()){evt.preventDefault(); %s; %s} if(evt.key==='Escape'){%s}",
 							textSignal,
 							actionExpr(props.SubmitURL),

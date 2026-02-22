@@ -17,7 +17,6 @@ import (
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/calendar"
-	"github.com/plaenen/webx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -82,7 +81,7 @@ func CalendarAdvanced() templ.Component {
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "Month Navigation",
-				TemplCode: `navSignals := utils.Signals(calID, calendar.NavigableSignals{
+				TemplCode: `navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
     Year:  now.Year(),
     Month: int(now.Month()),
 })
@@ -136,7 +135,7 @@ navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "Date Range Selection",
-				TemplCode: `rangeSigs := utils.Signals(calID, calendar.RangeCalendarSignals{})
+				TemplCode: `rangeSigs := ds.NewSignals(calID, calendar.RangeCalendarSignals{})
 
 <div data-signals={ rangeSigs.DataSignals }>
     <span>
@@ -183,7 +182,7 @@ navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "Navigation + Range Combined",
-				TemplCode: `navSignals := utils.Signals(calID, calendar.NavigableSignals{
+				TemplCode: `navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
     Year:  now.Year(),
     Month: int(now.Month()),
 })
@@ -254,7 +253,7 @@ func navigableCalendarDemo() templ.Component {
 		wctx := webx.FromContext(ctx)
 		now := time.Now()
 		calID := "nav-cal"
-		navSignals := utils.Signals(calID, calendar.NavigableSignals{
+		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
 			Year:  now.Year(),
 			Month: int(now.Month()),
 		})
@@ -266,7 +265,7 @@ func navigableCalendarDemo() templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(navSignals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 138, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 137, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -287,7 +286,7 @@ func navigableCalendarDemo() templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("(() => { const months = ['January','February','March','April','May','June','July','August','September','October','November','December']; return months[%s - 1] + ' ' + %s; })()", navSignals.Signal("month"), navSignals.Signal("year")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 147, Col: 296}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 146, Col: 296}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -300,7 +299,7 @@ func navigableCalendarDemo() templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s %d", now.Month().String(), now.Year()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 148, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 147, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -357,7 +356,7 @@ func rangeCalendarDemo() templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		now := time.Now()
 		calID := "range-cal"
-		rangeSigs := utils.Signals(calID, calendar.RangeCalendarSignals{})
+		rangeSigs := ds.NewSignals(calID, calendar.RangeCalendarSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div data-signals=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -365,7 +364,7 @@ func rangeCalendarDemo() templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(rangeSigs.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 172, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 171, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -384,7 +383,7 @@ func rangeCalendarDemo() templ.Component {
 			rangeSigs.Signal("rangeEnd"),
 		))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 184, Col: 6}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 183, Col: 6}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -435,7 +434,7 @@ func combinedCalendarDemo() templ.Component {
 		wctx := webx.FromContext(ctx)
 		now := time.Now()
 		calID := "combo-cal"
-		navSignals := utils.Signals(calID, calendar.NavigableSignals{
+		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
 			Year:  now.Year(),
 			Month: int(now.Month()),
 		})
@@ -447,7 +446,7 @@ func combinedCalendarDemo() templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(navSignals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 208, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 207, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -468,7 +467,7 @@ func combinedCalendarDemo() templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("(() => { const months = ['January','February','March','April','May','June','July','August','September','October','November','December']; return months[%s - 1] + ' ' + %s; })()", navSignals.Signal("month"), navSignals.Signal("year")))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 217, Col: 296}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 216, Col: 296}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -481,7 +480,7 @@ func combinedCalendarDemo() templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s %d", now.Month().String(), now.Year()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 218, Col: 60}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/calendar_advanced.templ`, Line: 217, Col: 60}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {

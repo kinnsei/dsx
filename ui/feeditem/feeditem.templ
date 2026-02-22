@@ -41,7 +41,7 @@ templ FeedItem(props ...Props) {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, FeedItemSignals{Open: false})
+		signals := ds.NewSignals(id, FeedItemSignals{Open: false})
 	}}
 	<div
 		id={ id }
@@ -63,7 +63,7 @@ type HeaderProps struct {
 // Header renders the clickable header that toggles the feed item open/closed.
 templ Header(props HeaderProps) {
 	{{
-		signals := utils.Signals(props.FeedItemID, FeedItemSignals{})
+		signals := ds.NewSignals(props.FeedItemID, FeedItemSignals{})
 		toggleExpr := signals.Toggle("open")
 	}}
 	<div
@@ -91,7 +91,7 @@ type ContentProps struct {
 // Content renders the expandable content section, hidden by default.
 templ Content(props ContentProps) {
 	{{
-		signals := utils.Signals(props.FeedItemID, FeedItemSignals{})
+		signals := ds.NewSignals(props.FeedItemID, FeedItemSignals{})
 	}}
 	<div
 		class={ utils.TwMerge("px-3 pb-3", props.Class) }

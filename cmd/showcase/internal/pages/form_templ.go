@@ -144,7 +144,7 @@ func Forms() templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("$login.email"))
+						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("login", "email"))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -204,7 +204,7 @@ func Forms() templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("$login.password"))
+						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("login", "password"))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -283,13 +283,13 @@ func Forms() templ.Component {
     @form.Field() {
         @form.Label() { Email }
         <input type="email" class="input input-bordered w-full"
-            { ds.Bind("$login.email")... } />
+            { ds.Bind("login", "email")... } />
         @form.Error("$login.email_error")
     }
     @form.Field() {
         @form.Label() { Password }
         <input type="password" class="input input-bordered w-full"
-            { ds.Bind("$login.password")... } />
+            { ds.Bind("login", "password")... } />
         @form.Error("$login.password_error")
     }
     @form.Submit(form.SubmitProps{FormID: "login"}) {
@@ -301,7 +301,7 @@ func Forms() templ.Component {
     return form.Handler(
         func(formID string, r *http.Request) []form.FieldError {
             var signals loginFormSignals
-            if err := form.ReadSignals(formID, r, &signals); err != nil {
+            if err := ds.ReadSignals(formID, r, &signals); err != nil {
                 return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
             }
 
@@ -406,7 +406,7 @@ func Forms() templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("$contact.name"))
+						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("contact", "name"))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -466,7 +466,7 @@ func Forms() templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("$contact.email"))
+						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("contact", "email"))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -526,7 +526,7 @@ func Forms() templ.Component {
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
-						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("$contact.message"))
+						templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind("contact", "message"))
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
 						}
@@ -605,19 +605,19 @@ func Forms() templ.Component {
     @form.Field() {
         @form.Label() { Name }
         <input type="text" class="input input-bordered w-full"
-            { ds.Bind("$contact.name")... } />
+            { ds.Bind("contact", "name")... } />
         @form.Error("$contact.name_error")
     }
     @form.Field() {
         @form.Label() { Email }
         <input type="email" class="input input-bordered w-full"
-            { ds.Bind("$contact.email")... } />
+            { ds.Bind("contact", "email")... } />
         @form.Error("$contact.email_error")
     }
     @form.Field() {
         @form.Label() { Message }
         <textarea class="textarea textarea-bordered w-full" rows="4"
-            { ds.Bind("$contact.message")... }></textarea>
+            { ds.Bind("contact", "message")... }></textarea>
         @form.Error("$contact.message_error")
     }
     @form.Submit(form.SubmitProps{FormID: "contact"}) {
@@ -629,7 +629,7 @@ func Forms() templ.Component {
     return form.Handler(
         func(formID string, r *http.Request) []form.FieldError {
             var signals contactFormSignals
-            if err := form.ReadSignals(formID, r, &signals); err != nil {
+            if err := ds.ReadSignals(formID, r, &signals); err != nil {
                 return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
             }
 

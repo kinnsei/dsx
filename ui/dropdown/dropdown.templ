@@ -46,7 +46,7 @@ templ Dropdown(props Props) {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, DropdownSignals{Open: false})
+		signals := ds.NewSignals(id, DropdownSignals{Open: false})
 	}}
 	<div
 		id={ id }
@@ -69,7 +69,7 @@ type TriggerProps struct {
 
 templ Trigger(props TriggerProps) {
 	{{
-		signals := utils.Signals(props.DropdownID, DropdownSignals{})
+		signals := ds.NewSignals(props.DropdownID, DropdownSignals{})
 	}}
 	<div
 		tabindex="0"
@@ -91,7 +91,7 @@ type ContentProps struct {
 
 templ Content(props ContentProps) {
 	{{
-		signals := utils.Signals(props.DropdownID, DropdownSignals{})
+		signals := ds.NewSignals(props.DropdownID, DropdownSignals{})
 	}}
 	<ul
 		tabindex="-1"

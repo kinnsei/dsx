@@ -2,9 +2,9 @@ package pages
 
 import (
 	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/accordion"
-	"github.com/plaenen/webx/utils"
 )
 
 templ Accordions() {
@@ -233,7 +233,7 @@ templ joinedDemo() {
 
 templ accordionStateDemo() {
 	{{
-		signals := utils.Signals("state-accordion", accordion.AccordionSignals{})
+		signals := ds.NewSignals("state-accordion", accordion.AccordionSignals{})
 	}}
 	<div class="mb-4">
 		<span class="text-sm text-base-content/60">

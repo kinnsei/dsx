@@ -47,7 +47,7 @@ templ Drawer(props Props) {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, DrawerSignals{Open: false})
+		signals := ds.NewSignals(id, DrawerSignals{Open: false})
 	}}
 	<div
 		data-signals={ signals.DataSignals }
@@ -89,7 +89,7 @@ templ Side(props SideProps) {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, DrawerSignals{})
+		signals := ds.NewSignals(id, DrawerSignals{})
 	}}
 	<div class="drawer-side z-40" { props.Attributes... }>
 		<div
@@ -106,7 +106,7 @@ templ Side(props SideProps) {
 // Only visible on small screens (hidden on lg: when drawer is always open).
 templ ToggleButton(drawerID string) {
 	{{
-		signals := utils.Signals(drawerID, DrawerSignals{})
+		signals := ds.NewSignals(drawerID, DrawerSignals{})
 	}}
 	<button
 		type="button"

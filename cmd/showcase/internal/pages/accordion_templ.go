@@ -11,8 +11,8 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/accordion"
-	"github.com/plaenen/webx/utils"
 )
 
 func Accordions() templ.Component {
@@ -819,7 +819,7 @@ func accordionStateDemo() templ.Component {
 			templ_7745c5c3_Var28 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals("state-accordion", accordion.AccordionSignals{})
+		signals := ds.NewSignals("state-accordion", accordion.AccordionSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"mb-4\"><span class=\"text-sm text-base-content/60\">Active item: <code class=\"badge badge-sm\" data-text=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

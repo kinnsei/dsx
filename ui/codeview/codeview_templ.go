@@ -56,7 +56,7 @@ func CodeView(props Props) templ.Component {
 			id = "cv-" + utils.RandomID()
 		}
 		codeID := id + "-code"
-		signals := utils.Signals(id, CopySignals{Copied: false})
+		signals := ds.NewSignals(id, CopySignals{Copied: false})
 		copyExpr := fmt.Sprintf(
 			"navigator.clipboard.writeText(document.getElementById('%s').textContent).then(() => { %s; setTimeout(() => %s, 2000) })",
 			codeID,

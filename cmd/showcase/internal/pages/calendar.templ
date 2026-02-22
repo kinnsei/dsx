@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/calendar"
-	"github.com/plaenen/webx/utils"
 )
 
 templ Calendars() {
@@ -41,7 +41,7 @@ sel := time.Date(now.Year(), now.Month(), 15, 0, 0, 0, 0, time.UTC).Format("2006
 			}
 			@components.Example(components.ExampleProps{
 				Title: "State Indicator",
-				TemplCode: `signals := utils.Signals("state-cal", calendar.CalendarSignals{})
+				TemplCode: `signals := ds.NewSignals("state-cal", calendar.CalendarSignals{})
 
 <div class="mb-4">
     <span class="text-sm text-base-content/60">
@@ -82,7 +82,7 @@ templ preselectedDemo() {
 
 templ calendarStateDemo() {
 	{{
-		signals := utils.Signals("state-cal", calendar.CalendarSignals{})
+		signals := ds.NewSignals("state-cal", calendar.CalendarSignals{})
 	}}
 	<div class="mb-4">
 		<span class="text-sm text-base-content/60">

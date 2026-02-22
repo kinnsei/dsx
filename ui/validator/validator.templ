@@ -72,7 +72,7 @@ func (p *InputProps) defaults() {
 templ Input(props InputProps) {
 	{{ props.defaults() }}
 	{{
-		signals := utils.Signals(props.ID, validatorSignals{
+		signals := ds.NewSignals(props.ID, validatorSignals{
 			Value: props.Value,
 			Valid: true,
 			Error: "",
@@ -125,7 +125,7 @@ templ Input(props InputProps) {
 // and the input has a non-empty value.
 templ SuccessHint(id string) {
 	{{
-		signals := utils.Signals(id, validatorSignals{})
+		signals := ds.NewSignals(id, validatorSignals{})
 	}}
 	<div
 		class="mt-2 text-xs text-success"

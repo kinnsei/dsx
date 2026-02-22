@@ -47,7 +47,7 @@ templ Accordion(props Props) {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, AccordionSignals{Active: props.DefaultValue})
+		signals := ds.NewSignals(id, AccordionSignals{Active: props.DefaultValue})
 	}}
 	<div
 		data-signals={ signals.DataSignals }
@@ -61,14 +61,14 @@ templ Accordion(props Props) {
 // match the parent Accordion's ID so signals are shared.
 templ Item(props ItemProps) {
 	{{
-		signals := utils.Signals(props.AccordionID, AccordionSignals{})
+		signals := ds.NewSignals(props.AccordionID, AccordionSignals{})
 		isActive := signals.Equals("active", props.Value)
 		isNotActive := signals.NotEquals("active", props.Value)
 		toggleExpr := fmt.Sprintf("%s ? (%s) : (%s)",
 			isActive,
 			signals.Set("active", "''"),
 			signals.SetString("active", props.Value))
-		dataClass := utils.NewDataClass().
+		dataClass := ds.NewDataClass().
 			Add("collapse-open", isActive).
 			Add("collapse-close", isNotActive).
 			Build()

@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/plaenen/webx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -70,15 +69,3 @@ func Handler(validate SubmitFunc, onSuccess func(formID string, sse *datastar.Se
 	}
 }
 
-// ReadSignals reads the form's namespaced signals from the request.
-// Pass a pointer to your signals struct.
-//
-//	type LoginSignals struct {
-//	    Email    string `json:"email"`
-//	    Password string `json:"password"`
-//	}
-//	var signals LoginSignals
-//	if err := form.ReadSignals("login", r, &signals); err != nil { ... }
-func ReadSignals(formID string, r *http.Request, dest any) error {
-	return ds.ReadSignals(formID, r, dest)
-}

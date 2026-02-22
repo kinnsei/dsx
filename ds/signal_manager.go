@@ -1,4 +1,4 @@
-package utils
+package ds
 
 import (
 	"encoding/json"
@@ -15,10 +15,10 @@ type SignalManager struct {
 	DataSignals string
 }
 
-// Signals creates a new SignalManager with the given ID and initial state.
+// NewSignals creates a new SignalManager with the given ID and initial state.
 // The ID is sanitized (hyphens → underscores) for JavaScript compatibility.
 // The signalsStruct should have json tags for each property.
-func Signals(id string, signalsStruct any) *SignalManager {
+func NewSignals(id string, signalsStruct any) *SignalManager {
 	sanitizedID := strings.ReplaceAll(id, "-", "_")
 
 	nested := map[string]any{
@@ -77,4 +77,3 @@ func (sm *SignalManager) Conditional(property, trueValue, falseValue string) str
 func (sm *SignalManager) ConditionalAction(condition, property, value string) string {
 	return fmt.Sprintf("%s ? (%s) : void 0", condition, sm.Set(property, value))
 }
-

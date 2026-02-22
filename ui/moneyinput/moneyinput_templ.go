@@ -76,7 +76,7 @@ func DecimalInput(props DecimalProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		props.defaults()
-		signals := utils.Signals(props.ID, decimalSignals{
+		signals := ds.NewSignals(props.ID, decimalSignals{
 			Value:  props.Value,
 			Amount: "",
 			Error:  "",
@@ -353,7 +353,7 @@ func MoneyInput(props MoneyProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		props.defaults()
-		signals := utils.Signals(props.ID, moneySignals{
+		signals := ds.NewSignals(props.ID, moneySignals{
 			Value:    props.Value,
 			Amount:   "",
 			Currency: "",

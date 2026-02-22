@@ -52,7 +52,7 @@ templ AIChat(props Props) {
 			shortcut = "⌘K"
 		}
 
-		signals := utils.Signals(id, AIChatSignals{Open: false, Input: ""})
+		signals := ds.NewSignals(id, AIChatSignals{Open: false, Input: ""})
 		inputSignal := signals.Signal("input")
 		isOpen := signals.Signal("open")
 		isClosed := fmt.Sprintf("!%s", isOpen)
@@ -114,7 +114,7 @@ templ AIChat(props Props) {
 						type="text"
 						class="input input-ghost input-sm text-sm flex-1 focus:outline-none"
 						placeholder={ replyPlaceholder }
-						{ ds.Bind(inputSignal)... }
+						{ ds.Bind(id, "input")... }
 						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && %s.trim() ? (evt.preventDefault(), %s) : evt.key === 'Escape' ? (%s) : void 0",
 							inputSignal,
 							submitExpr,

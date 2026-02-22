@@ -26,13 +26,12 @@ func OnClick(expr string) templ.Attributes {
 	return On("click", expr)
 }
 
-// Bind returns a data-bind:<signal> attribute.
-// The signal path should not include the $ prefix used in expressions.
-// If a $-prefixed signal reference is passed (e.g. from SignalManager.Signal()),
-// the $ is automatically stripped.
-func Bind(signal string) templ.Attributes {
-	signal = strings.TrimPrefix(signal, "$")
-	return templ.Attributes{"data-bind:" + signal: ""}
+// Bind returns a data-bind:<componentID>.<field> attribute.
+// The componentID is sanitized (hyphens → underscores) to match the signal namespace.
+// This pairs with ReadSignals(componentID, r, &signals) on the handler side.
+func Bind(componentID, field string) templ.Attributes {
+	sanitizedID := strings.ReplaceAll(componentID, "-", "_")
+	return templ.Attributes{"data-bind:" + sanitizedID + "." + field: ""}
 }
 
 // ClassToggle returns a data-class:<name> attribute (single class toggle).
@@ -67,8 +66,9 @@ func Ref(name string) templ.Attributes {
 
 // --- Standalone attributes (no colon) ---
 
-// Signals returns a data-signals attribute.
-func Signals(value string) templ.Attributes {
+// RawSignals returns a data-signals attribute with a raw JSON string.
+// Prefer NewSignals(componentID, struct) for type-safe namespaced signals.
+func RawSignals(value string) templ.Attributes {
 	return templ.Attributes{"data-signals": value}
 }
 

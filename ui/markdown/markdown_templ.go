@@ -179,7 +179,7 @@ func MarkdownInput(props InputProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		props.defaults()
-		signals := utils.Signals(props.ID, inputSignals{
+		signals := ds.NewSignals(props.ID, inputSignals{
 			Value: props.Value,
 			Mode:  "edit",
 		})

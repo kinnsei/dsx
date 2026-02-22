@@ -67,7 +67,7 @@ func (p *Props) defaults() {
 templ Form(props Props) {
 	{{ props.defaults() }}
 	{{
-		signals := utils.Signals(props.ID, props.Signals)
+		signals := ds.NewSignals(props.ID, props.Signals)
 
 		// Build action URL with form ID for the handler.
 		actionURL := fmt.Sprintf("%s?id=%s", props.Action, props.ID)
@@ -193,7 +193,7 @@ type SubmitProps struct {
 // Submit renders a submit button that shows a loading state while submitting.
 templ Submit(props SubmitProps) {
 	{{
-		signals := utils.Signals(props.FormID, FormSignals{})
+		signals := ds.NewSignals(props.FormID, FormSignals{})
 	}}
 	<button
 		type="submit"
@@ -213,7 +213,7 @@ templ Submit(props SubmitProps) {
 // Shows when the form's "error" signal is non-empty.
 templ FormError(formID string) {
 	{{
-		signals := utils.Signals(formID, FormSignals{})
+		signals := ds.NewSignals(formID, FormSignals{})
 	}}
 	<div
 		class="alert alert-error text-sm"

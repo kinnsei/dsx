@@ -99,7 +99,7 @@ func Input(props InputProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		props.defaults()
-		signals := utils.Signals(props.ID, validatorSignals{
+		signals := ds.NewSignals(props.ID, validatorSignals{
 			Value: props.Value,
 			Valid: true,
 			Error: "",
@@ -340,7 +340,7 @@ func SuccessHint(id string) templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(id, validatorSignals{})
+		signals := ds.NewSignals(id, validatorSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"mt-2 text-xs text-success\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

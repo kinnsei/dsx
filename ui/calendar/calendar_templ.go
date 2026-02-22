@@ -93,7 +93,7 @@ func Calendar(props Props) templ.Component {
 		days := buildGrid(year, month)
 		monthLabel := fmt.Sprintf("%s %d", month.String(), year)
 		if props.Mode == ModeRange {
-			rangeSigs := utils.Signals(id, RangeCalendarSignals{
+			rangeSigs := ds.NewSignals(id, RangeCalendarSignals{
 				RangeStart: props.RangeStart,
 				RangeEnd:   props.RangeEnd,
 			})
@@ -188,7 +188,7 @@ func Calendar(props Props) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			signals := utils.Signals(id, CalendarSignals{Selected: props.Selected})
+			signals := ds.NewSignals(id, CalendarSignals{Selected: props.Selected})
 			var templ_7745c5c3_Var8 = []any{utils.TwMerge("w-fit bg-base-100 border border-base-300 rounded-box shadow-lg p-4", props.Class)}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 			if templ_7745c5c3_Err != nil {
@@ -284,7 +284,7 @@ func Calendar(props Props) templ.Component {
 	})
 }
 
-func dayButton(signals *utils.SignalManager, day calendarDay) templ.Component {
+func dayButton(signals *ds.SignalManager, day calendarDay) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -309,7 +309,7 @@ func dayButton(signals *utils.SignalManager, day calendarDay) templ.Component {
 		isSelected := signals.Equals("selected", dateStr)
 		isNotSelected := signals.NotEquals("selected", dateStr)
 
-		dc := utils.NewDataClass().
+		dc := ds.NewDataClass().
 			Add("btn-primary", isSelected).
 			Add("btn-ghost", isNotSelected)
 		if !day.InMonth {
@@ -383,7 +383,7 @@ func dayButton(signals *utils.SignalManager, day calendarDay) templ.Component {
 	})
 }
 
-func rangeButton(signals *utils.SignalManager, day calendarDay) templ.Component {
+func rangeButton(signals *ds.SignalManager, day calendarDay) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -410,7 +410,7 @@ func rangeButton(signals *utils.SignalManager, day calendarDay) templ.Component 
 		// If no rangeStart or rangeEnd exists, set rangeStart.
 		// If rangeStart is set but rangeEnd is empty, set rangeEnd (swap if needed).
 		// If both are set, start a new range.
-		clickExpr := utils.NewExpression().
+		clickExpr := ds.NewExpression().
 			Statement(fmt.Sprintf(
 				"(() => { const d = '%s'; const rs = %s; const re = %s; "+
 					"if (rs === '' || (rs !== '' && re !== '')) { %s; %s; } "+
@@ -455,7 +455,7 @@ func rangeButton(signals *utils.SignalManager, day calendarDay) templ.Component 
 			isStart, isEnd, isInRange,
 		)
 
-		dc := utils.NewDataClass().
+		dc := ds.NewDataClass().
 			Add("btn-primary", fmt.Sprintf("(%s) || (%s)", isStart, isEnd)).
 			Add("btn-accent btn-outline", isInRange).
 			Add("btn-ghost", isNotHighlighted)

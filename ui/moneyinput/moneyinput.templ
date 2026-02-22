@@ -49,7 +49,7 @@ func (p *DecimalProps) defaults() {
 templ DecimalInput(props DecimalProps) {
 	{{ props.defaults() }}
 	{{
-		signals := utils.Signals(props.ID, decimalSignals{
+		signals := ds.NewSignals(props.ID, decimalSignals{
 			Value:  props.Value,
 			Amount: "",
 			Error:  "",
@@ -146,7 +146,7 @@ func (p *MoneyProps) defaults() {
 templ MoneyInput(props MoneyProps) {
 	{{ props.defaults() }}
 	{{
-		signals := utils.Signals(props.ID, moneySignals{
+		signals := ds.NewSignals(props.ID, moneySignals{
 			Value:    props.Value,
 			Amount:   "",
 			Currency: "",

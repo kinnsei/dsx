@@ -29,7 +29,7 @@ type ThemeOption struct {
 
 // themeEffect returns a Datastar effect expression that applies the current
 // theme signal to the document root element.
-func themeEffect(signals *utils.SignalManager) string {
+func themeEffect(signals *ds.SignalManager) string {
 	return fmt.Sprintf("document.documentElement.setAttribute('data-theme', %s)", signals.Signal("theme"))
 }
 
@@ -81,7 +81,7 @@ func Toggle(props ToggleProps) templ.Component {
 		if wctx.Theme != "" {
 			initialTheme = wctx.Theme
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
+		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		onChange := fmt.Sprintf("%s = evt.target.checked ? '%s' : '%s'; %s",
 			signals.Signal("theme"), props.Theme, defaultTheme, persistAction(wctx.BasePath))
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("toggle theme-controller", props.Class)}
@@ -199,7 +199,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 		if wctx.Theme != "" {
 			initialTheme = wctx.Theme
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
+		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-radios"
 		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
 		var templ_7745c5c3_Var7 = []any{utils.TwMerge("flex flex-col gap-1", props.Class)}
@@ -374,7 +374,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 		if wctx.Theme != "" {
 			initialTheme = wctx.Theme
 		}
-		signals := utils.Signals(id, ThemeSignals{Theme: initialTheme})
+		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-btns"
 		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
 		var templ_7745c5c3_Var15 = []any{utils.TwMerge("join", props.Class)}

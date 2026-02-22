@@ -74,7 +74,7 @@ func Drawer(props Props) templ.Component {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, DrawerSignals{Open: false})
+		signals := ds.NewSignals(id, DrawerSignals{Open: false})
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("drawer lg:drawer-open", string(props.Position), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
@@ -232,7 +232,7 @@ func Side(props SideProps) templ.Component {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, DrawerSignals{})
+		signals := ds.NewSignals(id, DrawerSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"drawer-side z-40\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -310,7 +310,7 @@ func ToggleButton(drawerID string) templ.Component {
 			templ_7745c5c3_Var11 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(drawerID, DrawerSignals{})
+		signals := ds.NewSignals(drawerID, DrawerSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<button type=\"button\" class=\"btn btn-ghost lg:hidden\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

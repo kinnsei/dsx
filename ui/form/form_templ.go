@@ -94,7 +94,7 @@ func Form(props Props) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		props.defaults()
-		signals := utils.Signals(props.ID, props.Signals)
+		signals := ds.NewSignals(props.ID, props.Signals)
 
 		// Build action URL with form ID for the handler.
 		actionURL := fmt.Sprintf("%s?id=%s", props.Action, props.ID)
@@ -557,7 +557,7 @@ func Submit(props SubmitProps) templ.Component {
 			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(props.FormID, FormSignals{})
+		signals := ds.NewSignals(props.FormID, FormSignals{})
 		var templ_7745c5c3_Var19 = []any{utils.TwMerge("btn", string(props.Variant), props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var19...)
 		if templ_7745c5c3_Err != nil {
@@ -635,7 +635,7 @@ func FormError(formID string) templ.Component {
 			templ_7745c5c3_Var21 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(formID, FormSignals{})
+		signals := ds.NewSignals(formID, FormSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div class=\"alert alert-error text-sm\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

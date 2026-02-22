@@ -68,7 +68,7 @@ func FeedItem(props ...Props) templ.Component {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, FeedItemSignals{Open: false})
+		signals := ds.NewSignals(id, FeedItemSignals{Open: false})
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("rounded-box border border-base-300 bg-base-100 overflow-hidden transition-all", p.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
@@ -166,7 +166,7 @@ func Header(props HeaderProps) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(props.FeedItemID, FeedItemSignals{})
+		signals := ds.NewSignals(props.FeedItemID, FeedItemSignals{})
 		toggleExpr := signals.Toggle("open")
 		var templ_7745c5c3_Var7 = []any{utils.TwMerge("flex items-center gap-2 px-3 py-2.5 cursor-pointer hover:bg-base-200/50 transition-colors", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
@@ -256,7 +256,7 @@ func Content(props ContentProps) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(props.FeedItemID, FeedItemSignals{})
+		signals := ds.NewSignals(props.FeedItemID, FeedItemSignals{})
 		var templ_7745c5c3_Var11 = []any{utils.TwMerge("px-3 pb-3", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {

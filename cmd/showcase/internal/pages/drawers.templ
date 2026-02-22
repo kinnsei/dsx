@@ -7,7 +7,6 @@ import (
 	"github.com/plaenen/webx/ui/button"
 	"github.com/plaenen/webx/ui/drawer"
 	"github.com/plaenen/webx/ui/menu"
-	"github.com/plaenen/webx/utils"
 )
 
 templ Drawers() {
@@ -25,7 +24,7 @@ templ Drawers() {
 			</div>
 			@components.Example(components.ExampleProps{
 				Title: "How it works",
-				TemplCode: `signals := utils.Signals("my_drawer", drawer.DrawerSignals{Open: false})
+				TemplCode: `signals := ds.NewSignals("my_drawer", drawer.DrawerSignals{Open: false})
 
 <div data-signals={ signals.DataSignals }>
     @button.Button(button.Props{
@@ -47,7 +46,7 @@ templ Drawers() {
 			}
 			@components.Example(components.ExampleProps{
 				Title: "Standalone Drawer Demo",
-				TemplCode: `signals := utils.Signals("demo_drawer", drawer.DrawerSignals{Open: false})
+				TemplCode: `signals := ds.NewSignals("demo_drawer", drawer.DrawerSignals{Open: false})
 
 <div data-signals={ signals.DataSignals }>
     @button.Button(button.Props{
@@ -58,7 +57,7 @@ templ Drawers() {
         Toggle Drawer
     }
     // Drawer panel with slide-in transition
-    <div data-class={ utils.NewDataClass().
+    <div data-class={ ds.NewDataClass().
         Add("-translate-x-full", "!"+signals.Signal("open")).
         Add("translate-x-0", signals.Signal("open")).Build() }>
         @menu.Menu(menu.Props{Class: "p-0"}) {
@@ -73,7 +72,7 @@ templ Drawers() {
 			}
 			@components.Example(components.ExampleProps{
 				Title: "Right Side (drawer-end)",
-				TemplCode: `signals := utils.Signals("demo_drawer_end", drawer.DrawerSignals{Open: false})
+				TemplCode: `signals := ds.NewSignals("demo_drawer_end", drawer.DrawerSignals{Open: false})
 
 <div data-signals={ signals.DataSignals }>
     @button.Button(button.Props{
@@ -84,7 +83,7 @@ templ Drawers() {
         Toggle Right Drawer
     }
     // Right-side panel with slide-in from right
-    <div data-class={ utils.NewDataClass().
+    <div data-class={ ds.NewDataClass().
         Add("translate-x-full", "!"+signals.Signal("open")).
         Add("translate-x-0", signals.Signal("open")).Build() }>
         @menu.Menu(menu.Props{Class: "p-0"}) {
@@ -103,7 +102,7 @@ templ Drawers() {
 
 templ inlineDrawerEndDemo() {
 	{{
-		signals := utils.Signals("demo_drawer_end", drawer.DrawerSignals{Open: false})
+		signals := ds.NewSignals("demo_drawer_end", drawer.DrawerSignals{Open: false})
 	}}
 	<div
 		data-signals={ signals.DataSignals }
@@ -124,7 +123,7 @@ templ inlineDrawerEndDemo() {
 		</div>
 		<div
 			class="absolute inset-y-0 right-0 w-52 bg-base-200 border-l border-base-300 p-4 transition-transform duration-200 z-10"
-			data-class={ utils.NewDataClass().Add("translate-x-full", "!"+signals.Signal("open")).Add("translate-x-0", signals.Signal("open")).Build() }
+			data-class={ ds.NewDataClass().Add("translate-x-full", "!"+signals.Signal("open")).Add("translate-x-0", signals.Signal("open")).Build() }
 		>
 			@menu.Menu(menu.Props{Class: "p-0"}) {
 				@menu.Title() {
@@ -149,7 +148,7 @@ templ inlineDrawerEndDemo() {
 
 templ inlineDrawerDemo() {
 	{{
-		signals := utils.Signals("demo_drawer", drawer.DrawerSignals{Open: false})
+		signals := ds.NewSignals("demo_drawer", drawer.DrawerSignals{Open: false})
 	}}
 	<div
 		data-signals={ signals.DataSignals }
@@ -170,7 +169,7 @@ templ inlineDrawerDemo() {
 		</div>
 		<div
 			class="absolute inset-y-0 left-0 w-52 bg-base-200 border-r border-base-300 p-4 transition-transform duration-200 z-10"
-			data-class={ utils.NewDataClass().Add("-translate-x-full", "!"+signals.Signal("open")).Add("translate-x-0", signals.Signal("open")).Build() }
+			data-class={ ds.NewDataClass().Add("-translate-x-full", "!"+signals.Signal("open")).Add("translate-x-0", signals.Signal("open")).Build() }
 		>
 			@menu.Menu(menu.Props{Class: "p-0"}) {
 				@menu.Title() {

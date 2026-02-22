@@ -74,7 +74,7 @@ func Accordion(props Props) templ.Component {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, AccordionSignals{Active: props.DefaultValue})
+		signals := ds.NewSignals(id, AccordionSignals{Active: props.DefaultValue})
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("w-full", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
@@ -145,14 +145,14 @@ func Item(props ItemProps) templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(props.AccordionID, AccordionSignals{})
+		signals := ds.NewSignals(props.AccordionID, AccordionSignals{})
 		isActive := signals.Equals("active", props.Value)
 		isNotActive := signals.NotEquals("active", props.Value)
 		toggleExpr := fmt.Sprintf("%s ? (%s) : (%s)",
 			isActive,
 			signals.Set("active", "''"),
 			signals.SetString("active", props.Value))
-		dataClass := utils.NewDataClass().
+		dataClass := ds.NewDataClass().
 			Add("collapse-open", isActive).
 			Add("collapse-close", isNotActive).
 			Build()

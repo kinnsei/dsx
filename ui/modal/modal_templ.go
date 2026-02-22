@@ -77,7 +77,7 @@ func Modal(props Props) templ.Component {
 		if id == "" {
 			id = utils.RandomID()
 		}
-		signals := utils.Signals(id, ModalSignals{Open: false})
+		signals := ds.NewSignals(id, ModalSignals{Open: false})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-signals=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -327,7 +327,7 @@ func Backdrop(modalID string) templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals(modalID, ModalSignals{})
+		signals := ds.NewSignals(modalID, ModalSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"modal-backdrop\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -370,7 +370,7 @@ func OpenButton(modalID string, props ...OpenButtonProps) templ.Component {
 		if len(props) > 0 {
 			p = props[0]
 		}
-		signals := utils.Signals(modalID, ModalSignals{})
+		signals := ds.NewSignals(modalID, ModalSignals{})
 		var templ_7745c5c3_Var14 = []any{utils.TwMerge("btn", p.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var14...)
 		if templ_7745c5c3_Err != nil {
@@ -448,7 +448,7 @@ func CloseButton(modalID string, props ...CloseButtonProps) templ.Component {
 		if len(props) > 0 {
 			p = props[0]
 		}
-		signals := utils.Signals(modalID, ModalSignals{})
+		signals := ds.NewSignals(modalID, ModalSignals{})
 		var templ_7745c5c3_Var17 = []any{utils.TwMerge("btn", p.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var17...)
 		if templ_7745c5c3_Err != nil {

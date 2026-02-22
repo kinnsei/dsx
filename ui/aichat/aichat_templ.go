@@ -79,7 +79,7 @@ func AIChat(props Props) templ.Component {
 			shortcut = "⌘K"
 		}
 
-		signals := utils.Signals(id, AIChatSignals{Open: false, Input: ""})
+		signals := ds.NewSignals(id, AIChatSignals{Open: false, Input: ""})
 		inputSignal := signals.Signal("input")
 		isOpen := signals.Signal("open")
 		isClosed := fmt.Sprintf("!%s", isOpen)
@@ -249,7 +249,7 @@ func AIChat(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind(inputSignal))
+			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind(id, "input"))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

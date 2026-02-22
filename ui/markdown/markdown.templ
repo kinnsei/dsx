@@ -78,7 +78,7 @@ func (p *InputProps) defaults() {
 templ MarkdownInput(props InputProps) {
 	{{ props.defaults() }}
 	{{
-		signals := utils.Signals(props.ID, inputSignals{
+		signals := ds.NewSignals(props.ID, inputSignals{
 			Value: props.Value,
 			Mode:  "edit",
 		})

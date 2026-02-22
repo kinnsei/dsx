@@ -13,8 +13,8 @@ import (
 
 	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/calendar"
-	"github.com/plaenen/webx/utils"
 )
 
 func Calendars() templ.Component {
@@ -138,7 +138,7 @@ sel := time.Date(now.Year(), now.Month(), 15, 0, 0, 0, 0, time.UTC).Format("2006
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "State Indicator",
-				TemplCode: `signals := utils.Signals("state-cal", calendar.CalendarSignals{})
+				TemplCode: `signals := ds.NewSignals("state-cal", calendar.CalendarSignals{})
 
 <div class="mb-4">
     <span class="text-sm text-base-content/60">
@@ -262,7 +262,7 @@ func calendarStateDemo() templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		signals := utils.Signals("state-cal", calendar.CalendarSignals{})
+		signals := ds.NewSignals("state-cal", calendar.CalendarSignals{})
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"mb-4\"><span class=\"text-sm text-base-content/60\">Selected: <code class=\"badge badge-sm\" data-text=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

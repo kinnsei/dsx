@@ -12,7 +12,6 @@ import (
 	"github.com/plaenen/webx/ui/menu"
 	"github.com/plaenen/webx/ui/navbar"
 	"github.com/plaenen/webx/ui/themecontroller"
-	"github.com/plaenen/webx/utils"
 )
 
 // UserInfo configures the user section in the sidebar footer.
@@ -95,7 +94,7 @@ const DrawerID = "dashboard"
 templ Dashboard(props DashboardProps) {
 	@Base(props.BaseProps) {
 		{{
-			panelSignals := utils.Signals("detail_panel", PanelSignals{Open: false})
+			panelSignals := ds.NewSignals("detail_panel", PanelSignals{Open: false})
 		}}
 		<div
 			if props.ShowDetailPanel {
@@ -256,7 +255,7 @@ templ userAvatar(user UserInfo) {
 	}
 }
 
-templ dashboardDetailPanel(signals *utils.SignalManager) {
+templ dashboardDetailPanel(signals *ds.SignalManager) {
 	// Overlay
 	<div
 		class="fixed inset-0 bg-black/50 z-40"

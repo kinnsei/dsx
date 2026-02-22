@@ -79,7 +79,7 @@ func CommandBar(props Props) templ.Component {
 		if props.Embedded {
 			initialMode = "text"
 		}
-		signals := utils.Signals(id, CommandBarSignals{Mode: initialMode, Text: "", Recording: false})
+		signals := ds.NewSignals(id, CommandBarSignals{Mode: initialMode, Text: "", Recording: false})
 		modeSignal := signals.Signal("mode")
 		textSignal := signals.Signal("text")
 		recordingSignal := signals.Signal("recording")
@@ -433,7 +433,7 @@ func CommandBar(props Props) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind(textSignal))
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Bind(id, "text"))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
