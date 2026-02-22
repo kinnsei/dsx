@@ -70,7 +70,7 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-text-only",
 					Placeholder: "Type a message...",
-					SubmitURL:   "/showcase/api/butler/capture",
+					SubmitURL:   "/showcase/api/commandbar/capture",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -85,7 +85,7 @@ func CommandBars() templ.Component {
 				Title: "Text Only",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type a message...",
-    SubmitURL:   "/showcase/api/butler/capture",
+    SubmitURL:   "/showcase/api/commandbar/capture",
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -110,7 +110,7 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-suggestions",
 					Placeholder: "How can I help?",
-					SubmitURL:   "/showcase/api/butler/capture",
+					SubmitURL:   "/showcase/api/commandbar/capture",
 					Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -126,7 +126,7 @@ func CommandBars() templ.Component {
 				Title: "With Suggestions",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "How can I help?",
-    SubmitURL:   "/showcase/api/butler/capture",
+    SubmitURL:   "/showcase/api/commandbar/capture",
     Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
@@ -152,9 +152,9 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-all-modes",
 					Placeholder: "Type, upload, or record...",
-					SubmitURL:   "/showcase/api/butler/capture",
-					UploadURL:   "/showcase/api/butler/capture",
-					VoiceURL:    "/showcase/api/butler/capture",
+					SubmitURL:   "/showcase/api/commandbar/capture",
+					UploadURL:   "/showcase/api/commandbar/capture",
+					VoiceURL:    "/showcase/api/commandbar/capture",
 					Suggestions: []string{"Open a case", "Upload document", "Quick note"},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -170,9 +170,9 @@ func CommandBars() templ.Component {
 				Title: "All Modes (Text + File + Voice)",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type, upload, or record...",
-    SubmitURL:   "/showcase/api/butler/capture",
-    UploadURL:   "/showcase/api/butler/capture",
-    VoiceURL:    "/showcase/api/butler/capture",
+    SubmitURL:   "/showcase/api/commandbar/capture",
+    UploadURL:   "/showcase/api/commandbar/capture",
+    VoiceURL:    "/showcase/api/commandbar/capture",
     Suggestions: []string{"Open a case", "Upload document", "Quick note"},
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
@@ -198,8 +198,8 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-text-file",
 					Placeholder: "Type or attach a file...",
-					SubmitURL:   "/showcase/api/butler/capture",
-					UploadURL:   "/showcase/api/butler/capture",
+					SubmitURL:   "/showcase/api/commandbar/capture",
+					UploadURL:   "/showcase/api/commandbar/capture",
 					FileHint:    "Drop a receipt or invoice",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -215,8 +215,8 @@ func CommandBars() templ.Component {
 				Title: "Text + File (No Voice)",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type or attach a file...",
-    SubmitURL:   "/showcase/api/butler/capture",
-    UploadURL:   "/showcase/api/butler/capture",
+    SubmitURL:   "/showcase/api/commandbar/capture",
+    UploadURL:   "/showcase/api/commandbar/capture",
     FileHint:    "Drop a receipt or invoice",
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
@@ -242,9 +242,9 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-custom",
 					Placeholder: "Ask the AI assistant...",
-					SubmitURL:   "/showcase/api/butler/capture",
-					UploadURL:   "/showcase/api/butler/capture",
-					VoiceURL:    "/showcase/api/butler/capture",
+					SubmitURL:   "/showcase/api/commandbar/capture",
+					UploadURL:   "/showcase/api/commandbar/capture",
+					VoiceURL:    "/showcase/api/commandbar/capture",
 					FileHint:    "Upload compliance documents here",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -260,9 +260,9 @@ func CommandBars() templ.Component {
 				Title: "Custom Placeholder & File Hint",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Ask the AI assistant...",
-    SubmitURL:   "/showcase/api/butler/capture",
-    UploadURL:   "/showcase/api/butler/capture",
-    VoiceURL:    "/showcase/api/butler/capture",
+    SubmitURL:   "/showcase/api/commandbar/capture",
+    UploadURL:   "/showcase/api/commandbar/capture",
+    VoiceURL:    "/showcase/api/commandbar/capture",
     FileHint:    "Upload compliance documents here",
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)

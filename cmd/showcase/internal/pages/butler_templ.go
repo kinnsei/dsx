@@ -112,9 +112,9 @@ func Butler() templ.Component {
 					}
 					templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 						Placeholder: "Search client, create case, attach document...",
-						SubmitURL:   "/showcase/api/butler/capture",
-						UploadURL:   "/showcase/api/butler/capture",
-						VoiceURL:    "/showcase/api/butler/capture",
+						SubmitURL:   "/showcase/api/commandbar/capture",
+						UploadURL:   "/showcase/api/commandbar/capture",
+						VoiceURL:    "/showcase/api/commandbar/capture",
 						Suggestions: []string{
 							"KYC renewal for Müller GmbH",
 							"Escalate wire transfer #4491",
@@ -726,9 +726,9 @@ func Butler() templ.Component {
 				}
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					Placeholder: "Search client, create case, attach document...",
-					SubmitURL:   "/showcase/api/butler/capture",
-					UploadURL:   "/showcase/api/butler/capture",
-					VoiceURL:    "/showcase/api/butler/capture",
+					SubmitURL:   "/showcase/api/commandbar/capture",
+					UploadURL:   "/showcase/api/commandbar/capture",
+					VoiceURL:    "/showcase/api/commandbar/capture",
 					Suggestions: []string{"Check KYC status", "Escalate to compliance"},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -2046,7 +2046,7 @@ var composedCode = `@feed.Feed() {
   }
 }`
 
-var handlerCode = `func (h *butlerHandlers) capture() http.HandlerFunc {
+var handlerCode = `func (h *commandbarHandlers) capture() http.HandlerFunc {
   return func(w http.ResponseWriter, r *http.Request) {
     sse := datastar.NewSSE(w, r)
     ds.Send.Toast(sse, ds.ToastSuccess, "Message received!")
