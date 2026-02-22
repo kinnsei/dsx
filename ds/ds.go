@@ -27,7 +27,11 @@ func OnClick(expr string) templ.Attributes {
 }
 
 // Bind returns a data-bind:<signal> attribute.
+// The signal path should not include the $ prefix used in expressions.
+// If a $-prefixed signal reference is passed (e.g. from SignalManager.Signal()),
+// the $ is automatically stripped.
 func Bind(signal string) templ.Attributes {
+	signal = strings.TrimPrefix(signal, "$")
 	return templ.Attributes{"data-bind:" + signal: ""}
 }
 
