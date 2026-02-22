@@ -22,60 +22,43 @@ func (h *commandbarHandlers) register(r chi.Router) {
 	r.Post("/api/commandbar/capture", h.capture())
 }
 
-// commandbar demo IDs on the showcase page (sanitized: hyphens → underscores).
-var commandBarDemoIDs = []string{
-	"demo_text_only",
-	"demo_suggestions",
-	"demo_all_modes",
-	"demo_text_file",
-	"demo_custom",
-}
-
 func (h *commandbarHandlers) capture() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Read signals BEFORE creating SSE (SSE consumes the request body).
+		// With filterSignals, only the triggering commandbar's namespace arrives.
+		// Read raw JSON and find the single namespace present.
 		var raw map[string]json.RawMessage
-		if err := datastar.ReadSignals(r, &raw); err != nil {
+		if err := ds.ReadRaw(r, &raw); err != nil {
 			http.Error(w, fmt.Sprintf("read signals: %v", err), http.StatusBadRequest)
 			return
 		}
 
 		sse := datastar.NewSSE(w, r)
 
-		// All commandbar instances on the page send their signals.
-		// Find the one with active content (non-empty text or non-idle mode).
-		for _, id := range commandBarDemoIDs {
-			data, ok := raw[id]
-			if !ok {
-				continue
-			}
-
+		for id, data := range raw {
 			var signals commandbar.CommandBarSignals
 			if err := json.Unmarshal(data, &signals); err != nil {
 				continue
 			}
 
 			text := strings.TrimSpace(signals.Text)
-			mode := signals.Mode
-
-			// Skip instances in their default/idle state.
-			if text == "" && (mode == "" || mode == "text") {
-				continue
-			}
 
 			switch {
 			case text != "":
 				ds.Send.Toast(sse, ds.ToastSuccess,
-					fmt.Sprintf("Received: %q (mode: %s)", text, mode))
-			case mode == "voice":
-				ds.Send.Toast(sse, ds.ToastSuccess, "Voice recording received")
-			case mode == "file":
-				ds.Send.Toast(sse, ds.ToastSuccess, "File upload received")
+					fmt.Sprintf("[%s] Received: %q", id, text))
+			case signals.Mode == "voice":
+				ds.Send.Toast(sse, ds.ToastSuccess,
+					fmt.Sprintf("[%s] Voice recording received", id))
+			case signals.Mode == "file":
+				ds.Send.Toast(sse, ds.ToastSuccess,
+					fmt.Sprintf("[%s] File upload received", id))
+			default:
+				ds.Send.Toast(sse, ds.ToastSuccess,
+					fmt.Sprintf("[%s] Action received", id))
 			}
 			return
 		}
 
-		// No active commandbar found — fallback to any with text content.
-		ds.Send.Toast(sse, ds.ToastSuccess, "Action received")
+		ds.Send.Toast(sse, ds.ToastWarning, "No signals received")
 	}
 }

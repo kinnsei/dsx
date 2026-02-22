@@ -114,9 +114,10 @@ const csrfJS = `document.querySelector('meta[name=csrf-token]')?.content||''`
 type ActionOption func(*actionConfig)
 
 type actionConfig struct {
-	retries               *int   // nil = Datastar default; 0 = no retry; >0 = custom count
-	contentType           string // e.g. "form" for multipart/form-data
-	requestCancellation   string // e.g. "disabled" to prevent other SSE requests from cancelling this one
+	retries             *int   // nil = Datastar default; 0 = no retry; >0 = custom count
+	contentType         string // e.g. "form" for multipart/form-data
+	requestCancellation string // e.g. "disabled" to prevent other SSE requests from cancelling this one
+	filterSignals       string // regex pattern for filterSignals.include
 }
 
 // WithRetries sets the maximum number of retry attempts.
@@ -135,6 +136,19 @@ func WithContentType(ct string) ActionOption {
 // Use "disabled" for persistent stream connections that should not be interrupted.
 func WithRequestCancellation(mode string) ActionOption {
 	return func(c *actionConfig) { c.requestCancellation = mode }
+}
+
+// WithFilterSignals limits which signals are sent with the request.
+// Pass a component ID — only signals in that namespace are included.
+// Hyphens are automatically converted to underscores.
+//
+//	ds.Post("/api/send", ds.WithFilterSignals("my-bar"))
+//	// → @post('/api/send', {..., filterSignals: {include: /^my_bar\./}})
+func WithFilterSignals(componentID string) ActionOption {
+	sanitized := strings.ReplaceAll(componentID, "-", "_")
+	return func(c *actionConfig) {
+		c.filterSignals = fmt.Sprintf("/^%s\\./", sanitized)
+	}
 }
 
 // noRetry is a pre-built option that disables retries.
@@ -159,6 +173,9 @@ func buildAction(method, url string, csrf bool, opts []ActionOption) string {
 	}
 	if cfg.retries != nil {
 		parts = append(parts, fmt.Sprintf("retryMaxCount: %d", *cfg.retries))
+	}
+	if cfg.filterSignals != "" {
+		parts = append(parts, fmt.Sprintf("filterSignals: {include: %s}", cfg.filterSignals))
 	}
 
 	if len(parts) == 0 {

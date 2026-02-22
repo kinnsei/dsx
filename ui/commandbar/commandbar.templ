@@ -191,7 +191,7 @@ templ CommandBar(props Props) {
 						{ ds.Bind(id, "text")... }
 						data-on:keydown={ fmt.Sprintf("if(evt.key==='Enter'&&!evt.shiftKey&&%s.trim()){evt.preventDefault(); %s; %s} if(evt.key==='Escape'){%s}",
 							textSignal,
-							actionExpr(props.SubmitURL),
+							actionExpr(props.SubmitURL, id),
 							clearExpr,
 							clearExpr,
 						) }
@@ -215,7 +215,7 @@ templ CommandBar(props Props) {
 							class="btn btn-sm btn-neutral"
 							{ ds.OnClick(fmt.Sprintf("if(%s.trim()){%s; %s}",
 								textSignal,
-								actionExpr(props.SubmitURL),
+								actionExpr(props.SubmitURL, id),
 								clearExpr,
 							))... }
 						>
@@ -240,7 +240,7 @@ templ CommandBar(props Props) {
 								class="hidden"
 								multiple
 								data-on:change={ fmt.Sprintf("%s; %s",
-									actionExpr(props.UploadURL),
+									actionExpr(props.UploadURL, id),
 									clearExpr,
 								) }
 							/>
@@ -260,7 +260,7 @@ templ CommandBar(props Props) {
 								class="hidden"
 								multiple
 								data-on:change={ fmt.Sprintf("%s; %s",
-									actionExpr(props.UploadURL),
+									actionExpr(props.UploadURL, id),
 									clearExpr,
 								) }
 							/>
@@ -321,7 +321,7 @@ templ CommandBar(props Props) {
 							class="btn btn-circle btn-lg bg-error text-error-content hover:bg-error/80 mx-auto"
 							{ ds.OnClick(fmt.Sprintf("%s; %s; %s",
 								signals.Set("recording", "false"),
-								actionExpr(props.VoiceURL),
+								actionExpr(props.VoiceURL, id),
 								clearExpr,
 							))... }
 						>
@@ -334,9 +334,9 @@ templ CommandBar(props Props) {
 	</div>
 }
 
-func actionExpr(url string) string {
+func actionExpr(url, componentID string) string {
 	if url == "" {
 		return "void 0"
 	}
-	return ds.PostOnce(url)
+	return ds.Post(url, ds.WithRetries(0), ds.WithFilterSignals(componentID))
 }

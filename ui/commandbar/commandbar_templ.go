@@ -444,7 +444,7 @@ func CommandBar(props Props) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("if(evt.key==='Enter'&&!evt.shiftKey&&%s.trim()){evt.preventDefault(); %s; %s} if(evt.key==='Escape'){%s}",
 			textSignal,
-			actionExpr(props.SubmitURL),
+			actionExpr(props.SubmitURL, id),
 			clearExpr,
 			clearExpr,
 		))
@@ -507,7 +507,7 @@ func CommandBar(props Props) templ.Component {
 			}
 			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("if(%s.trim()){%s; %s}",
 				textSignal,
-				actionExpr(props.SubmitURL),
+				actionExpr(props.SubmitURL, id),
 				clearExpr,
 			)))
 			if templ_7745c5c3_Err != nil {
@@ -558,7 +558,7 @@ func CommandBar(props Props) templ.Component {
 			}
 			var templ_7745c5c3_Var14 string
 			templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s; %s",
-				actionExpr(props.UploadURL),
+				actionExpr(props.UploadURL, id),
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
@@ -590,7 +590,7 @@ func CommandBar(props Props) templ.Component {
 			}
 			var templ_7745c5c3_Var15 string
 			templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%s; %s",
-				actionExpr(props.UploadURL),
+				actionExpr(props.UploadURL, id),
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
@@ -656,7 +656,7 @@ func CommandBar(props Props) templ.Component {
 			}
 			templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(fmt.Sprintf("%s; %s; %s",
 				signals.Set("recording", "false"),
-				actionExpr(props.VoiceURL),
+				actionExpr(props.VoiceURL, id),
 				clearExpr,
 			)))
 			if templ_7745c5c3_Err != nil {
@@ -683,11 +683,11 @@ func CommandBar(props Props) templ.Component {
 	})
 }
 
-func actionExpr(url string) string {
+func actionExpr(url, componentID string) string {
 	if url == "" {
 		return "void 0"
 	}
-	return ds.PostOnce(url)
+	return ds.Post(url, ds.WithRetries(0), ds.WithFilterSignals(componentID))
 }
 
 var _ = templruntime.GeneratedTemplate
