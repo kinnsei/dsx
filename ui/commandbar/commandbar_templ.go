@@ -441,7 +441,7 @@ func CommandBar(props Props) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? %s : void 0",
+		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? (%s) : void 0",
 			textSignal,
 			actionExpr(props.SubmitURL),
 			clearExpr,

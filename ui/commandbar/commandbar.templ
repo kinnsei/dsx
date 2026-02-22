@@ -188,7 +188,7 @@ templ CommandBar(props Props) {
 						placeholder={ placeholder }
 						rows="2"
 						{ ds.Bind(textSignal)... }
-						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? %s : void 0",
+						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && !evt.shiftKey && %s.trim() ? (evt.preventDefault(), %s, %s) : evt.key === 'Escape' ? (%s) : void 0",
 							textSignal,
 							actionExpr(props.SubmitURL),
 							clearExpr,
