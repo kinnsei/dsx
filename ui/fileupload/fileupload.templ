@@ -2,6 +2,7 @@ package fileupload
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/icon"
@@ -38,7 +39,7 @@ func (p *Props) defaults() {
 templ FileUpload(props Props) {
 	{{ props.defaults() }}
 	{{
-		uploadURL := fmt.Sprintf("%s?id=%s&removeUrl=%s", props.UploadURL, props.ID, props.RemoveURL)
+		uploadURL := fmt.Sprintf("%s?id=%s&removeUrl=%s", props.UploadURL, url.QueryEscape(props.ID), url.QueryEscape(props.RemoveURL))
 		onChange := ds.Post(uploadURL, ds.WithContentType("form"))
 	}}
 	<div
@@ -81,7 +82,7 @@ templ fileListItems(componentID string, files []FileMeta, removeURL string) {
 					<button
 						type="button"
 						class="btn btn-ghost btn-xs text-error"
-						{ ds.OnClick(ds.Post(fmt.Sprintf("%s?id=%s&fileId=%s&removeUrl=%s", removeURL, componentID, f.ID, removeURL)))... }
+						{ ds.OnClick(ds.Post(fmt.Sprintf("%s?id=%s&fileId=%s&removeUrl=%s", removeURL, url.QueryEscape(componentID), url.QueryEscape(f.ID), url.QueryEscape(removeURL))))... }
 					>
 						@icon.X(icon.Props{Size: 16})
 					</button>

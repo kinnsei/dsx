@@ -80,7 +80,11 @@ templ Item(props ItemProps) {
 	>
 		<div
 			class="collapse-title font-semibold cursor-pointer"
+			tabindex="0"
+			role="button"
+			data-attr:aria-expanded={ isActive }
 			{ ds.OnClick(toggleExpr)... }
+			data-on:keydown={ fmt.Sprintf("(evt.key === 'Enter' || evt.key === ' ') && (evt.preventDefault(), %s)", toggleExpr) }
 		>
 			{ props.Title }
 		</div>

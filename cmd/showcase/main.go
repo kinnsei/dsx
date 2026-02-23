@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -16,7 +17,6 @@ import (
 	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/cmd/showcase/internal/handlers"
 	"github.com/plaenen/webx/cmd/showcase/internal/pages"
-	memstore "github.com/plaenen/webx/cmd/showcase/internal/session"
 	"github.com/plaenen/webx/cmd/showcase/internal/static"
 	"github.com/plaenen/webx/stream"
 	"github.com/plaenen/webx/ui"
@@ -88,29 +88,30 @@ func serve(port int, pro bool) error {
 	broker := stream.NewBroker(nc)
 	slog.Info("embedded NATS started (in-process)")
 
+	// Generate random HMAC secret for CSRF.
+	secret := make([]byte, 32)
+	if _, err := rand.Read(secret); err != nil {
+		return fmt.Errorf("generating CSRF secret: %w", err)
+	}
+
 	r := chi.NewRouter()
 
-	// Session + CSRF middleware
-	store := memstore.NewMemStore()
-	r.Use(webx.SessionMiddleware(store))
+	// Session + CSRF middleware (cookie-based)
+	r.Use(webx.Middleware(webx.MiddlewareConfig{
+		Secret: secret,
+		Secure: false, // development mode
+	}))
 	r.Use(webx.SecurityHeadersMiddleware())
 
-	// Set dev-mode flag, base path, and dependencies on every request
+	// Set base path and stream URL on every request
 	const basePath = "/showcase"
 	streamURL := basePath + "/stream"
-	stylesheets := []webx.Stylesheet{{Href: "/assets/css/output.css"}}
-	scripts := []webx.Script{{Src: "/assets/js/datastar.js"}}
-	var bodyTags []webx.BodyTag
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			wctx := webx.FromContext(r.Context())
-			wctx.DevMode = true
-			wctx.BasePath = basePath
-			wctx.StreamURL = streamURL
-			wctx.Stylesheets = stylesheets
-			wctx.Scripts = scripts
-			wctx.BodyTags = bodyTags
-			next.ServeHTTP(w, r.WithContext(wctx.WithContext(r.Context())))
+			wxctx := webx.FromContext(r.Context())
+			wxctx.BasePath = basePath
+			wxctx.StreamURL = streamURL
+			next.ServeHTTP(w, r.WithContext(wxctx.WithContext(r.Context())))
 		})
 	})
 
@@ -202,7 +203,7 @@ func serve(port int, pro bool) error {
 	h := handlers.New(broker)
 	r.Route(basePath, func(r chi.Router) {
 		r.Get("/stream", broker.Handler())
-		ui.RegisterRoutes(r,
+		ui.RegisterRoutes(r, false,
 			ui.WithMarkdownPreview(),
 			ui.WithDecimalParser(),
 			ui.WithMoneyParser(),

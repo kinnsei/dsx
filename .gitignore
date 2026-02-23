@@ -10,3 +10,4 @@ bin/
 .temp/
 tmp/build-errors.log
 /dashboard
+tmp/

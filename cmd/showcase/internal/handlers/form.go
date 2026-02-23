@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/form"
-	"github.com/plaenen/webx/validators"
+	"github.com/plaenen/webx/utils/validators"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

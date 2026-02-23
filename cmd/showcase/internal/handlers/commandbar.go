@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -28,7 +29,8 @@ func (h *commandbarHandlers) capture() http.HandlerFunc {
 		// Read raw JSON and find the single namespace present.
 		var raw map[string]json.RawMessage
 		if err := ds.ReadRaw(r, &raw); err != nil {
-			http.Error(w, fmt.Sprintf("read signals: %v", err), http.StatusBadRequest)
+			slog.Error("commandbar: failed to read signals", "error", err)
+			http.Error(w, "failed to read input", http.StatusBadRequest)
 			return
 		}
 

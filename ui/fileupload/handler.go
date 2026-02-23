@@ -2,7 +2,11 @@ package fileupload
 
 import (
 	"fmt"
+	"io"
+	"log/slog"
+	"mime/multipart"
 	"net/http"
+	"net/url"
 	"strings"
 
 	webx "github.com/plaenen/webx"
@@ -68,12 +72,17 @@ func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
 		}
 
 		removeURL := r.URL.Query().Get("removeUrl")
+		if removeURL != "" && !isRelativePath(removeURL) {
+			http.Error(w, "invalid removeUrl parameter", http.StatusBadRequest)
+			return
+		}
 
-		wctx := webx.FromContext(r.Context())
-		key := storeKey(wctx.SessionID, componentID)
+		wxctx := webx.FromContext(r.Context())
+		key := storeKey(wxctx.SessionID, componentID)
 
 		if err := r.ParseMultipartForm(32 << 20); err != nil {
-			http.Error(w, fmt.Sprintf("parse form: %v", err), http.StatusBadRequest)
+			slog.Error("fileupload: parse form failed", "error", err)
+			http.Error(w, "failed to parse upload", http.StatusBadRequest)
 			return
 		}
 
@@ -94,8 +103,14 @@ func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
 				continue
 			}
 
-			// Check MIME type
-			ct := fh.Header.Get("Content-Type")
+			// Detect actual MIME type from file content (first 512 bytes).
+			ct, detectErr := detectMIME(fh)
+			if detectErr != nil {
+				slog.Error("fileupload: MIME detection failed", "file", fh.Filename, "error", detectErr)
+				errors = append(errors, fmt.Sprintf("%s: unable to determine file type", fh.Filename))
+				continue
+			}
+
 			if len(cfg.allowedTypes) > 0 {
 				allowed := false
 				for _, prefix := range cfg.allowedTypes {
@@ -160,9 +175,13 @@ func RemoveHandler(store *Store) http.HandlerFunc {
 			http.Error(w, "missing id or fileId query parameter", http.StatusBadRequest)
 			return
 		}
+		if removeURL != "" && !isRelativePath(removeURL) {
+			http.Error(w, "invalid removeUrl parameter", http.StatusBadRequest)
+			return
+		}
 
-		wctx := webx.FromContext(r.Context())
-		key := storeKey(wctx.SessionID, componentID)
+		wxctx := webx.FromContext(r.Context())
+		key := storeKey(wxctx.SessionID, componentID)
 
 		store.Remove(key, fileID)
 		files := store.List(key)
@@ -174,4 +193,51 @@ func RemoveHandler(store *Store) http.HandlerFunc {
 			datastar.WithModeInner(),
 		)
 	}
+}
+
+// detectMIME opens a multipart file header and reads the first 512 bytes
+// to detect the actual MIME type using http.DetectContentType.
+func detectMIME(fh *multipart.FileHeader) (string, error) {
+	f, err := fh.Open()
+	if err != nil {
+		return "", fmt.Errorf("opening file: %w", err)
+	}
+	defer f.Close()
+
+	buf := make([]byte, 512)
+	n, err := io.ReadAtLeast(f, buf, 1)
+	if err != nil && err != io.ErrUnexpectedEOF {
+		return "", fmt.Errorf("reading file header: %w", err)
+	}
+	return http.DetectContentType(buf[:n]), nil
+}
+
+// isRelativePath validates that a URL string is a relative path (starts with /)
+// and does not contain a scheme or protocol-relative prefix.
+func isRelativePath(s string) bool {
+	if s == "" {
+		return false
+	}
+	if !strings.HasPrefix(s, "/") {
+		return false
+	}
+	// Reject protocol-relative URLs (e.g. "//evil.com")
+	if strings.HasPrefix(s, "//") {
+		return false
+	}
+	// Reject URLs with a scheme embedded (shouldn't happen with / prefix, but be safe)
+	if u, err := url.Parse(s); err != nil || u.Host != "" {
+		return false
+	}
+	return true
+}
+
+// RemoveQueryParams builds a remove URL with properly escaped query parameters.
+func RemoveQueryParams(removeURL, componentID, fileID string) string {
+	return fmt.Sprintf("%s?id=%s&fileId=%s&removeUrl=%s",
+		removeURL,
+		url.QueryEscape(componentID),
+		url.QueryEscape(fileID),
+		url.QueryEscape(removeURL),
+	)
 }

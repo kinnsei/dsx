@@ -89,6 +89,7 @@ templ CommandBar(props Props) {
 	}}
 	<div
 		id={ id }
+		role="search"
 		data-signals={ signals.DataSignals }
 		class={ utils.TwMerge(props.Class) }
 		{ props.Attributes... }
@@ -106,6 +107,7 @@ templ CommandBar(props Props) {
 					if hasFile {
 						<button
 							class="btn btn-ghost btn-xs btn-square"
+							aria-label="Attach file"
 							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openFile))... }
 						>
 							@icon.Paperclip(icon.Props{Size: 14, Class: "text-base-content/40"})
@@ -114,6 +116,7 @@ templ CommandBar(props Props) {
 					if hasVoice {
 						<button
 							class="btn btn-ghost btn-xs btn-square"
+							aria-label="Voice input"
 							{ ds.OnClick(fmt.Sprintf("evt.stopPropagation(); %s", openVoice))... }
 						>
 							@icon.Mic(icon.Props{Size: 14, Class: "text-base-content/40"})
@@ -172,6 +175,7 @@ templ CommandBar(props Props) {
 				if !props.Embedded {
 					<button
 						class="btn btn-ghost btn-xs btn-square"
+						aria-label="Close"
 						{ ds.OnClick(clearExpr)... }
 					>
 						@icon.X(icon.Props{Size: 14})

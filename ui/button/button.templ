@@ -57,6 +57,7 @@ templ Button(props ...Props) {
 		if p.ID != "" {
 			id={ p.ID }
 		}
+		type="button"
 		class={ utils.TwMerge("btn", string(p.Variant), string(p.Size), p.Class) }
 		disabled?={ p.Disabled }
 		{ attrs... }

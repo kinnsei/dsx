@@ -13,16 +13,10 @@ import (
 const SetThemePath = "/api/theme"
 
 // SetThemeHandler returns an HTTP handler that persists the selected theme
-// to the session store. It reads the theme from Datastar signals and stores
-// it using the SessionStore from WebXContext.
-func SetThemeHandler() http.HandlerFunc {
+// to a cookie. It reads the theme from Datastar signals and sets the
+// webx_theme cookie.
+func SetThemeHandler(secure bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wctx := webx.FromContext(r.Context())
-		if wctx.Store == nil {
-			http.Error(w, "session store not configured", http.StatusInternalServerError)
-			return
-		}
-
 		// Datastar signals are namespaced by component ID, so we read the
 		// raw map and search for the "theme" value in any nested object.
 		var signals map[string]any
@@ -37,10 +31,16 @@ func SetThemeHandler() http.HandlerFunc {
 			return
 		}
 
-		if err := wctx.Store.Set(wctx.SessionID, webx.ThemeSessionKey, theme); err != nil {
-			http.Error(w, fmt.Sprintf("saving theme: %v", err), http.StatusInternalServerError)
-			return
-		}
+		http.SetCookie(w, &http.Cookie{
+			Name:     "webx_theme",
+			Value:    theme,
+			Path:     "/",
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+			Secure:   secure,
+		})
+
+		_ = webx.FromContext(r.Context()) // ensure context exists
 
 		sse := datastar.NewSSE(w, r)
 		sse.MarshalAndPatchSignals(signals)

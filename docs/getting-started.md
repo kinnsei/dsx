@@ -82,9 +82,12 @@ func main() {
     // 2. Create router with middleware
     r := chi.NewRouter()
 
-    store := NewMySessionStore() // implements webx.SessionStore
-    r.Use(webx.SessionMiddleware(store))
-    r.Use(webx.SecurityHeadersMiddleware())
+    secret := []byte("your-secret-key-at-least-32-bytes!") // use a real secret in production
+    r.Use(webx.Middleware(webx.MiddlewareConfig{
+        Secret: secret,
+        Secure: false, // set true in production (HTTPS)
+    }))
+    r.Use(webx.SecurityHeadersMiddleware()) // pass true for HSTS: SecurityHeadersMiddleware(true)
 
     // 3. Configure WebX context
     const basePath = "/app"
@@ -93,8 +96,6 @@ func main() {
             wctx := webx.FromContext(r.Context())
             wctx.BasePath = basePath
             wctx.StreamURL = basePath + "/stream"
-            wctx.Stylesheets = []webx.Stylesheet{{Href: "/assets/css/output.css"}}
-            wctx.Scripts = []webx.Script{{Src: "/assets/js/datastar.js"}}
             next.ServeHTTP(w, r.WithContext(wctx.WithContext(r.Context())))
         })
     })
@@ -120,7 +121,7 @@ func main() {
 
 ## WebX Context
 
-Every request carries a `WebXContext` set up by `SessionMiddleware`. Access it in handlers and templ components:
+Every request carries a `webx.Context` set up by `webx.Middleware`. Access it in handlers and templ components:
 
 ```go
 wctx := webx.FromContext(ctx)
@@ -128,43 +129,37 @@ wctx := webx.FromContext(ctx)
 
 | Field | Type | Description |
 |---|---|---|
-| `CSRFToken` | `string` | Auto-generated CSRF token (injected in base layout) |
-| `SessionID` | `string` | Session cookie value |
+| `CSRFToken` | `string` | Auto-generated signed CSRF token (cookie-based double-submit) |
+| `SessionID` | `string` | Session cookie value (random hex, auto-generated) |
 | `BasePath` | `string` | Prefix for SSE handler routes (e.g. `"/app"`) |
 | `StreamURL` | `string` | URL for the reactive SSE stream endpoint |
-| `Theme` | `string` | DaisyUI theme name (persisted in session) |
-| `Store` | `SessionStore` | Session store for reading/writing session data |
-| `DevMode` | `bool` | Development mode flag |
-| `Stylesheets` | `[]Stylesheet` | `<link>` tags injected in `<head>` |
-| `Scripts` | `[]Script` | `<script>` tags injected in `<head>` |
-| `BodyTags` | `[]BodyTag` | Elements injected at end of `<body>` |
+| `Theme` | `string` | DaisyUI theme name (persisted in cookie) |
+| `Scopes` | `[]string` | Reactive scopes accumulated during render |
 
 Helper: `wctx.APIPath("/my-endpoint")` prepends `BasePath` to a path.
 
 ---
 
-## Session Store
-
-Implement the `webx.SessionStore` interface:
-
-```go
-type SessionStore interface {
-    Get(sessionID string, key string) (string, error)
-    Set(sessionID string, key string, value string) error
-    Delete(sessionID string) error
-}
-```
-
-WebX uses this for CSRF tokens, theme persistence, and any app-specific session data. See `cmd/showcase/internal/session/memory.go` for an in-memory reference implementation.
-
----
-
 ## Middleware
+
+WebX uses cookie-based middleware. No session store is required.
 
 | Middleware | What it does |
 |---|---|
-| `webx.SessionMiddleware(store)` | Creates/reads session cookie, sets `WebXContext`, validates CSRF on non-GET requests |
-| `webx.SecurityHeadersMiddleware()` | Sets `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` headers |
+| `webx.Middleware(cfg)` | Creates/reads session, CSRF, and theme cookies; populates `webx.Context`; validates signed CSRF token on mutating requests (POST/PUT/DELETE) |
+| `webx.SecurityHeadersMiddleware()` | Sets `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Content-Security-Policy` headers (includes `unsafe-eval` for Datastar) |
+| `webx.SecurityHeadersMiddleware(true)` | Same as above, plus `Strict-Transport-Security` (HSTS) for HTTPS environments |
+
+### MiddlewareConfig
+
+```go
+webx.MiddlewareConfig{
+    Secret: []byte("..."), // HMAC-SHA256 key, minimum 32 bytes (panics if shorter)
+    Secure: true,          // Set Secure flag on cookies (true for HTTPS / production)
+}
+```
+
+CSRF protection uses a signed double-submit cookie pattern. The middleware generates a cryptographically signed token, stores it in an `HttpOnly` cookie, and validates it via the `X-CSRF-Token` header on mutating requests. The `ds` package automatically includes this header in Datastar POST/PUT/DELETE actions.
 
 ---
 

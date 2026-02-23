@@ -9,7 +9,6 @@ import (
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
 	"github.com/plaenen/webx/ui/calendar"
-	"github.com/starfederation/datastar-go/datastar"
 )
 
 templ CalendarAdvanced() {
@@ -31,17 +30,17 @@ templ CalendarAdvanced() {
     Year:  now.Year(),
     Month: int(now.Month()),
 })
-navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
+navURL := wxctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
 
 <div data-signals={ navSignals.DataSignals }>
     <button { ds.OnClick(fmt.Sprintf("%s; %s",
         navSignals.Set("direction", "-1"),
-        datastar.GetSSE(navURL)))... }>
+        ds.Get(navURL)))... }>
         Prev
     </button>
     <button { ds.OnClick(fmt.Sprintf("%s; %s",
         navSignals.Set("direction", "1"),
-        datastar.GetSSE(navURL)))... }>
+        ds.Get(navURL)))... }>
         Next
     </button>
     @calendar.Calendar(calendar.Props{
@@ -92,17 +91,17 @@ navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
     Year:  now.Year(),
     Month: int(now.Month()),
 })
-navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=range&id=" + calID
+navURL := wxctx.APIPath(calendar.NavigatePath) + "?mode=range&id=" + calID
 
 <div data-signals={ navSignals.DataSignals }>
     <button { ds.OnClick(fmt.Sprintf("%s; %s",
         navSignals.Set("direction", "-1"),
-        datastar.GetSSE(navURL)))... }>
+        ds.Get(navURL)))... }>
         Prev
     </button>
     <button { ds.OnClick(fmt.Sprintf("%s; %s",
         navSignals.Set("direction", "1"),
-        datastar.GetSSE(navURL)))... }>
+        ds.Get(navURL)))... }>
         Next
     </button>
     @calendar.Calendar(calendar.Props{
@@ -125,21 +124,21 @@ navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=range&id=" + calID
 
 templ navigableCalendarDemo() {
 	{{
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		now := time.Now()
 		calID := "nav-cal"
 		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
 			Year:  now.Year(),
 			Month: int(now.Month()),
 		})
-		navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
+		navURL := wxctx.APIPath(calendar.NavigatePath) + "?mode=single&id=" + calID
 	}}
 	<div data-signals={ navSignals.DataSignals }>
 		<div class="flex items-center gap-2 mb-4">
 			<button
 				type="button"
 				class="btn btn-sm btn-ghost"
-				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "-1"), datastar.GetSSE(navURL)))... }
+				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "-1"), ds.Get(navURL)))... }
 			>
 				&#9664; Prev
 			</button>
@@ -149,7 +148,7 @@ templ navigableCalendarDemo() {
 			<button
 				type="button"
 				class="btn btn-sm btn-ghost"
-				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "1"), datastar.GetSSE(navURL)))... }
+				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "1"), ds.Get(navURL)))... }
 			>
 				Next &#9654;
 			</button>
@@ -195,21 +194,21 @@ templ rangeCalendarDemo() {
 
 templ combinedCalendarDemo() {
 	{{
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		now := time.Now()
 		calID := "combo-cal"
 		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
 			Year:  now.Year(),
 			Month: int(now.Month()),
 		})
-		navURL := wctx.APIPath(calendar.NavigatePath) + "?mode=range&id=" + calID
+		navURL := wxctx.APIPath(calendar.NavigatePath) + "?mode=range&id=" + calID
 	}}
 	<div data-signals={ navSignals.DataSignals }>
 		<div class="flex items-center gap-2 mb-4">
 			<button
 				type="button"
 				class="btn btn-sm btn-ghost"
-				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "-1"), datastar.GetSSE(navURL)))... }
+				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "-1"), ds.Get(navURL)))... }
 			>
 				&#9664; Prev
 			</button>
@@ -219,7 +218,7 @@ templ combinedCalendarDemo() {
 			<button
 				type="button"
 				class="btn btn-sm btn-ghost"
-				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "1"), datastar.GetSSE(navURL)))... }
+				{ ds.OnClick(fmt.Sprintf("%s; %s", navSignals.Set("direction", "1"), ds.Get(navURL)))... }
 			>
 				Next &#9654;
 			</button>

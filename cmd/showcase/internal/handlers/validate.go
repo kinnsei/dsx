@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/go-chi/chi/v5"
 	"github.com/plaenen/webx/ui/validator"
-	"github.com/plaenen/webx/validators"
+	"github.com/plaenen/webx/utils/validators"
 )
 
 type validateHandlers struct{}

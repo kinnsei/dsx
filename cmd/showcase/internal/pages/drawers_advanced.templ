@@ -18,7 +18,7 @@ templ DrawersAdvanced() {
 		CurrentPath: "/components/drawer-advanced",
 	}) {
 		{{
-			wctx := webx.FromContext(ctx)
+			wxctx := webx.FromContext(ctx)
 		}}
 		<div class="space-y-8">
 			<div>
@@ -29,20 +29,20 @@ templ DrawersAdvanced() {
 				</p>
 			</div>
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				@projectCard(wctx, "1", "WebX Framework", "Component library for Go + Templ + Datastar", "active", 78)
-				@projectCard(wctx, "2", "Neon Database", "Serverless Postgres with branching", "active", 92)
-				@projectCard(wctx, "3", "Data Pipeline", "ETL pipeline for analytics data", "paused", 45)
-				@projectCard(wctx, "4", "Mobile App", "React Native client for the platform", "active", 63)
-				@projectCard(wctx, "5", "Auth Service", "OAuth2 and OIDC identity provider", "completed", 100)
-				@projectCard(wctx, "6", "Monitoring", "Observability stack with metrics and alerts", "planning", 12)
+				@projectCard(wxctx, "1", "WebX Framework", "Component library for Go + Templ + Datastar", "active", 78)
+				@projectCard(wxctx, "2", "Neon Database", "Serverless Postgres with branching", "active", 92)
+				@projectCard(wxctx, "3", "Data Pipeline", "ETL pipeline for analytics data", "paused", 45)
+				@projectCard(wxctx, "4", "Mobile App", "React Native client for the platform", "active", 63)
+				@projectCard(wxctx, "5", "Auth Service", "OAuth2 and OIDC identity provider", "completed", 100)
+				@projectCard(wxctx, "6", "Monitoring", "Observability stack with metrics and alerts", "planning", 12)
 			</div>
 			@components.Example(components.ExampleProps{
 				Title: "How It Works",
-				TemplCode: `templ projectCard(wctx *webx.WebXContext, id, name string) {
+				TemplCode: `templ projectCard(wxctx *webx.Context, id, name string) {
     @card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg"}) {
         @card.Body(card.Props{
             Attributes: ds.Merge(
-                ds.OnClick(ds.GetOnce(wctx.APIPath("/api/drawer/project/"+id))),
+                ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/"+id))),
             ),
         }) {
             { name }
@@ -86,11 +86,11 @@ templ DrawersAdvanced() {
 	}
 }
 
-templ projectCard(wctx *webx.WebXContext, id, name, description, status string, progress int) {
+templ projectCard(wxctx *webx.Context, id, name, description, status string, progress int) {
 	@card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg transition-shadow"}) {
 		@card.Body(card.Props{
 			Attributes: ds.Merge(
-				ds.OnClick(ds.GetOnce(wctx.APIPath("/api/drawer/project/"+id))),
+				ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/"+id))),
 			),
 		}) {
 			<div class="flex items-start justify-between">

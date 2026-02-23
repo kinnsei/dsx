@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
 	"strings"
 	"time"
@@ -56,7 +57,8 @@ func (h *aichatHandlers) send(chatID string, readInput inputReader) http.Handler
 	return func(w http.ResponseWriter, r *http.Request) {
 		text, err := readInput(r)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+			slog.Error("aichat: failed to read input", "error", err)
+			http.Error(w, "failed to read input", http.StatusBadRequest)
 			return
 		}
 

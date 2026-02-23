@@ -68,7 +68,7 @@ func Toggle(props ToggleProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -78,12 +78,12 @@ func Toggle(props ToggleProps) templ.Component {
 			defaultTheme = "default"
 		}
 		initialTheme := defaultTheme
-		if wctx.Theme != "" {
-			initialTheme = wctx.Theme
+		if wxctx.Theme != "" {
+			initialTheme = wxctx.Theme
 		}
 		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		onChange := fmt.Sprintf("%s = evt.target.checked ? '%s' : '%s'; %s",
-			signals.Signal("theme"), props.Theme, defaultTheme, persistAction(wctx.BasePath))
+			signals.Signal("theme"), props.Theme, defaultTheme, persistAction(wxctx.BasePath))
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("toggle theme-controller", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
 		if templ_7745c5c3_Err != nil {
@@ -186,7 +186,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -196,12 +196,12 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			defaultTheme = props.Themes[0].Value
 		}
 		initialTheme := defaultTheme
-		if wctx.Theme != "" {
-			initialTheme = wctx.Theme
+		if wxctx.Theme != "" {
+			initialTheme = wxctx.Theme
 		}
 		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-radios"
-		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wxctx.BasePath))
 		var templ_7745c5c3_Var7 = []any{utils.TwMerge("flex flex-col gap-1", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
@@ -361,7 +361,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -371,12 +371,12 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			defaultTheme = props.Themes[0].Value
 		}
 		initialTheme := defaultTheme
-		if wctx.Theme != "" {
-			initialTheme = wctx.Theme
+		if wxctx.Theme != "" {
+			initialTheme = wxctx.Theme
 		}
 		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-btns"
-		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wxctx.BasePath))
 		var templ_7745c5c3_Var15 = []any{utils.TwMerge("join", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var15...)
 		if templ_7745c5c3_Err != nil {

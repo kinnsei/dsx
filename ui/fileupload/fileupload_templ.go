@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
+	"net/url"
 
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/icon"
@@ -65,7 +66,7 @@ func FileUpload(props Props) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		props.defaults()
-		uploadURL := fmt.Sprintf("%s?id=%s&removeUrl=%s", props.UploadURL, props.ID, props.RemoveURL)
+		uploadURL := fmt.Sprintf("%s?id=%s&removeUrl=%s", props.UploadURL, url.QueryEscape(props.ID), url.QueryEscape(props.RemoveURL))
 		onChange := ds.Post(uploadURL, ds.WithContentType("form"))
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("space-y-3", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
@@ -79,7 +80,7 @@ func FileUpload(props Props) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID + "-container")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 45, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 46, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -113,7 +114,7 @@ func FileUpload(props Props) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID + "-input")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 53, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 54, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -137,7 +138,7 @@ func FileUpload(props Props) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.Accept)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 59, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 60, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -159,7 +160,7 @@ func FileUpload(props Props) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID + "-errors")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 64, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 65, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -172,7 +173,7 @@ func FileUpload(props Props) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID + "-list")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 65, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 66, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -230,7 +231,7 @@ func fileListItems(componentID string, files []FileMeta, removeURL string) templ
 				var templ_7745c5c3_Var10 string
 				templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(f.Name)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 79, Col: 63}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 80, Col: 63}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 				if templ_7745c5c3_Err != nil {
@@ -243,7 +244,7 @@ func fileListItems(componentID string, files []FileMeta, removeURL string) templ
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(formatBytes(f.Size))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 80, Col: 67}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/fileupload/fileupload.templ`, Line: 81, Col: 67}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -253,7 +254,7 @@ func fileListItems(componentID string, files []FileMeta, removeURL string) templ
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.Post(fmt.Sprintf("%s?id=%s&fileId=%s&removeUrl=%s", removeURL, componentID, f.ID, removeURL))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.Post(fmt.Sprintf("%s?id=%s&fileId=%s&removeUrl=%s", removeURL, url.QueryEscape(componentID), url.QueryEscape(f.ID), url.QueryEscape(removeURL)))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

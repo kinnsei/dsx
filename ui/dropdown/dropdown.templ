@@ -74,6 +74,8 @@ templ Trigger(props TriggerProps) {
 	<div
 		tabindex="0"
 		role="button"
+		aria-haspopup="true"
+		data-attr:aria-expanded={ signals.Signal("open") }
 		class={ utils.TwMerge("btn", props.Class) }
 		{ ds.On("click", signals.Toggle("open"))... }
 		{ props.Attributes... }

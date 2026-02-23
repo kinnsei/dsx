@@ -79,7 +79,7 @@ func TestScopeSignals(t *testing.T) {
 }
 
 func TestWatchEffect(t *testing.T) {
-	wctx := &webx.WebXContext{}
+	wctx := &webx.Context{}
 	ctx := wctx.WithContext(context.Background())
 
 	effect := stream.WatchEffect(ctx, "counter:shared", "/api/counter")
@@ -100,7 +100,7 @@ func TestWatchEffect(t *testing.T) {
 }
 
 func TestWatchEffect_Dedup(t *testing.T) {
-	wctx := &webx.WebXContext{}
+	wctx := &webx.Context{}
 	ctx := wctx.WithContext(context.Background())
 
 	stream.WatchEffect(ctx, "counter:shared", "/api/counter")
@@ -394,7 +394,7 @@ func TestCounterHandler_GetCounter(t *testing.T) {
 }
 
 func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
-	wctx := &webx.WebXContext{
+	wctx := &webx.Context{
 		StreamURL: "/showcase/stream",
 		Scopes:    []string{"counter:shared"},
 	}
@@ -440,7 +440,7 @@ func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
 }
 
 func TestConnectTemplate_NoRenderWithoutScopes(t *testing.T) {
-	wctx := &webx.WebXContext{
+	wctx := &webx.Context{
 		StreamURL: "/showcase/stream",
 		Scopes:    nil,
 	}
@@ -458,7 +458,7 @@ func TestConnectTemplate_NoRenderWithoutScopes(t *testing.T) {
 }
 
 func TestConnectTemplate_NoRenderWithoutStreamURL(t *testing.T) {
-	wctx := &webx.WebXContext{
+	wctx := &webx.Context{
 		StreamURL: "",
 		Scopes:    []string{"counter:shared"},
 	}
@@ -485,7 +485,7 @@ func TestE2E_FullFlow(t *testing.T) {
 	broker := stream.NewBroker(nc)
 
 	// === Step 1: Simulate page render ===
-	wctx := &webx.WebXContext{
+	wctx := &webx.Context{
 		BasePath:  "/showcase",
 		StreamURL: "/showcase/stream",
 	}
@@ -648,7 +648,7 @@ func TestE2E_DataSignalsFormat(t *testing.T) {
 	}
 
 	// Test Connect template produces the same format
-	wctx := &webx.WebXContext{
+	wctx := &webx.Context{
 		StreamURL: "/stream",
 		Scopes:    []string{"counter:shared"},
 	}
@@ -673,7 +673,7 @@ func TestE2E_MultipleScopes(t *testing.T) {
 	nc := startNATS(t)
 	broker := stream.NewBroker(nc)
 
-	wctx := &webx.WebXContext{
+	wctx := &webx.Context{
 		StreamURL: "/stream",
 	}
 	ctx := wctx.WithContext(context.Background())

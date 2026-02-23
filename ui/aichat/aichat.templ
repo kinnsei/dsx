@@ -58,11 +58,6 @@ templ AIChat(props Props) {
 		isClosed := fmt.Sprintf("!%s", isOpen)
 		openExpr := signals.Set("open", "true")
 		closeExpr := fmt.Sprintf("%s; %s", signals.Set("open", "false"), signals.SetString("input", ""))
-		submitExpr := fmt.Sprintf("%s.trim() && (%s; %s)",
-			inputSignal,
-			ds.PostOnce(props.SubmitURL),
-			signals.SetString("input", ""),
-		)
 		messagesID := MessagesID(id)
 	}}
 	<div
@@ -91,17 +86,21 @@ templ AIChat(props Props) {
 			<!-- Close button -->
 			<div class="flex justify-end px-3 pt-2">
 				<button
+					type="button"
+					aria-label="Close chat"
 					class="btn btn-ghost btn-xs btn-square text-base-content/30 hover:text-base-content"
 					{ ds.OnClick(closeExpr)... }
 				>
-					×
+					<span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<!-- Messages area -->
 			<div
 				id={ messagesID }
 				class="flex flex-col gap-3 px-4 pb-4 max-h-96 overflow-y-auto"
-			></div>
+			>
+				{ children... }
+			</div>
 			<!-- Input area -->
 			if props.InputSlot != nil {
 				<div class="border-t border-base-200">
@@ -115,9 +114,10 @@ templ AIChat(props Props) {
 						class="input input-ghost input-sm text-sm flex-1 focus:outline-none"
 						placeholder={ replyPlaceholder }
 						{ ds.Bind(id, "input")... }
-						data-on:keydown={ fmt.Sprintf("evt.key === 'Enter' && %s.trim() ? (evt.preventDefault(), %s) : evt.key === 'Escape' ? (%s) : void 0",
+						data-on:keydown={ fmt.Sprintf("if(evt.key === 'Enter' && %s.trim()) { evt.preventDefault(); %s; %s } if(evt.key === 'Escape') { %s }",
 							inputSignal,
-							submitExpr,
+							ds.PostOnce(props.SubmitURL),
+							signals.SetString("input", ""),
 							closeExpr,
 						) }
 					/>

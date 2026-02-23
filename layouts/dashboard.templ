@@ -3,7 +3,6 @@ package layouts
 import (
 	"strings"
 
-	"github.com/plaenen/webx/capability"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/ui/avatar"
 	"github.com/plaenen/webx/ui/drawer"
@@ -34,7 +33,6 @@ type NavItem struct {
 	Href       string
 	Icon       icon.IconType
 	Active     bool
-	Capability string // required capability to see this item (empty = always visible)
 }
 
 // NavGroup is a titled group of navigation items.
@@ -83,9 +81,6 @@ type DashboardProps struct {
 	// When set, a sun/moon toggle appears in the navbar end section.
 	ThemeToggle *ThemeToggleConfig
 
-	// Capabilities is the current user's capability set, used to filter nav items.
-	// When nil, all nav items are shown (backward compatible).
-	Capabilities capability.Set
 }
 
 // DrawerID is the fixed ID for the dashboard's sidebar drawer.
@@ -136,7 +131,7 @@ templ Dashboard(props DashboardProps) {
 				}
 				@drawer.Side(drawer.SideProps{ID: DrawerID}) {
 					@dashboardSidebarHeader(props.App)
-					@dashboardSidebarNav(props.Nav, props.CurrentPath, props.Capabilities)
+					@dashboardSidebarNav(props.Nav, props.CurrentPath)
 					<div class="flex-1"></div>
 					if props.User.Name != "" || props.User.Email != "" {
 						@dashboardSidebarFooter(props.User, props.UserMenu)
@@ -159,17 +154,16 @@ templ dashboardSidebarHeader(app AppBranding) {
 	</div>
 }
 
-templ dashboardSidebarNav(groups []NavGroup, currentPath string, caps capability.Set) {
+templ dashboardSidebarNav(groups []NavGroup, currentPath string) {
 	@menu.Menu() {
 		for _, group := range groups {
-			{{ visibleItems := filterNavItems(group.Items, caps) }}
-			if len(visibleItems) > 0 {
+			if len(group.Items) > 0 {
 				if group.Title != "" {
 					@menu.Title() {
 						{ group.Title }
 					}
 				}
-				for _, item := range visibleItems {
+				for _, item := range group.Items {
 					@menu.Item(menu.ItemProps{
 						Href:   item.Href,
 						Active: item.Active || item.Href == currentPath,
@@ -282,19 +276,6 @@ templ dashboardDetailPanel(signals *ds.SignalManager) {
 			// Content injected via SSE or Datastar
 		</div>
 	</aside>
-}
-
-func filterNavItems(items []NavItem, caps capability.Set) []NavItem {
-	if caps == nil {
-		return items
-	}
-	var filtered []NavItem
-	for _, item := range items {
-		if item.Capability == "" || caps.Can(item.Capability) {
-			filtered = append(filtered, item)
-		}
-	}
-	return filtered
 }
 
 func userInitials(name string) string {

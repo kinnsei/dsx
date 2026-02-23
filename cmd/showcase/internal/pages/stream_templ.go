@@ -50,10 +50,10 @@ func Stream() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wctx := webx.FromContext(ctx)
+			wxctx := webx.FromContext(ctx)
 			counterEffect := stream.WatchEffect(ctx,
 				"counter:shared",
-				wctx.APIPath("/api/stream/counter"),
+				wxctx.APIPath("/api/stream/counter"),
 			)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">Stream</h1><p class=\"text-base-content/70 mt-2\">Reactive SSE stream backed by embedded NATS. Components auto-reload when server-side data changes. Open this page in multiple tabs to see real-time sync.</p></div>")
 			if templ_7745c5c3_Err != nil {
@@ -96,7 +96,7 @@ func Stream() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Init(ds.GetOnce(wctx.APIPath("/api/stream/counter"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Init(ds.GetOnce(wxctx.APIPath("/api/stream/counter"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -104,7 +104,7 @@ func Stream() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/decrement"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/decrement"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -112,7 +112,7 @@ func Stream() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/reset"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/reset"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -120,7 +120,7 @@ func Stream() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/increment"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/increment"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -133,30 +133,30 @@ func Stream() templ.Component {
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "Shared Counter",
 				TemplCode: `{{
-    wctx := webx.FromContext(ctx)
+    wxctx := webx.FromContext(ctx)
     counterEffect := stream.WatchEffect(ctx,
         "counter:shared",
-        wctx.APIPath("/api/stream/counter"),
+        wxctx.APIPath("/api/stream/counter"),
     )
 }}
 <div data-signals={ stream.ScopeSignals("counter:shared") }
     { ds.Effect(counterEffect)... }>
     <span id="stream-counter-value"
-        { ds.Init(ds.GetOnce(wctx.APIPath("/api/stream/counter")))... }
+        { ds.Init(ds.GetOnce(wxctx.APIPath("/api/stream/counter")))... }
         class="text-6xl font-bold tabular-nums">
         —
     </span>
 </div>
 <button class="btn btn-primary btn-lg"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/decrement")))... }>
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/decrement")))... }>
     −
 </button>
 <button class="btn btn-neutral btn-lg"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/reset")))... }>
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/reset")))... }>
     Reset
 </button>
 <button class="btn btn-primary btn-lg"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/stream/increment")))... }>
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/increment")))... }>
     +
 </button>`,
 				HandlerCode: `func (s *streamHandlers) getCounter() http.HandlerFunc {

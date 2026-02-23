@@ -49,19 +49,20 @@ func WithFileUpload(store *fileupload.Store, opts ...fileupload.HandlerOption) R
 
 // RegisterRoutes registers all SSE/API handlers from UI component packages.
 // Calendar navigation and theme persistence are always registered.
+// The secure flag controls the Secure attribute on the theme cookie.
 // Use options to enable additional handlers:
 //
 //	r.Route(basePath, func(r chi.Router) {
-//	    ui.RegisterRoutes(r,
+//	    ui.RegisterRoutes(r, false,
 //	        ui.WithMarkdownPreview(),
 //	        ui.WithDecimalParser(),
 //	        ui.WithMoneyParser(),
 //	        ui.WithFileUpload(store),
 //	    )
 //	})
-func RegisterRoutes(r chi.Router, opts ...RouteOption) {
+func RegisterRoutes(r chi.Router, secure bool, opts ...RouteOption) {
 	r.Get(calendar.NavigatePath, calendar.NavigateHandlerFromQuery())
-	r.Post(themecontroller.SetThemePath, themecontroller.SetThemeHandler())
+	r.Post(themecontroller.SetThemePath, themecontroller.SetThemeHandler(secure))
 
 	for _, opt := range opts {
 		opt(r)

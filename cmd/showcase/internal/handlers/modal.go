@@ -44,20 +44,20 @@ func (h *modalHandlers) showWideModal() http.HandlerFunc {
 
 func (h *modalHandlers) showConfirm() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wctx := webx.FromContext(r.Context())
+		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Confirm(sse, "Are you sure you want to proceed with this action?",
-			wctx.APIPath("/api/modal/confirmed"),
+			wxctx.APIPath("/api/modal/confirmed"),
 		)
 	}
 }
 
 func (h *modalHandlers) showDangerConfirm() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wctx := webx.FromContext(r.Context())
+		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Confirm(sse, "This will permanently delete all data. This action cannot be undone.",
-			wctx.APIPath("/api/modal/confirmed"),
+			wxctx.APIPath("/api/modal/confirmed"),
 			ds.WithConfirmTitle("Danger Zone"),
 			ds.WithConfirmLabel("Delete Everything"),
 			ds.WithConfirmClass("btn btn-error"),
@@ -82,16 +82,16 @@ func (h *modalHandlers) patchContent() http.HandlerFunc {
 
 func (h *modalHandlers) redirect() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wctx := webx.FromContext(r.Context())
+		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
-		ds.Send.Redirect(sse, wctx.BasePath+"/")
+		ds.Send.Redirect(sse, wxctx.BasePath+"/")
 	}
 }
 
 func (h *modalHandlers) download() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wctx := webx.FromContext(r.Context())
+		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
-		ds.Send.Download(sse, wctx.APIPath("/api/modal/export.csv"), "export.csv")
+		ds.Send.Download(sse, wxctx.APIPath("/api/modal/export.csv"), "export.csv")
 	}
 }

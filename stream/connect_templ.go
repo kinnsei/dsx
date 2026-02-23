@@ -42,15 +42,15 @@ func Connect() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wctx := webx.FromContext(ctx)
-		scopes := wctx.Scopes
-		if len(scopes) > 0 && wctx.StreamURL != "" {
+		wxctx := webx.FromContext(ctx)
+		scopes := wxctx.Scopes
+		if len(scopes) > 0 && wxctx.StreamURL != "" {
 			// Build URL with scope query params.
 			params := make([]string, len(scopes))
 			for i, s := range scopes {
 				params[i] = "scope=" + s
 			}
-			url := wctx.StreamURL + "?" + strings.Join(params, "&")
+			url := wxctx.StreamURL + "?" + strings.Join(params, "&")
 
 			// Build initial signal object: {invoice_42: false, invoices_WILD: false}
 			signalMap := make(map[string]any, len(scopes))

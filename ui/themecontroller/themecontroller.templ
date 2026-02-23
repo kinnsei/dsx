@@ -41,7 +41,7 @@ type ToggleProps struct {
 
 templ Toggle(props ToggleProps) {
 	{{
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -51,12 +51,12 @@ templ Toggle(props ToggleProps) {
 			defaultTheme = "default"
 		}
 		initialTheme := defaultTheme
-		if wctx.Theme != "" {
-			initialTheme = wctx.Theme
+		if wxctx.Theme != "" {
+			initialTheme = wxctx.Theme
 		}
 		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		onChange := fmt.Sprintf("%s = evt.target.checked ? '%s' : '%s'; %s",
-			signals.Signal("theme"), props.Theme, defaultTheme, persistAction(wctx.BasePath))
+			signals.Signal("theme"), props.Theme, defaultTheme, persistAction(wxctx.BasePath))
 	}}
 	<input
 		type="checkbox"
@@ -81,7 +81,7 @@ type RadioGroupProps struct {
 
 templ RadioGroup(props RadioGroupProps) {
 	{{
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -91,12 +91,12 @@ templ RadioGroup(props RadioGroupProps) {
 			defaultTheme = props.Themes[0].Value
 		}
 		initialTheme := defaultTheme
-		if wctx.Theme != "" {
-			initialTheme = wctx.Theme
+		if wxctx.Theme != "" {
+			initialTheme = wxctx.Theme
 		}
 		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-radios"
-		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wxctx.BasePath))
 	}}
 	<div
 		data-signals={ signals.DataSignals }
@@ -132,7 +132,7 @@ type ButtonGroupProps struct {
 
 templ ButtonGroup(props ButtonGroupProps) {
 	{{
-		wctx := webx.FromContext(ctx)
+		wxctx := webx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -142,12 +142,12 @@ templ ButtonGroup(props ButtonGroupProps) {
 			defaultTheme = props.Themes[0].Value
 		}
 		initialTheme := defaultTheme
-		if wctx.Theme != "" {
-			initialTheme = wctx.Theme
+		if wxctx.Theme != "" {
+			initialTheme = wxctx.Theme
 		}
 		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
 		groupName := id + "-btns"
-		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wctx.BasePath))
+		onChange := fmt.Sprintf("%s; %s", signals.Set("theme", "evt.target.value"), persistAction(wxctx.BasePath))
 	}}
 	<div
 		data-signals={ signals.DataSignals }

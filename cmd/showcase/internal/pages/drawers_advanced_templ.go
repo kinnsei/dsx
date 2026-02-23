@@ -52,32 +52,32 @@ func DrawersAdvanced() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wctx := webx.FromContext(ctx)
+			wxctx := webx.FromContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">Advanced Drawer</h1><p class=\"text-base-content/70 mt-2\">Click a project card to open a detail drawer. The content is rendered server-side and delivered via SSE — no client-side JavaScript required.</p></div><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = projectCard(wctx, "1", "WebX Framework", "Component library for Go + Templ + Datastar", "active", 78).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = projectCard(wxctx, "1", "WebX Framework", "Component library for Go + Templ + Datastar", "active", 78).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = projectCard(wctx, "2", "Neon Database", "Serverless Postgres with branching", "active", 92).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = projectCard(wxctx, "2", "Neon Database", "Serverless Postgres with branching", "active", 92).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = projectCard(wctx, "3", "Data Pipeline", "ETL pipeline for analytics data", "paused", 45).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = projectCard(wxctx, "3", "Data Pipeline", "ETL pipeline for analytics data", "paused", 45).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = projectCard(wctx, "4", "Mobile App", "React Native client for the platform", "active", 63).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = projectCard(wxctx, "4", "Mobile App", "React Native client for the platform", "active", 63).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = projectCard(wctx, "5", "Auth Service", "OAuth2 and OIDC identity provider", "completed", 100).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = projectCard(wxctx, "5", "Auth Service", "OAuth2 and OIDC identity provider", "completed", 100).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = projectCard(wctx, "6", "Monitoring", "Observability stack with metrics and alerts", "planning", 12).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = projectCard(wxctx, "6", "Monitoring", "Observability stack with metrics and alerts", "planning", 12).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -144,11 +144,11 @@ func DrawersAdvanced() templ.Component {
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "How It Works",
-				TemplCode: `templ projectCard(wctx *webx.WebXContext, id, name string) {
+				TemplCode: `templ projectCard(wxctx *webx.Context, id, name string) {
     @card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg"}) {
         @card.Body(card.Props{
             Attributes: ds.Merge(
-                ds.OnClick(ds.GetOnce(wctx.APIPath("/api/drawer/project/"+id))),
+                ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/"+id))),
             ),
         }) {
             { name }
@@ -186,7 +186,7 @@ func DrawersAdvanced() templ.Component {
 	})
 }
 
-func projectCard(wctx *webx.WebXContext, id, name, description, status string, progress int) templ.Component {
+func projectCard(wxctx *webx.Context, id, name, description, status string, progress int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -313,7 +313,7 @@ func projectCard(wctx *webx.WebXContext, id, name, description, status string, p
 			})
 			templ_7745c5c3_Err = card.Body(card.Props{
 				Attributes: ds.Merge(
-					ds.OnClick(ds.GetOnce(wctx.APIPath("/api/drawer/project/" + id))),
+					ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/" + id))),
 				),
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

@@ -28,6 +28,11 @@ const (
 	SignalNamespace = "_stream"
 
 	defaultSubjectPrefix = "webx.scope"
+
+	// maxScopes is the maximum number of scopes a single SSE connection may
+	// subscribe to. This prevents a malicious client from exhausting memory
+	// by requesting an unbounded number of scope subscriptions.
+	maxScopes = 64
 )
 
 // Broker wraps a NATS connection and provides publish/subscribe for scope
@@ -84,6 +89,10 @@ func (b *Broker) Handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		scopes := r.URL.Query()["scope"]
 		if len(scopes) == 0 {
+			return
+		}
+		if len(scopes) > maxScopes {
+			http.Error(w, fmt.Sprintf("too many scopes (max %d)", maxScopes), http.StatusBadRequest)
 			return
 		}
 
@@ -154,8 +163,8 @@ func ScopeKey(scope string) string {
 //	stream.WatchEffect(ctx, "invoice:42", "/showcase/api/invoice/42")
 //	// registers scope, returns: "if($_stream.invoice_42) { $_stream.invoice_42 = false; @get('/showcase/api/invoice/42') }"
 func WatchEffect(ctx context.Context, scope string, reloadURL string) string {
-	wctx := webx.FromContext(ctx)
-	wctx.WatchScope(scope)
+	wxctx := webx.FromContext(ctx)
+	wxctx.WatchScope(scope)
 
 	key := ScopeKey(scope)
 	signal := fmt.Sprintf("$%s.%s", SignalNamespace, key)

@@ -1,6 +1,7 @@
 package layouts
 
 import (
+	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/layouts"
 	"github.com/plaenen/webx/ui/icon"
 )
@@ -102,10 +103,16 @@ var showcaseNav = []layouts.NavGroup{
 }
 
 templ Showcase(props ShowcaseProps) {
+	{{
+		wxctx := webx.FromContext(ctx)
+	}}
 	@layouts.Dashboard(layouts.DashboardProps{
 		BaseProps: layouts.BaseProps{
 			Title:       props.Title,
 			Description: props.Description,
+			CSRFToken:   wxctx.CSRFToken,
+			Theme:       wxctx.Theme,
+			Head:        showcaseHead(),
 		},
 		App: layouts.AppBranding{
 			Name: "WebX",

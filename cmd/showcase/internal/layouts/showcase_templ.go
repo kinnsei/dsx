@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/layouts"
 	"github.com/plaenen/webx/ui/icon"
 )
@@ -130,6 +131,7 @@ func Showcase(props ShowcaseProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
+		wxctx := webx.FromContext(ctx)
 		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
@@ -152,6 +154,9 @@ func Showcase(props ShowcaseProps) templ.Component {
 			BaseProps: layouts.BaseProps{
 				Title:       props.Title,
 				Description: props.Description,
+				CSRFToken:   wxctx.CSRFToken,
+				Theme:       wxctx.Theme,
+				Head:        showcaseHead(),
 			},
 			App: layouts.AppBranding{
 				Name: "WebX",

@@ -48,7 +48,7 @@ func ModalAdvanced() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wctx := webx.FromContext(ctx)
+			wxctx := webx.FromContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">SSE SDK</h1><p class=\"text-base-content/70 mt-2\">Backend helpers that send SSE events to the browser via <code class=\"bg-base-200 px-1.5 py-0.5 rounded text-xs\">ds.Send.XXX</code>. All interactions are server-driven — no client-side JavaScript.</p></div><!-- Modal -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -69,7 +69,7 @@ func ModalAdvanced() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/show"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -77,7 +77,7 @@ func ModalAdvanced() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show-wide"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/show-wide"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -91,7 +91,7 @@ func ModalAdvanced() templ.Component {
 				Title: "Modal",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/show")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/show")))... }
 >
     Open Modal
 </button>`,
@@ -125,7 +125,7 @@ func ModalAdvanced() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/confirm"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -133,7 +133,7 @@ func ModalAdvanced() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm-danger"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/confirm-danger"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -147,23 +147,23 @@ func ModalAdvanced() templ.Component {
 				Title: "Confirm",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/confirm")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/confirm")))... }
 >
     Ask Confirmation
 </button>`,
 				HandlerCode: `func (h *modalHandlers) showConfirm() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wctx := webx.FromContext(r.Context())
+        wxctx := webx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Confirm(sse, "Are you sure?",
-            wctx.APIPath("/api/modal/confirmed"),
+            wxctx.APIPath("/api/modal/confirmed"),
         )
     }
 }
 
 // Danger variant with custom styling:
 ds.Send.Confirm(sse, "Delete all data?",
-    wctx.APIPath("/api/data/purge"),
+    wxctx.APIPath("/api/data/purge"),
     ds.WithConfirmTitle("Danger Zone"),
     ds.WithConfirmLabel("Delete Everything"),
     ds.WithConfirmClass("btn btn-error"),
@@ -192,7 +192,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/patch"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/patch"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -209,7 +209,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 </div>
 <button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/patch")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/patch")))... }
 >
     Patch Content
 </button>`,
@@ -244,7 +244,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/redirect"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/redirect"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -258,15 +258,15 @@ ds.Send.Confirm(sse, "Delete all data?",
 				Title: "Redirect",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/redirect")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/redirect")))... }
 >
     Redirect to Home
 </button>`,
 				HandlerCode: `func (h *modalHandlers) redirect() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wctx := webx.FromContext(r.Context())
+        wxctx := webx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
-        ds.Send.Redirect(sse, wctx.BasePath+"/")
+        ds.Send.Redirect(sse, wxctx.BasePath+"/")
     }
 }`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
@@ -293,7 +293,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/download"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/download"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -307,16 +307,16 @@ ds.Send.Confirm(sse, "Delete all data?",
 				Title: "Download",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wctx.APIPath("/api/modal/download")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/download")))... }
 >
     Download File
 </button>`,
 				HandlerCode: `func (h *modalHandlers) download() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wctx := webx.FromContext(r.Context())
+        wxctx := webx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Download(sse,
-            wctx.APIPath("/api/reports/export.csv"),
+            wxctx.APIPath("/api/reports/export.csv"),
             "export.csv",
         )
     }
