@@ -6,22 +6,22 @@ import (
 )
 
 type uploadHandlers struct {
-	store *fileupload.Store
+	store fileupload.Store
 }
 
-func newFileStore() *fileupload.Store {
+func newFileStore() fileupload.Store {
 	return fileupload.NewStore()
 }
 
-func newUploadHandlers(store *fileupload.Store) *uploadHandlers {
+func newUploadHandlers(store fileupload.Store) *uploadHandlers {
 	return &uploadHandlers{store: store}
 }
 
 func (u *uploadHandlers) register(r chi.Router) {
-	r.Post("/api/upload/files", fileupload.UploadHandler(u.store))
-	r.Post("/api/upload/files-restricted", fileupload.UploadHandler(u.store,
+	r.Post("/upload/files", fileupload.UploadHandler(u.store))
+	r.Post("/upload/files-restricted", fileupload.UploadHandler(u.store,
 		fileupload.WithAllowedTypes("image/"),
 		fileupload.WithMaxFiles(3),
 	))
-	r.Post("/api/upload/remove", fileupload.RemoveHandler(u.store))
+	r.Post("/upload/remove", fileupload.RemoveHandler(u.store))
 }

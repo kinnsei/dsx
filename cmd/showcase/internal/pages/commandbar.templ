@@ -23,7 +23,7 @@ templ CommandBars() {
 				Title: "Text Only",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type a message...",
-    SubmitURL:   "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
 })`,
 				HandlerCode: `func (h *handler) capture() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +49,7 @@ templ CommandBars() {
 					@commandbar.CommandBar(commandbar.Props{
 						ID:          "demo-text-only",
 						Placeholder: "Type a message...",
-						SubmitURL:   "/showcase/api/commandbar/capture",
+						SubmitURL:   "/showcase/commandbar/capture",
 					})
 				</div>
 			}
@@ -57,7 +57,7 @@ templ CommandBars() {
 				Title: "With Suggestions",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "How can I help?",
-    SubmitURL:   "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
     Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
 })`,
 			}) {
@@ -65,7 +65,7 @@ templ CommandBars() {
 					@commandbar.CommandBar(commandbar.Props{
 						ID:          "demo-suggestions",
 						Placeholder: "How can I help?",
-						SubmitURL:   "/showcase/api/commandbar/capture",
+						SubmitURL:   "/showcase/commandbar/capture",
 						Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
 					})
 				</div>
@@ -74,9 +74,9 @@ templ CommandBars() {
 				Title: "All Modes (Text + File + Voice)",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type, upload, or record...",
-    SubmitURL:   "/api/command/send",
-    UploadURL:   "/api/command/upload",
-    VoiceURL:    "/api/command/voice",
+    SubmitURL:   "/command/send",
+    UploadURL:   "/command/upload",
+    VoiceURL:    "/command/voice",
     Suggestions: []string{"Open a case", "Upload document", "Quick note"},
 })`,
 				HandlerCode: `// All modes can share one handler or use separate endpoints.
@@ -107,9 +107,9 @@ func (h *handler) capture() http.HandlerFunc {
 					@commandbar.CommandBar(commandbar.Props{
 						ID:          "demo-all-modes",
 						Placeholder: "Type, upload, or record...",
-						SubmitURL:   "/showcase/api/commandbar/capture",
-						UploadURL:   "/showcase/api/commandbar/capture",
-						VoiceURL:    "/showcase/api/commandbar/capture",
+						SubmitURL:   "/showcase/commandbar/capture",
+						UploadURL:   "/showcase/commandbar/capture",
+						VoiceURL:    "/showcase/commandbar/capture",
 						Suggestions: []string{"Open a case", "Upload document", "Quick note"},
 					})
 				</div>
@@ -118,8 +118,8 @@ func (h *handler) capture() http.HandlerFunc {
 				Title: "Text + File (No Voice)",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type or attach a file...",
-    SubmitURL:   "/showcase/api/commandbar/capture",
-    UploadURL:   "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
+    UploadURL:   "/showcase/commandbar/capture",
     FileHint:    "Drop a receipt or invoice",
 })`,
 			}) {
@@ -127,8 +127,8 @@ func (h *handler) capture() http.HandlerFunc {
 					@commandbar.CommandBar(commandbar.Props{
 						ID:          "demo-text-file",
 						Placeholder: "Type or attach a file...",
-						SubmitURL:   "/showcase/api/commandbar/capture",
-						UploadURL:   "/showcase/api/commandbar/capture",
+						SubmitURL:   "/showcase/commandbar/capture",
+						UploadURL:   "/showcase/commandbar/capture",
 						FileHint:    "Drop a receipt or invoice",
 					})
 				</div>
@@ -137,9 +137,9 @@ func (h *handler) capture() http.HandlerFunc {
 				Title: "Custom Placeholder & File Hint",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Ask the AI assistant...",
-    SubmitURL:   "/showcase/api/commandbar/capture",
-    UploadURL:   "/showcase/api/commandbar/capture",
-    VoiceURL:    "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
+    UploadURL:   "/showcase/commandbar/capture",
+    VoiceURL:    "/showcase/commandbar/capture",
     FileHint:    "Upload compliance documents here",
 })`,
 			}) {
@@ -147,9 +147,9 @@ func (h *handler) capture() http.HandlerFunc {
 					@commandbar.CommandBar(commandbar.Props{
 						ID:          "demo-custom",
 						Placeholder: "Ask the AI assistant...",
-						SubmitURL:   "/showcase/api/commandbar/capture",
-						UploadURL:   "/showcase/api/commandbar/capture",
-						VoiceURL:    "/showcase/api/commandbar/capture",
+						SubmitURL:   "/showcase/commandbar/capture",
+						UploadURL:   "/showcase/commandbar/capture",
+						VoiceURL:    "/showcase/commandbar/capture",
 						FileHint:    "Upload compliance documents here",
 					})
 				</div>

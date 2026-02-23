@@ -148,7 +148,7 @@ func DrawersAdvanced() templ.Component {
     @card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg"}) {
         @card.Body(card.Props{
             Attributes: ds.Merge(
-                ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/"+id))),
+                ds.OnClick(ds.GetOnce(wxctx.APIPath("/drawer/project/"+id))),
             ),
         }) {
             { name }
@@ -313,7 +313,7 @@ func projectCard(wxctx *webx.Context, id, name, description, status string, prog
 			})
 			templ_7745c5c3_Err = card.Body(card.Props{
 				Attributes: ds.Merge(
-					ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/" + id))),
+					ds.OnClick(ds.GetOnce(wxctx.APIPath("/drawer/project/" + id))),
 				),
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {

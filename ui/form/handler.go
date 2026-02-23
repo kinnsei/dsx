@@ -26,7 +26,7 @@ type SubmitFunc func(formID string, r *http.Request) []FieldError
 //
 // Mount at your form's Action path:
 //
-//	r.Post("/api/auth/login", form.Handler(loginHandler, loginSuccess))
+//	r.Post("/auth/login", form.Handler(loginHandler, loginSuccess))
 func Handler(validate SubmitFunc, onSuccess func(formID string, sse *datastar.ServerSentEventGenerator)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		formID := r.URL.Query().Get("id")

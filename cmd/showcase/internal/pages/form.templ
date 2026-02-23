@@ -42,7 +42,7 @@ templ Forms() {
 				Title: "Login Form",
 				TemplCode: `@form.Form(form.Props{
     ID:      "login",
-    Action:  "/api/form/login",
+    Action:  "/form/login",
     Signals: loginSignals{},
 }) {
     @form.FormError("login")
@@ -101,7 +101,7 @@ templ Forms() {
 				<div class="w-full max-w-sm">
 					@form.Form(form.Props{
 						ID:      "login",
-						Action:  "/showcase/api/form/login",
+						Action:  "/showcase/form/login",
 						Signals: loginSignals{},
 					}) {
 						@form.FormError("login")
@@ -140,7 +140,7 @@ templ Forms() {
 				Title: "Contact Form",
 				TemplCode: `@form.Form(form.Props{
     ID:      "contact",
-    Action:  "/api/form/contact",
+    Action:  "/form/contact",
     Signals: contactSignals{},
 }) {
     @form.FormError("contact")
@@ -206,7 +206,7 @@ templ Forms() {
 				<div class="w-full max-w-md">
 					@form.Form(form.Props{
 						ID:      "contact",
-						Action:  "/showcase/api/form/contact",
+						Action:  "/showcase/form/contact",
 						Signals: contactSignals{},
 					}) {
 						@form.FormError("contact")

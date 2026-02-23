@@ -21,11 +21,11 @@ func newAIChatHandlers() *aichatHandlers {
 }
 
 func (h *aichatHandlers) register(r chi.Router) {
-	r.Post("/api/aichat/send", h.send(demoChatID, h.readAIChatInput))
-	r.Post("/api/aichat/send-combined", h.send(combinedChatID, h.readCommandBarInput))
-	r.Post("/api/aichat/action", h.action())
-	r.Post("/api/aichat/upload", h.action())
-	r.Post("/api/aichat/voice", h.action())
+	r.Post("/aichat/send", h.send(demoChatID, h.readAIChatInput))
+	r.Post("/aichat/send-combined", h.send(combinedChatID, h.readCommandBarInput))
+	r.Post("/aichat/action", h.action())
+	r.Post("/aichat/upload", h.action())
+	r.Post("/aichat/voice", h.action())
 }
 
 const (
@@ -75,11 +75,11 @@ func (h *aichatHandlers) send(chatID string, readInput inputReader) http.Handler
 		time.Sleep(800 * time.Millisecond)
 		_ = chat.HideTyping()
 
-		submitURL := "/showcase/api/aichat/send"
+		submitURL := "/showcase/aichat/send"
 		if chatID == combinedChatID {
-			submitURL = "/showcase/api/aichat/send-combined"
+			submitURL = "/showcase/aichat/send-combined"
 		}
-		actionURL := "/showcase/api/aichat/action"
+		actionURL := "/showcase/aichat/action"
 
 		lower := strings.ToLower(input)
 		switch {

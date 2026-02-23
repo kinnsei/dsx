@@ -97,7 +97,7 @@ import (
 func main() {
 	r := chi.NewRouter()
 
-	r.Get("/api/greet", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/greet", func(w http.ResponseWriter, r *http.Request) {
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Toast(sse, ds.ToastSuccess, "Hello, World!")
 	})
@@ -121,7 +121,7 @@ var templExample = `templ UserCard(name string, role string, active bool) {
 			<div class="card-actions mt-4">
 				<button
 					class="btn btn-primary btn-sm"
-					{ ds.OnClick(ds.GetOnce(wctx.APIPath("/api/user/details")))... }
+					{ ds.OnClick(ds.GetOnce(wctx.APIPath("/user/details")))... }
 				>
 					View Details
 				</button>

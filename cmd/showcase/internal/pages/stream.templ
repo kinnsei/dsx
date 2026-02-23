@@ -19,7 +19,7 @@ templ Stream() {
 			wxctx := webx.FromContext(ctx)
 			counterEffect := stream.WatchEffect(ctx,
 				"counter:shared",
-				wxctx.APIPath("/api/stream/counter"),
+				wxctx.APIPath("/stream/counter"),
 			)
 		}}
 		<div class="space-y-8">
@@ -35,27 +35,27 @@ templ Stream() {
     wxctx := webx.FromContext(ctx)
     counterEffect := stream.WatchEffect(ctx,
         "counter:shared",
-        wxctx.APIPath("/api/stream/counter"),
+        wxctx.APIPath("/stream/counter"),
     )
 }}
 <div data-signals={ stream.ScopeSignals("counter:shared") }
     { ds.Effect(counterEffect)... }>
     <span id="stream-counter-value"
-        { ds.Init(ds.GetOnce(wxctx.APIPath("/api/stream/counter")))... }
+        { ds.Init(ds.GetOnce(wxctx.APIPath("/stream/counter")))... }
         class="text-6xl font-bold tabular-nums">
         —
     </span>
 </div>
 <button class="btn btn-primary btn-lg"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/decrement")))... }>
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/stream/decrement")))... }>
     −
 </button>
 <button class="btn btn-neutral btn-lg"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/reset")))... }>
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/stream/reset")))... }>
     Reset
 </button>
 <button class="btn btn-primary btn-lg"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/increment")))... }>
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/stream/increment")))... }>
     +
 </button>`,
 				HandlerCode: `func (s *streamHandlers) getCounter() http.HandlerFunc {
@@ -87,7 +87,7 @@ func (s *streamHandlers) increment() http.HandlerFunc {
 					>
 						<span
 							id="stream-counter-value"
-							{ ds.Init(ds.GetOnce(wxctx.APIPath("/api/stream/counter")))... }
+							{ ds.Init(ds.GetOnce(wxctx.APIPath("/stream/counter")))... }
 							class="text-6xl font-bold tabular-nums"
 						>
 							—
@@ -96,19 +96,19 @@ func (s *streamHandlers) increment() http.HandlerFunc {
 					<div class="flex gap-3">
 						<button
 							class="btn btn-primary btn-lg"
-							{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/decrement")))... }
+							{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/stream/decrement")))... }
 						>
 							−
 						</button>
 						<button
 							class="btn btn-neutral btn-lg"
-							{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/reset")))... }
+							{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/stream/reset")))... }
 						>
 							Reset
 						</button>
 						<button
 							class="btn btn-primary btn-lg"
-							{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/stream/increment")))... }
+							{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/stream/increment")))... }
 						>
 							+
 						</button>

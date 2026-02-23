@@ -70,7 +70,7 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-text-only",
 					Placeholder: "Type a message...",
-					SubmitURL:   "/showcase/api/commandbar/capture",
+					SubmitURL:   "/showcase/commandbar/capture",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -85,7 +85,7 @@ func CommandBars() templ.Component {
 				Title: "Text Only",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type a message...",
-    SubmitURL:   "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
 })`,
 				HandlerCode: `func (h *handler) capture() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
@@ -129,7 +129,7 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-suggestions",
 					Placeholder: "How can I help?",
-					SubmitURL:   "/showcase/api/commandbar/capture",
+					SubmitURL:   "/showcase/commandbar/capture",
 					Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -145,7 +145,7 @@ func CommandBars() templ.Component {
 				Title: "With Suggestions",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "How can I help?",
-    SubmitURL:   "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
     Suggestions: []string{"Check balance", "Transfer funds", "Report issue"},
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
@@ -171,9 +171,9 @@ func CommandBars() templ.Component {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-all-modes",
 					Placeholder: "Type, upload, or record...",
-					SubmitURL:   "/showcase/api/commandbar/capture",
-					UploadURL:   "/showcase/api/commandbar/capture",
-					VoiceURL:    "/showcase/api/commandbar/capture",
+					SubmitURL:   "/showcase/commandbar/capture",
+					UploadURL:   "/showcase/commandbar/capture",
+					VoiceURL:    "/showcase/commandbar/capture",
 					Suggestions: []string{"Open a case", "Upload document", "Quick note"},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -189,9 +189,9 @@ func CommandBars() templ.Component {
 				Title: "All Modes (Text + File + Voice)",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type, upload, or record...",
-    SubmitURL:   "/api/command/send",
-    UploadURL:   "/api/command/upload",
-    VoiceURL:    "/api/command/voice",
+    SubmitURL:   "/command/send",
+    UploadURL:   "/command/upload",
+    VoiceURL:    "/command/voice",
     Suggestions: []string{"Open a case", "Upload document", "Quick note"},
 })`,
 				HandlerCode: `// All modes can share one handler or use separate endpoints.
@@ -240,8 +240,8 @@ func (h *handler) capture() http.HandlerFunc {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-text-file",
 					Placeholder: "Type or attach a file...",
-					SubmitURL:   "/showcase/api/commandbar/capture",
-					UploadURL:   "/showcase/api/commandbar/capture",
+					SubmitURL:   "/showcase/commandbar/capture",
+					UploadURL:   "/showcase/commandbar/capture",
 					FileHint:    "Drop a receipt or invoice",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -257,8 +257,8 @@ func (h *handler) capture() http.HandlerFunc {
 				Title: "Text + File (No Voice)",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Type or attach a file...",
-    SubmitURL:   "/showcase/api/commandbar/capture",
-    UploadURL:   "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
+    UploadURL:   "/showcase/commandbar/capture",
     FileHint:    "Drop a receipt or invoice",
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
@@ -284,9 +284,9 @@ func (h *handler) capture() http.HandlerFunc {
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					ID:          "demo-custom",
 					Placeholder: "Ask the AI assistant...",
-					SubmitURL:   "/showcase/api/commandbar/capture",
-					UploadURL:   "/showcase/api/commandbar/capture",
-					VoiceURL:    "/showcase/api/commandbar/capture",
+					SubmitURL:   "/showcase/commandbar/capture",
+					UploadURL:   "/showcase/commandbar/capture",
+					VoiceURL:    "/showcase/commandbar/capture",
 					FileHint:    "Upload compliance documents here",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -302,9 +302,9 @@ func (h *handler) capture() http.HandlerFunc {
 				Title: "Custom Placeholder & File Hint",
 				TemplCode: `@commandbar.CommandBar(commandbar.Props{
     Placeholder: "Ask the AI assistant...",
-    SubmitURL:   "/showcase/api/commandbar/capture",
-    UploadURL:   "/showcase/api/commandbar/capture",
-    VoiceURL:    "/showcase/api/commandbar/capture",
+    SubmitURL:   "/showcase/commandbar/capture",
+    UploadURL:   "/showcase/commandbar/capture",
+    VoiceURL:    "/showcase/commandbar/capture",
     FileHint:    "Upload compliance documents here",
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)

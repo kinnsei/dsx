@@ -110,15 +110,11 @@ templ Dashboard(props DashboardProps) {
 						}
 						@navbar.End() {
 							if props.ThemeToggle != nil {
-								<label class="flex items-center gap-2 cursor-pointer">
-									@icon.SunMedium(icon.Props{Size: 16})
-									@themecontroller.Toggle(themecontroller.ToggleProps{
-										ID:      "theme-toggle",
-										Theme:   props.ThemeToggle.DarkTheme,
-										Default: props.ThemeToggle.LightTheme,
-									})
-									@icon.Moon(icon.Props{Size: 16})
-								</label>
+								@themecontroller.IconToggle(themecontroller.IconToggleProps{
+									ID:    "theme-toggle",
+									Dark:  props.ThemeToggle.DarkTheme,
+									Light: props.ThemeToggle.LightTheme,
+								})
 							}
 							if props.HeaderActions != nil {
 								@props.HeaderActions

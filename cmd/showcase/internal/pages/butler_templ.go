@@ -112,9 +112,9 @@ func Butler() templ.Component {
 					}
 					templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 						Placeholder: "Search client, create case, attach document...",
-						SubmitURL:   "/showcase/api/commandbar/capture",
-						UploadURL:   "/showcase/api/commandbar/capture",
-						VoiceURL:    "/showcase/api/commandbar/capture",
+						SubmitURL:   "/showcase/commandbar/capture",
+						UploadURL:   "/showcase/commandbar/capture",
+						VoiceURL:    "/showcase/commandbar/capture",
 						Suggestions: []string{
 							"KYC renewal for Müller GmbH",
 							"Escalate wire transfer #4491",
@@ -726,9 +726,9 @@ func Butler() templ.Component {
 				}
 				templ_7745c5c3_Err = commandbar.CommandBar(commandbar.Props{
 					Placeholder: "Search client, create case, attach document...",
-					SubmitURL:   "/showcase/api/commandbar/capture",
-					UploadURL:   "/showcase/api/commandbar/capture",
-					VoiceURL:    "/showcase/api/commandbar/capture",
+					SubmitURL:   "/showcase/commandbar/capture",
+					UploadURL:   "/showcase/commandbar/capture",
+					VoiceURL:    "/showcase/commandbar/capture",
 					Suggestions: []string{"Check KYC status", "Escalate to compliance"},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -2016,9 +2016,9 @@ var composedCode = `@feed.Feed() {
 
   @commandbar.CommandBar(commandbar.Props{
     Placeholder: "Search client, create case...",
-    SubmitURL:   "/api/capture",
-    UploadURL:   "/api/upload",
-    VoiceURL:    "/api/voice",
+    SubmitURL:   "/capture",
+    UploadURL:   "/upload",
+    VoiceURL:    "/voice",
     Suggestions: []string{"KYC renewal", "Escalate wire"},
     FileHint:    "Drop a document, scan, or upload",
   })
@@ -2120,9 +2120,9 @@ var sparklineCode = `@sparkline.Sparkline(sparkline.Props{
 
 var commandbarCode = `@commandbar.CommandBar(commandbar.Props{
   Placeholder: "Search client, create case...",
-  SubmitURL:   "/api/capture",
-  UploadURL:   "/api/upload",   // enables File tab
-  VoiceURL:    "/api/voice",    // enables Voice tab
+  SubmitURL:   "/capture",
+  UploadURL:   "/upload",   // enables File tab
+  VoiceURL:    "/voice",    // enables Voice tab
   Suggestions: []string{"Check KYC", "Escalate"},
   FileHint:    "Drop a document, scan, or upload",
 })`

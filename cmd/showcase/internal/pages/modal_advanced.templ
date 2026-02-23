@@ -30,7 +30,7 @@ templ ModalAdvanced() {
 				Title: "Modal",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/show")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/show")))... }
 >
     Open Modal
 </button>`,
@@ -47,13 +47,13 @@ templ ModalAdvanced() {
 				<div class="flex flex-wrap gap-3">
 					<button
 						class="btn btn-primary btn-sm"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/show")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/show")))... }
 					>
 						Open Modal
 					</button>
 					<button
 						class="btn btn-sm"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/show-wide")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/show-wide")))... }
 					>
 						Wide Modal
 					</button>
@@ -64,7 +64,7 @@ templ ModalAdvanced() {
 				Title: "Confirm",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/confirm")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/confirm")))... }
 >
     Ask Confirmation
 </button>`,
@@ -73,14 +73,14 @@ templ ModalAdvanced() {
         wxctx := webx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Confirm(sse, "Are you sure?",
-            wxctx.APIPath("/api/modal/confirmed"),
+            wxctx.APIPath("/modal/confirmed"),
         )
     }
 }
 
 // Danger variant with custom styling:
 ds.Send.Confirm(sse, "Delete all data?",
-    wxctx.APIPath("/api/data/purge"),
+    wxctx.APIPath("/data/purge"),
     ds.WithConfirmTitle("Danger Zone"),
     ds.WithConfirmLabel("Delete Everything"),
     ds.WithConfirmClass("btn btn-error"),
@@ -92,13 +92,13 @@ ds.Send.Confirm(sse, "Delete all data?",
 				<div class="flex flex-wrap gap-3">
 					<button
 						class="btn btn-primary btn-sm"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/confirm")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/confirm")))... }
 					>
 						Ask Confirmation
 					</button>
 					<button
 						class="btn btn-error btn-sm"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/confirm-danger")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/confirm-danger")))... }
 					>
 						Danger Confirm
 					</button>
@@ -112,7 +112,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 </div>
 <button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/patch")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/patch")))... }
 >
     Patch Content
 </button>`,
@@ -133,7 +133,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				<div class="mt-4">
 					<button
 						class="btn btn-primary btn-sm"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/patch")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/patch")))... }
 					>
 						Patch Content
 					</button>
@@ -144,7 +144,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				Title: "Redirect",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/redirect")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/redirect")))... }
 >
     Redirect to Home
 </button>`,
@@ -161,7 +161,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				</p>
 				<button
 					class="btn btn-primary btn-sm"
-					{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/redirect")))... }
+					{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/redirect")))... }
 				>
 					Redirect to Home
 				</button>
@@ -171,7 +171,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				Title: "Download",
 				TemplCode: `<button
     class="btn btn-primary btn-sm"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/download")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/download")))... }
 >
     Download File
 </button>`,
@@ -180,7 +180,7 @@ ds.Send.Confirm(sse, "Delete all data?",
         wxctx := webx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Download(sse,
-            wxctx.APIPath("/api/reports/export.csv"),
+            wxctx.APIPath("/reports/export.csv"),
             "export.csv",
         )
     }
@@ -191,7 +191,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 				</p>
 				<button
 					class="btn btn-primary btn-sm"
-					{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/modal/download")))... }
+					{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/modal/download")))... }
 				>
 					Download File
 				</button>

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -14,7 +15,14 @@ type previewSignals struct {
 }
 
 // PreviewPath is the standard handler path for markdown preview.
-const PreviewPath = "/api/preview/markdown"
+const PreviewPath = "/preview/markdown"
+
+// Route returns a RouteOption that registers the markdown preview handler.
+func Route() func(chi.Router) {
+	return func(r chi.Router) {
+		r.Post(PreviewPath, PreviewHandler())
+	}
+}
 
 // PreviewHandler returns an http.HandlerFunc that renders markdown from
 // the component's signals and patches the preview div via SSE.

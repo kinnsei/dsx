@@ -24,11 +24,11 @@ templ MoneyInputs() {
 				Title: "Basic Decimal",
 				TemplCode: `@moneyinput.DecimalInput(moneyinput.DecimalProps{
     ID:          "decimal-basic",
-    ParseURL:    "/showcase/api/parse/decimal",
+    ParseURL:    "/showcase/parse/decimal",
     Placeholder: "e.g. 5k, 1.5M, 1,234.56",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/decimal", moneyinput.DecimalHandler())`,
+				HandlerCode: `r.Get("/parse/decimal", moneyinput.DecimalHandler())`,
 			}) {
 				<p class="text-sm mb-4">
 					Type shorthand like 5k, 1.5M, 2.5B, or plain numbers with commas (1,234.56).
@@ -36,7 +36,7 @@ templ MoneyInputs() {
 				<div class="w-full max-w-sm">
 					@moneyinput.DecimalInput(moneyinput.DecimalProps{
 						ID:          "decimal-basic",
-						ParseURL:    "/showcase/api/parse/decimal",
+						ParseURL:    "/showcase/parse/decimal",
 						Placeholder: "e.g. 5k, 1.5M, 1,234.56",
 						Class:       "input-bordered w-full",
 					})
@@ -46,12 +46,12 @@ templ MoneyInputs() {
 				Title: "Pre-filled Decimal",
 				TemplCode: `@moneyinput.DecimalInput(moneyinput.DecimalProps{
     ID:          "decimal-prefilled",
-    ParseURL:    "/showcase/api/parse/decimal",
+    ParseURL:    "/showcase/parse/decimal",
     Placeholder: "e.g. 5k",
     Value:       "2500",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/decimal", moneyinput.DecimalHandler())`,
+				HandlerCode: `r.Get("/parse/decimal", moneyinput.DecimalHandler())`,
 			}) {
 				<p class="text-sm mb-4">
 					A decimal input with an initial value. Edit it to see the parsed result update.
@@ -59,7 +59,7 @@ templ MoneyInputs() {
 				<div class="w-full max-w-sm">
 					@moneyinput.DecimalInput(moneyinput.DecimalProps{
 						ID:          "decimal-prefilled",
-						ParseURL:    "/showcase/api/parse/decimal",
+						ParseURL:    "/showcase/parse/decimal",
 						Placeholder: "e.g. 5k",
 						Value:       "2500",
 						Class:       "input-bordered w-full",
@@ -70,11 +70,11 @@ templ MoneyInputs() {
 				Title: "Money with Currency",
 				TemplCode: `@moneyinput.MoneyInput(moneyinput.MoneyProps{
     ID:          "money-any",
-    ParseURL:    "/showcase/api/parse/money",
+    ParseURL:    "/showcase/parse/money",
     Placeholder: "e.g. USD 5k, 100 EUR",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/money", moneyinput.MoneyHandler())`,
+				HandlerCode: `r.Get("/parse/money", moneyinput.MoneyHandler())`,
 			}) {
 				<p class="text-sm mb-4">
 					Type a currency code and amount, e.g. "USD 100" or "100 EUR". Any
@@ -83,7 +83,7 @@ templ MoneyInputs() {
 				<div class="w-full max-w-sm">
 					@moneyinput.MoneyInput(moneyinput.MoneyProps{
 						ID:          "money-any",
-						ParseURL:    "/showcase/api/parse/money",
+						ParseURL:    "/showcase/parse/money",
 						Placeholder: "e.g. USD 5k, 100 EUR",
 						Class:       "input-bordered w-full",
 					})
@@ -93,11 +93,11 @@ templ MoneyInputs() {
 				Title: "Restricted Currencies",
 				TemplCode: `@moneyinput.MoneyInput(moneyinput.MoneyProps{
     ID:          "money-restricted",
-    ParseURL:    "/showcase/api/parse/money-restricted",
+    ParseURL:    "/showcase/parse/money-restricted",
     Placeholder: "e.g. USD 100, 50 EUR",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/money-restricted", moneyinput.MoneyHandler("USD", "EUR"))`,
+				HandlerCode: `r.Get("/parse/money-restricted", moneyinput.MoneyHandler("USD", "EUR"))`,
 			}) {
 				<p class="text-sm mb-4">
 					Only USD and EUR are accepted. Try typing "GBP 100" to see the error.
@@ -105,7 +105,7 @@ templ MoneyInputs() {
 				<div class="w-full max-w-sm">
 					@moneyinput.MoneyInput(moneyinput.MoneyProps{
 						ID:          "money-restricted",
-						ParseURL:    "/showcase/api/parse/money-restricted",
+						ParseURL:    "/showcase/parse/money-restricted",
 						Placeholder: "e.g. USD 100, 50 EUR",
 						Class:       "input-bordered w-full",
 					})

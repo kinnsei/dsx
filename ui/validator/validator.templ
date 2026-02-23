@@ -3,6 +3,7 @@ package validator
 import (
 	"fmt"
 
+	webx "github.com/plaenen/webx"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/utils"
 )
@@ -43,9 +44,12 @@ type InputProps struct {
 	Placeholder string
 	// Value is the initial input value.
 	Value string
+	// Validate is a built-in validation type (e.g. validator.Email).
+	// When set, ValidateURL is resolved automatically using BasePath.
+	Validate Validation
 	// ValidateURL is the endpoint path for server-side validation.
 	// The component appends "?id=<ID>" automatically.
-	// Example: "/api/validate/email"
+	// Overrides Validate if both are set.
 	ValidateURL string
 	// DebounceMs is the debounce delay in milliseconds. Defaults to 500.
 	DebounceMs int
@@ -59,7 +63,11 @@ func (p *InputProps) defaults() {
 		p.ID = utils.RandomID()
 	}
 	if p.Type == "" {
-		p.Type = TypeText
+		if t, ok := validationInputTypes[p.Validate]; ok {
+			p.Type = t
+		} else {
+			p.Type = TypeText
+		}
 	}
 	if p.DebounceMs == 0 {
 		p.DebounceMs = 500
@@ -72,13 +80,20 @@ func (p *InputProps) defaults() {
 templ Input(props InputProps) {
 	{{ props.defaults() }}
 	{{
+		// Resolve ValidateURL from Validation type if not set explicitly.
+		validatePath := props.ValidateURL
+		if validatePath == "" && props.Validate != "" {
+			wctx := webx.FromContext(ctx)
+			validatePath = wctx.APIPath(props.Validate.Path())
+		}
+
 		signals := ds.NewSignals(props.ID, validatorSignals{
 			Value: props.Value,
 			Valid: true,
 			Error: "",
 		})
 
-		validateURL := fmt.Sprintf("%s?id=%s", props.ValidateURL, props.ID)
+		validateURL := fmt.Sprintf("%s?id=%s", validatePath, props.ID)
 
 		onInput := fmt.Sprintf(
 			"%s; %s",

@@ -23,15 +23,12 @@ templ Validators() {
 				Title: "Email Validation",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-demo",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email",
+    Validate:    validator.Email,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/validate/email", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, false)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
 			}) {
 				<p class="text-sm mb-4">
 					Validates email format on the server. Try typing an invalid email to see the error hint.
@@ -39,8 +36,7 @@ templ Validators() {
 				<div class="w-full max-w-sm">
 					@validator.Input(validator.InputProps{
 						ID:          "email-demo",
-						Type:        validator.TypeEmail,
-						ValidateURL: "/showcase/api/validate/email",
+						Validate:    validator.Email,
 						Placeholder: "email@example.com",
 						Class:       "input-bordered w-full",
 					})
@@ -50,18 +46,15 @@ templ Validators() {
 				Title: "With Success Hint",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-success",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email",
+    Validate:    validator.Email,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
 })
 @validator.SuccessHint("email-success") {
     Valid email address
 }`,
-				HandlerCode: `r.Get("/api/validate/email", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, false)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
 			}) {
 				<p class="text-sm mb-4">
 					Shows a success message when the email is valid.
@@ -69,8 +62,7 @@ templ Validators() {
 				<div class="w-full max-w-sm">
 					@validator.Input(validator.InputProps{
 						ID:          "email-success",
-						Type:        validator.TypeEmail,
-						ValidateURL: "/showcase/api/validate/email",
+						Validate:    validator.Email,
 						Placeholder: "email@example.com",
 						Class:       "input-bordered w-full",
 					})
@@ -83,16 +75,13 @@ templ Validators() {
 				Title: "Email with MX Check",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-mx",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email-mx",
+    Validate:    validator.EmailMX,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
     HintText:    "Please enter a valid email with a real domain",
 })`,
-				HandlerCode: `r.Get("/api/validate/email-mx", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, true)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
 			}) {
 				<p class="text-sm mb-4">
 					Validates email format and verifies the domain has MX records.
@@ -100,8 +89,7 @@ templ Validators() {
 				<div class="w-full max-w-sm">
 					@validator.Input(validator.InputProps{
 						ID:          "email-mx",
-						Type:        validator.TypeEmail,
-						ValidateURL: "/showcase/api/validate/email-mx",
+						Validate:    validator.EmailMX,
 						Placeholder: "email@example.com",
 						Class:       "input-bordered w-full",
 						HintText:    "Please enter a valid email with a real domain",
@@ -109,19 +97,68 @@ templ Validators() {
 				</div>
 			}
 			@components.Example(components.ExampleProps{
+				Title: "IBAN Validation",
+				TemplCode: `@validator.Input(validator.InputProps{
+    ID:          "iban-demo",
+    Validate:    validator.IBANValidation,
+    Placeholder: "DE89 3704 0044 0532 0130 00",
+    Class:       "input-bordered w-full",
+})`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
+			}) {
+				<p class="text-sm mb-4">
+					Validates IBAN format, country-specific length, and MOD-97 checksum.
+				</p>
+				<div class="w-full max-w-sm">
+					@validator.Input(validator.InputProps{
+						ID:          "iban-demo",
+						Validate:    validator.IBANValidation,
+						Placeholder: "DE89 3704 0044 0532 0130 00",
+						Class:       "input-bordered w-full",
+					})
+					@validator.SuccessHint("iban-demo") {
+						Valid IBAN
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "SWIFT/BIC Validation",
+				TemplCode: `@validator.Input(validator.InputProps{
+    ID:          "swift-demo",
+    Validate:    validator.SWIFTValidation,
+    Placeholder: "DEUTDEFF",
+    Class:       "input-bordered w-full",
+})`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
+			}) {
+				<p class="text-sm mb-4">
+					Validates SWIFT/BIC code format. Accepts 8-character (head office) or 11-character (branch) codes.
+				</p>
+				<div class="w-full max-w-sm">
+					@validator.Input(validator.InputProps{
+						ID:          "swift-demo",
+						Validate:    validator.SWIFTValidation,
+						Placeholder: "DEUTDEFF",
+						Class:       "input-bordered w-full",
+					})
+					@validator.SuccessHint("swift-demo") {
+						Valid SWIFT/BIC code
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
 				Title: "Custom Debounce",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-fast",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email",
+    Validate:    validator.Email,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
     DebounceMs:  200,
 })`,
-				HandlerCode: `r.Get("/api/validate/email", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, false)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
 			}) {
 				<p class="text-sm mb-4">
 					Same email validation with a shorter debounce (200ms).
@@ -129,8 +166,7 @@ templ Validators() {
 				<div class="w-full max-w-sm">
 					@validator.Input(validator.InputProps{
 						ID:          "email-fast",
-						Type:        validator.TypeEmail,
-						ValidateURL: "/showcase/api/validate/email",
+						Validate:    validator.Email,
 						Placeholder: "email@example.com",
 						Class:       "input-bordered w-full",
 						DebounceMs:  200,

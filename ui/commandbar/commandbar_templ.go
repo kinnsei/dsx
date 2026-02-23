@@ -90,7 +90,7 @@ func CommandBar(props Props) templ.Component {
 		isFile := fmt.Sprintf("%s === 'file'", modeSignal)
 		isVoice := fmt.Sprintf("%s === 'voice'", modeSignal)
 
-		openText := signals.SetString("mode", "text")
+		openText := fmt.Sprintf("%s; requestAnimationFrame(()=>document.querySelector('#%s textarea')?.focus())", signals.SetString("mode", "text"), id)
 		openFile := signals.SetString("mode", "file")
 		openVoice := signals.SetString("mode", "voice")
 

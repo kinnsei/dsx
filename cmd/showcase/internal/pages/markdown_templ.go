@@ -131,7 +131,7 @@ func Markdowns() templ.Component {
 				}
 				templ_7745c5c3_Err = markdown.MarkdownInput(markdown.InputProps{
 					ID:         "md-editor",
-					PreviewURL: "/showcase/api/preview/markdown",
+					PreviewURL: "/showcase/preview/markdown",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -146,9 +146,9 @@ func Markdowns() templ.Component {
 				Title: "Markdown Input",
 				TemplCode: `@markdown.MarkdownInput(markdown.InputProps{
     ID:         "md-editor",
-    PreviewURL: "/showcase/api/preview/markdown",
+    PreviewURL: "/showcase/preview/markdown",
 })`,
-				HandlerCode: `r.Post("/api/preview/markdown", markdown.PreviewHandler())`,
+				HandlerCode: `r.Post("/preview/markdown", markdown.PreviewHandler())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -171,7 +171,7 @@ func Markdowns() templ.Component {
 				}
 				templ_7745c5c3_Err = markdown.MarkdownInput(markdown.InputProps{
 					ID:         "md-prefilled",
-					PreviewURL: "/showcase/api/preview/markdown",
+					PreviewURL: "/showcase/preview/markdown",
 					Value:      prefillMarkdown,
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -187,10 +187,10 @@ func Markdowns() templ.Component {
 				Title: "Pre-filled Input",
 				TemplCode: `@markdown.MarkdownInput(markdown.InputProps{
     ID:         "md-prefilled",
-    PreviewURL: "/showcase/api/preview/markdown",
+    PreviewURL: "/showcase/preview/markdown",
     Value:      prefillMarkdown,
 })`,
-				HandlerCode: `r.Post("/api/preview/markdown", markdown.PreviewHandler())`,
+				HandlerCode: `r.Post("/preview/markdown", markdown.PreviewHandler())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

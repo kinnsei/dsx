@@ -65,6 +65,10 @@ import (
     "github.com/plaenen/webx"
     "github.com/plaenen/webx/stream"
     "github.com/plaenen/webx/ui"
+    "github.com/plaenen/webx/ui/calendar"
+    "github.com/plaenen/webx/ui/markdown"
+    "github.com/plaenen/webx/ui/moneyinput"
+    "github.com/plaenen/webx/ui/themecontroller"
 )
 
 func main() {
@@ -107,9 +111,11 @@ func main() {
     r.Route(basePath, func(r chi.Router) {
         r.Get("/stream", broker.Handler())
         ui.RegisterRoutes(r,
-            ui.WithMarkdownPreview(),
-            ui.WithDecimalParser(),
-            ui.WithMoneyParser(),
+            calendar.Route(),
+            themecontroller.Route(false),
+            markdown.Route(),
+            moneyinput.DecimalRoute(),
+            moneyinput.MoneyRoute(),
         )
     })
 
@@ -165,19 +171,20 @@ CSRF protection uses a signed double-submit cookie pattern. The middleware gener
 
 ## Handler Registration
 
-`ui.RegisterRoutes` registers SSE handlers for UI components. Calendar navigation and theme persistence are always registered. Use options for additional handlers:
+`ui.RegisterRoutes` applies route options to a router. Each component package exports its own `Route()` function:
 
 ```go
 r.Route(basePath, func(r chi.Router) {
     r.Get("/stream", broker.Handler())
 
     ui.RegisterRoutes(r,
-        ui.WithMarkdownPreview(),                    // POST /api/preview/markdown
-        ui.WithDecimalParser(),                      // GET  /api/parse/decimal
-        ui.WithMoneyParser(),                        // GET  /api/parse/money
-        ui.WithMoneyParser("USD", "EUR"),             // restricted currencies
-        ui.WithFileUpload(store),                    // POST /api/upload/files + /remove
-        ui.WithFileUpload(store,                     // with validation options
+        calendar.Route(),                              // GET  /calendar/navigate
+        themecontroller.Route(false),                   // POST /theme
+        markdown.Route(),                              // POST /preview/markdown
+        moneyinput.DecimalRoute(),                     // GET  /parse/decimal
+        moneyinput.MoneyRoute("USD", "EUR"),           // GET  /parse/money
+        fileupload.Route(store),                       // POST /upload/files + /upload/remove
+        fileupload.Route(store,                        // with validation options
             fileupload.WithMaxFiles(3),
             fileupload.WithAllowedTypes("image/"),
         ),
@@ -185,21 +192,14 @@ r.Route(basePath, func(r chi.Router) {
 })
 ```
 
-**Always registered (zero-config):**
-
-| Handler | Path | Method |
-|---|---|---|
-| Calendar navigation | `/api/calendar/navigate` | GET |
-| Theme persistence | `/api/theme` | POST |
-
 **Handlers that require app-specific logic** (register manually):
 
 ```go
 // Validator — each field needs its own validation function
-r.Get("/api/validate/email", validator.Handler(emailValidator))
+r.Get("/validate/email", validator.Handler(emailValidator))
 
 // Form — needs validation function + success callback
-r.Post("/api/auth/login", form.Handler(loginValidator, onSuccess))
+r.Post("/auth/login", form.Handler(loginValidator, onSuccess))
 ```
 
 Each handler package exports a path constant (e.g. `markdown.PreviewPath`, `moneyinput.DecimalPath`, `fileupload.UploadPath`) for use when registering handlers manually.
@@ -248,10 +248,10 @@ ds.Text("$count")           // data-text
 **Action expressions** (return `string` for use in `ds.On`/`ds.OnClick`):
 
 ```go
-ds.Get("/api/data")         // @get('/api/data') with retry
-ds.Post("/api/submit")      // @post('/api/submit') with CSRF token
-ds.Put("/api/update")       // @put with CSRF
-ds.Delete("/api/remove")    // @delete with CSRF
+ds.Get("/data")             // @get('/data') with retry
+ds.Post("/submit")          // @post('/submit') with CSRF token
+ds.Put("/update")           // @put with CSRF
+ds.Delete("/remove")        // @delete with CSRF
 ```
 
 See [Datastar Go Reference](./datastar-go-reference.md) for the full backend SDK API and [HTML Datastar Elements Reference](./html-datastar-elements-reference.md) for all frontend attributes.
@@ -276,7 +276,7 @@ func myHandler(w http.ResponseWriter, r *http.Request) {
     ds.Send.Drawer(sse, myDrawerContent())
 
     // Confirmation dialog
-    ds.Send.Confirm(sse, "Delete this item?", "/api/items/delete")
+    ds.Send.Confirm(sse, "Delete this item?", "/items/delete")
 
     // Patch a DOM element with a templ component
     ds.Send.Patch(sse, myComponent())
@@ -297,7 +297,7 @@ The `stream` package enables real-time updates via NATS pub/sub:
 
 ```go
 // In a templ component — watch a scope and re-fetch on invalidation
-@stream.WatchEffect(ctx, "invoice:42", "/api/invoice/42")
+@stream.WatchEffect(ctx, "invoice:42", "/invoice/42")
 
 // In a handler — invalidate after mutation
 broker.Invalidate("invoice:42")

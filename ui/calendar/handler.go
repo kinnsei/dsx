@@ -6,12 +6,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
 // NavigatePath is the standard handler path for calendar navigation.
 // Mount it under your app's base path: basePath + NavigatePath.
-const NavigatePath = "/api/calendar/navigate"
+const NavigatePath = "/calendar/navigate"
 
 // navigateSignals is the signal shape sent by the client during navigation.
 type navigateSignals struct {
@@ -46,6 +47,13 @@ func NavigateHandlerFromQuery() http.HandlerFunc {
 		}
 
 		handleNavigate(calendarID, mode)(w, r)
+	}
+}
+
+// Route returns a RouteOption that registers the calendar navigation handler.
+func Route() func(chi.Router) {
+	return func(r chi.Router) {
+		r.Get(NavigatePath, NavigateHandlerFromQuery())
 	}
 }
 

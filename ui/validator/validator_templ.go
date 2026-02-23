@@ -11,6 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
+	webx "github.com/plaenen/webx"
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/utils"
 )
@@ -51,9 +52,12 @@ type InputProps struct {
 	Placeholder string
 	// Value is the initial input value.
 	Value string
+	// Validate is a built-in validation type (e.g. validator.Email).
+	// When set, ValidateURL is resolved automatically using BasePath.
+	Validate Validation
 	// ValidateURL is the endpoint path for server-side validation.
 	// The component appends "?id=<ID>" automatically.
-	// Example: "/api/validate/email"
+	// Overrides Validate if both are set.
 	ValidateURL string
 	// DebounceMs is the debounce delay in milliseconds. Defaults to 500.
 	DebounceMs int
@@ -67,7 +71,11 @@ func (p *InputProps) defaults() {
 		p.ID = utils.RandomID()
 	}
 	if p.Type == "" {
-		p.Type = TypeText
+		if t, ok := validationInputTypes[p.Validate]; ok {
+			p.Type = t
+		} else {
+			p.Type = TypeText
+		}
 	}
 	if p.DebounceMs == 0 {
 		p.DebounceMs = 500
@@ -99,13 +107,20 @@ func Input(props InputProps) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		props.defaults()
+		// Resolve ValidateURL from Validation type if not set explicitly.
+		validatePath := props.ValidateURL
+		if validatePath == "" && props.Validate != "" {
+			wctx := webx.FromContext(ctx)
+			validatePath = wctx.APIPath(props.Validate.Path())
+		}
+
 		signals := ds.NewSignals(props.ID, validatorSignals{
 			Value: props.Value,
 			Valid: true,
 			Error: "",
 		})
 
-		validateURL := fmt.Sprintf("%s?id=%s", props.ValidateURL, props.ID)
+		validateURL := fmt.Sprintf("%s?id=%s", validatePath, props.ID)
 
 		onInput := fmt.Sprintf(
 			"%s; %s",
@@ -120,7 +135,7 @@ func Input(props InputProps) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID + "-wrapper")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 91, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 106, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -133,7 +148,7 @@ func Input(props InputProps) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(signals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 92, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 107, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -155,7 +170,7 @@ func Input(props InputProps) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 95, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 110, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -168,7 +183,7 @@ func Input(props InputProps) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(string(props.Type))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 96, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 111, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -186,7 +201,7 @@ func Input(props InputProps) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(props.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 98, Col: 21}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 113, Col: 21}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -205,7 +220,7 @@ func Input(props InputProps) templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(props.Placeholder)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 101, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 116, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -224,7 +239,7 @@ func Input(props InputProps) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(props.Value)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 104, Col: 23}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 119, Col: 23}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -267,7 +282,7 @@ func Input(props InputProps) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID + "-hint")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 111, Col: 26}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 126, Col: 26}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -289,7 +304,7 @@ func Input(props InputProps) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.HintText)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 116, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/validator/validator.templ`, Line: 131, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {

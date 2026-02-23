@@ -18,14 +18,14 @@ func newModalHandlers() *modalHandlers {
 }
 
 func (h *modalHandlers) register(r chi.Router) {
-	r.Get("/api/modal/show", h.showModal())
-	r.Get("/api/modal/show-wide", h.showWideModal())
-	r.Get("/api/modal/confirm", h.showConfirm())
-	r.Get("/api/modal/confirm-danger", h.showDangerConfirm())
-	r.Post("/api/modal/confirmed", h.confirmed())
-	r.Get("/api/modal/patch", h.patchContent())
-	r.Get("/api/modal/redirect", h.redirect())
-	r.Get("/api/modal/download", h.download())
+	r.Get("/modal/show", h.showModal())
+	r.Get("/modal/show-wide", h.showWideModal())
+	r.Get("/modal/confirm", h.showConfirm())
+	r.Get("/modal/confirm-danger", h.showDangerConfirm())
+	r.Post("/modal/confirmed", h.confirmed())
+	r.Get("/modal/patch", h.patchContent())
+	r.Get("/modal/redirect", h.redirect())
+	r.Get("/modal/download", h.download())
 }
 
 func (h *modalHandlers) showModal() http.HandlerFunc {
@@ -47,7 +47,7 @@ func (h *modalHandlers) showConfirm() http.HandlerFunc {
 		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Confirm(sse, "Are you sure you want to proceed with this action?",
-			wxctx.APIPath("/api/modal/confirmed"),
+			wxctx.APIPath("/modal/confirmed"),
 		)
 	}
 }
@@ -57,7 +57,7 @@ func (h *modalHandlers) showDangerConfirm() http.HandlerFunc {
 		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Confirm(sse, "This will permanently delete all data. This action cannot be undone.",
-			wxctx.APIPath("/api/modal/confirmed"),
+			wxctx.APIPath("/modal/confirmed"),
 			ds.WithConfirmTitle("Danger Zone"),
 			ds.WithConfirmLabel("Delete Everything"),
 			ds.WithConfirmClass("btn btn-error"),
@@ -92,6 +92,6 @@ func (h *modalHandlers) download() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
-		ds.Send.Download(sse, wxctx.APIPath("/api/modal/export.csv"), "export.csv")
+		ds.Send.Download(sse, wxctx.APIPath("/modal/export.csv"), "export.csv")
 	}
 }

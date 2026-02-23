@@ -70,7 +70,7 @@ func AIChats() templ.Component {
 				}
 				templ_7745c5c3_Err = aichat.AIChat(aichat.Props{
 					ID:        "demo-aichat",
-					SubmitURL: "/showcase/api/aichat/send",
+					SubmitURL: "/showcase/aichat/send",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -85,7 +85,7 @@ func AIChats() templ.Component {
 				Title: "Live Demo",
 				TemplCode: `@aichat.AIChat(aichat.Props{
     ID:        "demo-aichat",
-    SubmitURL: "/showcase/api/aichat/send",
+    SubmitURL: "/showcase/aichat/send",
 })`,
 				HandlerCode: `func (h *handler) send() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
@@ -115,7 +115,7 @@ func AIChats() templ.Component {
         // Or append any component (cards, quick replies, etc.)
         _ = chat.Append(aichat.QuickReplies(aichat.QuickRepliesProps{
             ChatID:    "demo-aichat",
-            SubmitURL: "/api/chat/send",
+            SubmitURL: "/chat/send",
             Options:   []aichat.QuickReply{{Label: "Yes", Value: "yes"}},
         }))
     }
@@ -145,7 +145,7 @@ func AIChats() templ.Component {
 					Placeholder:      "Ask the AI assistant...",
 					ReplyPlaceholder: "Follow up...",
 					Shortcut:         "⌘J",
-					SubmitURL:        "/showcase/api/aichat/send",
+					SubmitURL:        "/showcase/aichat/send",
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
@@ -162,7 +162,7 @@ func AIChats() templ.Component {
     Placeholder:      "Ask the AI assistant...",
     ReplyPlaceholder: "Follow up...",
     Shortcut:         "⌘J",
-    SubmitURL:        "/showcase/api/aichat/send",
+    SubmitURL:        "/showcase/aichat/send",
 })`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
@@ -331,7 +331,7 @@ func AIChats() templ.Component {
 				}
 				templ_7745c5c3_Err = aichat.QuickReplies(aichat.QuickRepliesProps{
 					ChatID:    "demo-aichat",
-					SubmitURL: "/showcase/api/aichat/send",
+					SubmitURL: "/showcase/aichat/send",
 					Options: []aichat.QuickReply{
 						{Label: "Netflix €12.99", Value: "Netflix"},
 						{Label: "Spotify €17.99", Value: "Spotify"},
@@ -355,7 +355,7 @@ func AIChats() templ.Component {
 }
 @aichat.QuickReplies(aichat.QuickRepliesProps{
     ChatID:    "demo-aichat",
-    SubmitURL: "/showcase/api/aichat/send",
+    SubmitURL: "/showcase/aichat/send",
     Options: []aichat.QuickReply{
         {Label: "Netflix €12.99", Value: "Netflix"},
         {Label: "Spotify €17.99", Value: "Spotify"},
@@ -424,8 +424,8 @@ func AIChats() templ.Component {
 						}
 						templ_7745c5c3_Err = aichat.ActionBar(aichat.ActionBarProps{
 							PrimaryLabel: "Add to inbox ✦",
-							PrimaryURL:   "/showcase/api/aichat/action",
-							DiscardURL:   "/showcase/api/aichat/action",
+							PrimaryURL:   "/showcase/aichat/action",
+							DiscardURL:   "/showcase/aichat/action",
 						}).Render(ctx, templ_7745c5c3_Buffer)
 						if templ_7745c5c3_Err != nil {
 							return templ_7745c5c3_Err
@@ -498,9 +498,9 @@ func AIChats() templ.Component {
 						ID:          "combined-bar",
 						Embedded:    true,
 						Placeholder: "Type, upload, or record...",
-						SubmitURL:   "/showcase/api/aichat/send-combined",
-						UploadURL:   "/showcase/api/aichat/upload",
-						VoiceURL:    "/showcase/api/aichat/voice",
+						SubmitURL:   "/showcase/aichat/send-combined",
+						UploadURL:   "/showcase/aichat/upload",
+						VoiceURL:    "/showcase/aichat/voice",
 						Suggestions: []string{"Cancel a subscription", "Plan date night"},
 					}),
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -521,9 +521,9 @@ func AIChats() templ.Component {
         ID:          "combined-bar",
         Embedded:    true,
         Placeholder: "Type, upload, or record...",
-        SubmitURL:   "/showcase/api/aichat/send-combined",
-        UploadURL:   "/showcase/api/aichat/upload",
-        VoiceURL:    "/showcase/api/aichat/voice",
+        SubmitURL:   "/showcase/aichat/send-combined",
+        UploadURL:   "/showcase/aichat/upload",
+        VoiceURL:    "/showcase/aichat/voice",
         Suggestions: []string{"Cancel a subscription", "Plan date night"},
     }),
 })`,

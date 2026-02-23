@@ -72,7 +72,7 @@ func Toasts() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/info"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/info"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -80,7 +80,7 @@ func Toasts() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/success"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/success"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -88,7 +88,7 @@ func Toasts() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/warning"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/warning"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -96,7 +96,7 @@ func Toasts() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/error"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/error"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -110,7 +110,7 @@ func Toasts() templ.Component {
 				Title: "Auto-dismiss",
 				TemplCode: `<button
     class="btn btn-success"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/success")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/success")))... }
 >
     Success
 </button>`,
@@ -140,7 +140,7 @@ func Toasts() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/persistent"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/persistent"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -154,7 +154,7 @@ func Toasts() templ.Component {
 				Title: "Persistent",
 				TemplCode: `<button
     class="btn btn-warning"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/persistent")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/persistent")))... }
 >
     Persistent Toast
 </button>`,
@@ -186,7 +186,7 @@ func Toasts() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/action"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/action"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -200,7 +200,7 @@ func Toasts() templ.Component {
 				Title: "Action Required",
 				TemplCode: `<button
     class="btn btn-error"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/action")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/action")))... }
 >
     Action Toast (Undo)
 </button>`,
@@ -209,7 +209,7 @@ func Toasts() templ.Component {
         wctx := webx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Toast(sse, ds.ToastError, "Item deleted.",
-            ds.WithToastAction("Undo", wxctx.APIPath("/api/toast/action-callback")),
+            ds.WithToastAction("Undo", wxctx.APIPath("/toast/action-callback")),
         )
     }
 }`,
@@ -233,7 +233,7 @@ func Toasts() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/link"))))
+				templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/link"))))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -247,7 +247,7 @@ func Toasts() templ.Component {
 				Title: "Link",
 				TemplCode: `<button
     class="btn btn-info"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/link")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/link")))... }
 >
     Link Toast
 </button>`,

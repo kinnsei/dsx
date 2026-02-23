@@ -5,12 +5,21 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/plaenen/webx"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
 // SetThemePath is the route path for the theme persistence endpoint.
-const SetThemePath = "/api/theme"
+const SetThemePath = "/theme"
+
+// Route returns a RouteOption that registers the theme persistence handler.
+// The secure flag controls the Secure attribute on the theme cookie.
+func Route(secure bool) func(chi.Router) {
+	return func(r chi.Router) {
+		r.Post(SetThemePath, SetThemeHandler(secure))
+	}
+}
 
 // SetThemeHandler returns an HTTP handler that persists the selected theme
 // to a cookie. It reads the theme from Datastar signals and sets the

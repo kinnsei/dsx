@@ -7,35 +7,32 @@ import (
 
 // Handlers wires all showcase SSE/API handlers.
 type Handlers struct {
-	validate *validateHandlers
-	form     *formHandlers
-	upload   *uploadHandlers
-	toast    *toastHandlers
-	stream   *streamHandlers
-	drawer   *drawerHandlers
-	modal    *modalHandlers
-	commandbar   *commandbarHandlers
-	aichat   *aichatHandlers
+	form       *formHandlers
+	upload     *uploadHandlers
+	toast      *toastHandlers
+	stream     *streamHandlers
+	drawer     *drawerHandlers
+	modal      *modalHandlers
+	commandbar *commandbarHandlers
+	aichat     *aichatHandlers
 }
 
 func New(broker *stream.Broker) *Handlers {
 	fileStore := newFileStore()
 	return &Handlers{
-		validate: newValidateHandlers(),
-		form:     newFormHandlers(),
-		upload:   newUploadHandlers(fileStore),
-		toast:    newToastHandlers(),
-		stream:   newStreamHandlers(broker),
-		drawer:   newDrawerHandlers(),
-		modal:    newModalHandlers(),
-		commandbar:   newCommandbarHandlers(),
-		aichat:   newAIChatHandlers(),
+		form:       newFormHandlers(),
+		upload:     newUploadHandlers(fileStore),
+		toast:      newToastHandlers(),
+		stream:     newStreamHandlers(broker),
+		drawer:     newDrawerHandlers(),
+		modal:      newModalHandlers(),
+		commandbar: newCommandbarHandlers(),
+		aichat:     newAIChatHandlers(),
 	}
 }
 
 // RegisterRoutes mounts all API handlers onto the given router.
 func (h *Handlers) RegisterRoutes(r chi.Router) {
-	h.validate.register(r)
 	h.form.register(r)
 	h.upload.register(r)
 	h.toast.register(r)

@@ -5,6 +5,7 @@ import (
 
 	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/icon"
 	"github.com/plaenen/webx/utils"
 )
 
@@ -128,6 +129,69 @@ type ButtonGroupProps struct {
 	Attributes templ.Attributes
 	Default    string        // initially selected theme
 	Themes     []ThemeOption // available themes
+}
+
+// IconToggleProps configures an icon-based toggle between a light and dark theme.
+// Displays a sun icon in dark mode (click to go light) and a moon icon in light
+// mode (click to go dark).
+type IconToggleProps struct {
+	ID         string
+	Class      string
+	Attributes templ.Attributes
+	Dark       string // dark theme name (e.g. "dark")
+	Light      string // light theme name (e.g. "silk", "light")
+	Size       int    // icon size in px (default 20)
+}
+
+templ IconToggle(props IconToggleProps) {
+	{{
+		wxctx := webx.FromContext(ctx)
+		id := props.ID
+		if id == "" {
+			id = utils.RandomID()
+		}
+		light := props.Light
+		if light == "" {
+			light = "default"
+		}
+		dark := props.Dark
+		if dark == "" {
+			dark = "dark"
+		}
+		size := props.Size
+		if size <= 0 {
+			size = 20
+		}
+		initialTheme := light
+		if wxctx.Theme != "" {
+			initialTheme = wxctx.Theme
+		}
+		signals := ds.NewSignals(id, ThemeSignals{Theme: initialTheme})
+		isDark := signals.Equals("theme", dark)
+		isLight := signals.NotEquals("theme", dark)
+		toggleExpr := fmt.Sprintf("if(%s) { %s } else { %s }; %s",
+			isDark,
+			signals.SetString("theme", light),
+			signals.SetString("theme", dark),
+			persistAction(wxctx.BasePath),
+		)
+	}}
+	<button
+		type="button"
+		aria-label="Toggle theme"
+		data-signals={ signals.DataSignals }
+		{ ds.Effect(themeEffect(signals))... }
+		class={ utils.TwMerge("btn btn-ghost btn-square btn-sm", props.Class) }
+		{ ds.OnClick(toggleExpr)... }
+		{ props.Attributes... }
+	>
+		<span style="display: none;" { ds.Show(isLight)... }>
+			@icon.Moon(icon.Props{Size: size})
+		</span>
+		<span style="display: none;" { ds.Show(isDark)... }>
+			@icon.Sun(icon.Props{Size: size})
+		</span>
+	</button>
 }
 
 templ ButtonGroup(props ButtonGroupProps) {

@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	webx "github.com/plaenen/webx"
 	"github.com/plaenen/webx/utils"
 	"github.com/starfederation/datastar-go/datastar"
@@ -39,15 +40,16 @@ func WithMaxFiles(n int) HandlerOption {
 	return func(c *handlerConfig) { c.maxFiles = n }
 }
 
-func storeKey(sessionID, componentID string) string {
+// StoreKey builds the composite key used to identify files in the store.
+func StoreKey(sessionID, componentID string) string {
 	return sessionID + ":" + componentID
 }
 
 // UploadPath is the standard handler path for file uploads.
-const UploadPath = "/api/upload/files"
+const UploadPath = "/upload/files"
 
 // RemovePath is the standard handler path for file removal.
-const RemovePath = "/api/upload/remove"
+const RemovePath = "/upload/remove"
 
 // UploadHandler returns an http.HandlerFunc that accepts multipart file
 // uploads and responds with an SSE patch of the updated file list.
@@ -55,7 +57,7 @@ const RemovePath = "/api/upload/remove"
 // Mount at a dedicated POST path:
 //
 //	r.Post(fileupload.UploadPath, fileupload.UploadHandler(store))
-func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
+func UploadHandler(store Store, opts ...HandlerOption) http.HandlerFunc {
 	cfg := &handlerConfig{
 		maxFileSize: 10 << 20, // 10MB
 		maxFiles:    10,
@@ -72,13 +74,13 @@ func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
 		}
 
 		removeURL := r.URL.Query().Get("removeUrl")
-		if removeURL != "" && !isRelativePath(removeURL) {
+		if removeURL != "" && !IsRelativePath(removeURL) {
 			http.Error(w, "invalid removeUrl parameter", http.StatusBadRequest)
 			return
 		}
 
 		wxctx := webx.FromContext(r.Context())
-		key := storeKey(wxctx.SessionID, componentID)
+		key := StoreKey(wxctx.SessionID, componentID)
 
 		if err := r.ParseMultipartForm(32 << 20); err != nil {
 			slog.Error("fileupload: parse form failed", "error", err)
@@ -104,7 +106,7 @@ func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
 			}
 
 			// Detect actual MIME type from file content (first 512 bytes).
-			ct, detectErr := detectMIME(fh)
+			ct, detectErr := DetectMIME(fh)
 			if detectErr != nil {
 				slog.Error("fileupload: MIME detection failed", "file", fh.Filename, "error", detectErr)
 				errors = append(errors, fmt.Sprintf("%s: unable to determine file type", fh.Filename))
@@ -166,7 +168,7 @@ func UploadHandler(store *Store, opts ...HandlerOption) http.HandlerFunc {
 // Mount at a dedicated POST path:
 //
 //	r.Post(fileupload.RemovePath, fileupload.RemoveHandler(store))
-func RemoveHandler(store *Store) http.HandlerFunc {
+func RemoveHandler(store Store) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		componentID := r.URL.Query().Get("id")
 		fileID := r.URL.Query().Get("fileId")
@@ -175,13 +177,13 @@ func RemoveHandler(store *Store) http.HandlerFunc {
 			http.Error(w, "missing id or fileId query parameter", http.StatusBadRequest)
 			return
 		}
-		if removeURL != "" && !isRelativePath(removeURL) {
+		if removeURL != "" && !IsRelativePath(removeURL) {
 			http.Error(w, "invalid removeUrl parameter", http.StatusBadRequest)
 			return
 		}
 
 		wxctx := webx.FromContext(r.Context())
-		key := storeKey(wxctx.SessionID, componentID)
+		key := StoreKey(wxctx.SessionID, componentID)
 
 		store.Remove(key, fileID)
 		files := store.List(key)
@@ -195,9 +197,9 @@ func RemoveHandler(store *Store) http.HandlerFunc {
 	}
 }
 
-// detectMIME opens a multipart file header and reads the first 512 bytes
+// DetectMIME opens a multipart file header and reads the first 512 bytes
 // to detect the actual MIME type using http.DetectContentType.
-func detectMIME(fh *multipart.FileHeader) (string, error) {
+func DetectMIME(fh *multipart.FileHeader) (string, error) {
 	f, err := fh.Open()
 	if err != nil {
 		return "", fmt.Errorf("opening file: %w", err)
@@ -212,9 +214,9 @@ func detectMIME(fh *multipart.FileHeader) (string, error) {
 	return http.DetectContentType(buf[:n]), nil
 }
 
-// isRelativePath validates that a URL string is a relative path (starts with /)
+// IsRelativePath validates that a URL string is a relative path (starts with /)
 // and does not contain a scheme or protocol-relative prefix.
-func isRelativePath(s string) bool {
+func IsRelativePath(s string) bool {
 	if s == "" {
 		return false
 	}
@@ -230,6 +232,14 @@ func isRelativePath(s string) bool {
 		return false
 	}
 	return true
+}
+
+// Route returns a RouteOption that registers upload and remove handlers.
+func Route(store Store, opts ...HandlerOption) func(chi.Router) {
+	return func(r chi.Router) {
+		r.Post(UploadPath, UploadHandler(store, opts...))
+		r.Post(RemovePath, RemoveHandler(store))
+	}
 }
 
 // RemoveQueryParams builds a remove URL with properly escaped query parameters.

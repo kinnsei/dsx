@@ -17,20 +17,20 @@ func newToastHandlers() *toastHandlers {
 
 func (t *toastHandlers) register(r chi.Router) {
 	// Auto-dismiss toasts
-	r.Get("/api/toast/info", t.showToast(ds.ToastInfo, "This is an informational message."))
-	r.Get("/api/toast/success", t.showToast(ds.ToastSuccess, "Operation completed successfully!"))
-	r.Get("/api/toast/warning", t.showToast(ds.ToastWarning, "Warning: please check your input."))
-	r.Get("/api/toast/error", t.showToast(ds.ToastError, "Something went wrong. Please try again."))
+	r.Get("/toast/info", t.showToast(ds.ToastInfo, "This is an informational message."))
+	r.Get("/toast/success", t.showToast(ds.ToastSuccess, "Operation completed successfully!"))
+	r.Get("/toast/warning", t.showToast(ds.ToastWarning, "Warning: please check your input."))
+	r.Get("/toast/error", t.showToast(ds.ToastError, "Something went wrong. Please try again."))
 
 	// Persistent toast
-	r.Get("/api/toast/persistent", t.showPersistent())
+	r.Get("/toast/persistent", t.showPersistent())
 
 	// Action toast
-	r.Get("/api/toast/action", t.showAction())
-	r.Get("/api/toast/action-callback", t.actionCallback())
+	r.Get("/toast/action", t.showAction())
+	r.Get("/toast/action-callback", t.actionCallback())
 
 	// Link toast
-	r.Get("/api/toast/link", t.showLink())
+	r.Get("/toast/link", t.showLink())
 }
 
 func (t *toastHandlers) showToast(level ds.ToastLevel, message string) http.HandlerFunc {
@@ -51,7 +51,7 @@ func (t *toastHandlers) showAction() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		wxctx := webx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
-		ds.Send.Toast(sse, ds.ToastError, "Item deleted.", ds.WithToastAction("Undo", wxctx.APIPath("/api/toast/action-callback")))
+		ds.Send.Toast(sse, ds.ToastError, "Item deleted.", ds.WithToastAction("Undo", wxctx.APIPath("/toast/action-callback")))
 	}
 }
 

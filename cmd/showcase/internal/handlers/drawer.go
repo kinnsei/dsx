@@ -16,7 +16,7 @@ func newDrawerHandlers() *drawerHandlers {
 }
 
 func (h *drawerHandlers) register(r chi.Router) {
-	r.Get("/api/drawer/project/{id}", h.showProject())
+	r.Get("/drawer/project/{id}", h.showProject())
 }
 
 var mockProjects = map[string]pages.Project{

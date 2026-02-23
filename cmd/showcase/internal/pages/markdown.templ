@@ -65,9 +65,9 @@ templ Markdowns() {
 				Title: "Markdown Input",
 				TemplCode: `@markdown.MarkdownInput(markdown.InputProps{
     ID:         "md-editor",
-    PreviewURL: "/showcase/api/preview/markdown",
+    PreviewURL: "/showcase/preview/markdown",
 })`,
-				HandlerCode: `r.Post("/api/preview/markdown", markdown.PreviewHandler())`,
+				HandlerCode: `r.Post("/preview/markdown", markdown.PreviewHandler())`,
 			}) {
 				<p class="text-sm mb-4">
 					Write markdown in the editor, then click Preview to see server-rendered output.
@@ -75,7 +75,7 @@ templ Markdowns() {
 				<div class="w-full max-w-2xl">
 					@markdown.MarkdownInput(markdown.InputProps{
 						ID:         "md-editor",
-						PreviewURL: "/showcase/api/preview/markdown",
+						PreviewURL: "/showcase/preview/markdown",
 					})
 				</div>
 			}
@@ -83,10 +83,10 @@ templ Markdowns() {
 				Title: "Pre-filled Input",
 				TemplCode: `@markdown.MarkdownInput(markdown.InputProps{
     ID:         "md-prefilled",
-    PreviewURL: "/showcase/api/preview/markdown",
+    PreviewURL: "/showcase/preview/markdown",
     Value:      prefillMarkdown,
 })`,
-				HandlerCode: `r.Post("/api/preview/markdown", markdown.PreviewHandler())`,
+				HandlerCode: `r.Post("/preview/markdown", markdown.PreviewHandler())`,
 			}) {
 				<p class="text-sm mb-4">
 					A markdown input with initial content. Edit and preview to see changes.
@@ -94,7 +94,7 @@ templ Markdowns() {
 				<div class="w-full max-w-2xl">
 					@markdown.MarkdownInput(markdown.InputProps{
 						ID:         "md-prefilled",
-						PreviewURL: "/showcase/api/preview/markdown",
+						PreviewURL: "/showcase/preview/markdown",
 						Value:      prefillMarkdown,
 					})
 				</div>

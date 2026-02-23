@@ -50,8 +50,8 @@ func (c *Context) WithContext(ctx context.Context) context.Context {
 }
 
 // APIPath returns the full path for a component SSE handler by prepending
-// the BasePath. For example, with BasePath "/showcase" and path "/api/calendar/navigate",
-// it returns "/showcase/api/calendar/navigate".
+// the BasePath. For example, with BasePath "/showcase" and path "/calendar/navigate",
+// it returns "/showcase/calendar/navigate".
 func (c *Context) APIPath(path string) string {
 	return c.BasePath + path
 }

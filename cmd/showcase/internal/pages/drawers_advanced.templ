@@ -42,7 +42,7 @@ templ DrawersAdvanced() {
     @card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg"}) {
         @card.Body(card.Props{
             Attributes: ds.Merge(
-                ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/"+id))),
+                ds.OnClick(ds.GetOnce(wxctx.APIPath("/drawer/project/"+id))),
             ),
         }) {
             { name }
@@ -90,7 +90,7 @@ templ projectCard(wxctx *webx.Context, id, name, description, status string, pro
 	@card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg transition-shadow"}) {
 		@card.Body(card.Props{
 			Attributes: ds.Merge(
-				ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/drawer/project/"+id))),
+				ds.OnClick(ds.GetOnce(wxctx.APIPath("/drawer/project/"+id))),
 			),
 		}) {
 			<div class="flex items-start justify-between">

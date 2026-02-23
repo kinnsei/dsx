@@ -69,8 +69,7 @@ func Validators() templ.Component {
 				}
 				templ_7745c5c3_Err = validator.Input(validator.InputProps{
 					ID:          "email-demo",
-					Type:        validator.TypeEmail,
-					ValidateURL: "/showcase/api/validate/email",
+					Validate:    validator.Email,
 					Placeholder: "email@example.com",
 					Class:       "input-bordered w-full",
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -87,15 +86,12 @@ func Validators() templ.Component {
 				Title: "Email Validation",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-demo",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email",
+    Validate:    validator.Email,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/validate/email", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, false)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -118,8 +114,7 @@ func Validators() templ.Component {
 				}
 				templ_7745c5c3_Err = validator.Input(validator.InputProps{
 					ID:          "email-success",
-					Type:        validator.TypeEmail,
-					ValidateURL: "/showcase/api/validate/email",
+					Validate:    validator.Email,
 					Placeholder: "email@example.com",
 					Class:       "input-bordered w-full",
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -158,18 +153,15 @@ func Validators() templ.Component {
 				Title: "With Success Hint",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-success",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email",
+    Validate:    validator.Email,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
 })
 @validator.SuccessHint("email-success") {
     Valid email address
 }`,
-				HandlerCode: `r.Get("/api/validate/email", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, false)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -192,8 +184,7 @@ func Validators() templ.Component {
 				}
 				templ_7745c5c3_Err = validator.Input(validator.InputProps{
 					ID:          "email-mx",
-					Type:        validator.TypeEmail,
-					ValidateURL: "/showcase/api/validate/email-mx",
+					Validate:    validator.EmailMX,
 					Placeholder: "email@example.com",
 					Class:       "input-bordered w-full",
 					HintText:    "Please enter a valid email with a real domain",
@@ -211,16 +202,13 @@ func Validators() templ.Component {
 				Title: "Email with MX Check",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-mx",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email-mx",
+    Validate:    validator.EmailMX,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
     HintText:    "Please enter a valid email with a real domain",
 })`,
-				HandlerCode: `r.Get("/api/validate/email-mx", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, true)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -237,14 +225,147 @@ func Validators() templ.Component {
 					}()
 				}
 				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p class=\"text-sm mb-4\">Same email validation with a shorter debounce (200ms).</p><div class=\"w-full max-w-sm\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<p class=\"text-sm mb-4\">Validates IBAN format, country-specific length, and MOD-97 checksum.</p><div class=\"w-full max-w-sm\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = validator.Input(validator.InputProps{
+					ID:          "iban-demo",
+					Validate:    validator.IBANValidation,
+					Placeholder: "DE89 3704 0044 0532 0130 00",
+					Class:       "input-bordered w-full",
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "Valid IBAN")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = validator.SuccessHint("iban-demo").Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = components.Example(components.ExampleProps{
+				Title: "IBAN Validation",
+				TemplCode: `@validator.Input(validator.InputProps{
+    ID:          "iban-demo",
+    Validate:    validator.IBANValidation,
+    Placeholder: "DE89 3704 0044 0532 0130 00",
+    Class:       "input-bordered w-full",
+})`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
+			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var9 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<p class=\"text-sm mb-4\">Validates SWIFT/BIC code format. Accepts 8-character (head office) or 11-character (branch) codes.</p><div class=\"w-full max-w-sm\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = validator.Input(validator.InputProps{
+					ID:          "swift-demo",
+					Validate:    validator.SWIFTValidation,
+					Placeholder: "DEUTDEFF",
+					Class:       "input-bordered w-full",
+				}).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Var10 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+					if !templ_7745c5c3_IsBuffer {
+						defer func() {
+							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+							if templ_7745c5c3_Err == nil {
+								templ_7745c5c3_Err = templ_7745c5c3_BufErr
+							}
+						}()
+					}
+					ctx = templ.InitializeContext(ctx)
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "Valid SWIFT/BIC code")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					return nil
+				})
+				templ_7745c5c3_Err = validator.SuccessHint("swift-demo").Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				return nil
+			})
+			templ_7745c5c3_Err = components.Example(components.ExampleProps{
+				Title: "SWIFT/BIC Validation",
+				TemplCode: `@validator.Input(validator.InputProps{
+    ID:          "swift-demo",
+    Validate:    validator.SWIFTValidation,
+    Placeholder: "DEUTDEFF",
+    Class:       "input-bordered w-full",
+})`,
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
+			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var9), templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Var11 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+				if !templ_7745c5c3_IsBuffer {
+					defer func() {
+						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+						if templ_7745c5c3_Err == nil {
+							templ_7745c5c3_Err = templ_7745c5c3_BufErr
+						}
+					}()
+				}
+				ctx = templ.InitializeContext(ctx)
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<p class=\"text-sm mb-4\">Same email validation with a shorter debounce (200ms).</p><div class=\"w-full max-w-sm\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				templ_7745c5c3_Err = validator.Input(validator.InputProps{
 					ID:          "email-fast",
-					Type:        validator.TypeEmail,
-					ValidateURL: "/showcase/api/validate/email",
+					Validate:    validator.Email,
 					Placeholder: "email@example.com",
 					Class:       "input-bordered w-full",
 					DebounceMs:  200,
@@ -252,7 +373,7 @@ func Validators() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -262,21 +383,18 @@ func Validators() templ.Component {
 				Title: "Custom Debounce",
 				TemplCode: `@validator.Input(validator.InputProps{
     ID:          "email-fast",
-    Type:        validator.TypeEmail,
-    ValidateURL: "/api/validate/email",
+    Validate:    validator.Email,
     Placeholder: "email@example.com",
     Class:       "input-bordered w-full",
     DebounceMs:  200,
 })`,
-				HandlerCode: `r.Get("/api/validate/email", validator.Handler(func(value string) validator.Result {
-    res := validators.Email(value, false)
-    return validator.Result{Valid: res.Valid, Error: res.Error}
-}))`,
-			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+				HandlerCode: `// Built-in: just register validator.Route()
+ui.RegisterRoutes(r, validator.Route())`,
+			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

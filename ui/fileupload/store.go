@@ -10,27 +10,38 @@ type FileMeta struct {
 	MimeType string
 }
 
-// Store is a thread-safe in-memory store for uploaded file metadata,
+// Store is the interface for uploaded file metadata storage.
+type Store interface {
+	Add(key string, meta FileMeta)
+	Remove(key, fileID string)
+	List(key string) []FileMeta
+	Clear(key string)
+}
+
+// MemoryStore is a thread-safe in-memory implementation of Store,
 // keyed by "sessionID:componentID".
-type Store struct {
+type MemoryStore struct {
 	mu    sync.Mutex
 	files map[string][]FileMeta
 }
 
-// NewStore creates a new empty file metadata store.
-func NewStore() *Store {
-	return &Store{files: make(map[string][]FileMeta)}
+// compile-time check
+var _ Store = (*MemoryStore)(nil)
+
+// NewStore creates a new empty in-memory file metadata store.
+func NewStore() *MemoryStore {
+	return &MemoryStore{files: make(map[string][]FileMeta)}
 }
 
 // Add appends a file to the store under the given key.
-func (s *Store) Add(key string, meta FileMeta) {
+func (s *MemoryStore) Add(key string, meta FileMeta) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.files[key] = append(s.files[key], meta)
 }
 
 // Remove deletes a file by ID from the store.
-func (s *Store) Remove(key, fileID string) {
+func (s *MemoryStore) Remove(key, fileID string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	files := s.files[key]
@@ -43,7 +54,7 @@ func (s *Store) Remove(key, fileID string) {
 }
 
 // List returns all files stored under the given key.
-func (s *Store) List(key string) []FileMeta {
+func (s *MemoryStore) List(key string) []FileMeta {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	dst := make([]FileMeta, len(s.files[key]))
@@ -52,7 +63,7 @@ func (s *Store) List(key string) []FileMeta {
 }
 
 // Clear removes all files under the given key.
-func (s *Store) Clear(key string) {
+func (s *MemoryStore) Clear(key string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	delete(s.files, key)

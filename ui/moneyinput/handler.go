@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -22,10 +23,25 @@ type moneyHandlerSignals struct {
 }
 
 // DecimalPath is the standard handler path for decimal parsing.
-const DecimalPath = "/api/parse/decimal"
+const DecimalPath = "/parse/decimal"
 
 // MoneyPath is the standard handler path for money parsing.
-const MoneyPath = "/api/parse/money"
+const MoneyPath = "/parse/money"
+
+// DecimalRoute returns a RouteOption that registers the decimal parser handler.
+func DecimalRoute() func(chi.Router) {
+	return func(r chi.Router) {
+		r.Get(DecimalPath, DecimalHandler())
+	}
+}
+
+// MoneyRoute returns a RouteOption that registers the money parser handler.
+// If allowedCurrencies is provided, only those currencies are accepted.
+func MoneyRoute(allowedCurrencies ...string) func(chi.Router) {
+	return func(r chi.Router) {
+		r.Get(MoneyPath, MoneyHandler(allowedCurrencies...))
+	}
+}
 
 // DecimalHandler returns an http.HandlerFunc that parses a numeric value
 // (supporting shorthand like 5k, 1.5M) and patches the signals with the

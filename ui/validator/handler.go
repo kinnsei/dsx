@@ -5,8 +5,71 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
+	"github.com/plaenen/webx/utils/validators"
 	"github.com/starfederation/datastar-go/datastar"
 )
+
+// Validation identifies a built-in server-side validation type.
+type Validation string
+
+const (
+	// Email validates email format (regex-based).
+	Email Validation = "email"
+	// EmailMX validates email format and checks MX records.
+	EmailMX Validation = "email-mx"
+	// IBANValidation validates IBAN format and checksum.
+	IBANValidation Validation = "iban"
+	// SWIFTValidation validates SWIFT/BIC code format.
+	SWIFTValidation Validation = "swift"
+)
+
+// validationInputTypes maps validation types to their default HTML input type.
+// If not listed, defaults to "text".
+var validationInputTypes = map[Validation]InputType{
+	Email:   TypeEmail,
+	EmailMX: TypeEmail,
+}
+
+// validationPath returns the handler path for a built-in validation type.
+func (v Validation) path() string {
+	return "/validate/" + string(v)
+}
+
+// Path returns the handler path for a built-in validation type.
+// Use with webx.Context.APIPath to build the full URL.
+func (v Validation) Path() string {
+	return v.path()
+}
+
+// builtinValidators maps validation types to their ValidateFunc.
+var builtinValidators = map[Validation]ValidateFunc{
+	Email: func(value string) Result {
+		r := validators.Email(value, false)
+		return Result{Valid: r.Valid, Error: r.Error}
+	},
+	EmailMX: func(value string) Result {
+		r := validators.Email(value, true)
+		return Result{Valid: r.Valid, Error: r.Error}
+	},
+	IBANValidation: func(value string) Result {
+		r := validators.IBAN(value)
+		return Result{Valid: r.Valid, Error: r.Error}
+	},
+	SWIFTValidation: func(value string) Result {
+		r := validators.SWIFT(value)
+		return Result{Valid: r.Valid, Error: r.Error}
+	},
+}
+
+// Route returns a RouteOption that registers all built-in validators.
+func Route() func(chi.Router) {
+	return func(r chi.Router) {
+		for v, fn := range builtinValidators {
+			r.Get(v.path(), Handler(fn))
+		}
+	}
+}
 
 // Result holds the outcome of a validation check.
 type Result struct {
@@ -22,8 +85,8 @@ type ValidateFunc func(value string) Result
 //
 // Mount each validator at its own path:
 //
-//	r.Get("/api/validate/email", validator.Handler(emailValidator))
-//	r.Get("/api/validate/phone", validator.Handler(phoneValidator))
+//	r.Get("/validate/email", validator.Handler(emailValidator))
+//	r.Get("/validate/phone", validator.Handler(phoneValidator))
 //
 // The component references this path via the ValidateURL prop.
 func Handler(fn ValidateFunc) http.HandlerFunc {

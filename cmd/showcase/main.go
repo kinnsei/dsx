@@ -20,6 +20,11 @@ import (
 	"github.com/plaenen/webx/cmd/showcase/internal/static"
 	"github.com/plaenen/webx/stream"
 	"github.com/plaenen/webx/ui"
+	"github.com/plaenen/webx/ui/calendar"
+	"github.com/plaenen/webx/ui/markdown"
+	"github.com/plaenen/webx/ui/moneyinput"
+	"github.com/plaenen/webx/ui/themecontroller"
+	"github.com/plaenen/webx/ui/validator"
 	"github.com/spf13/cobra"
 )
 
@@ -203,10 +208,13 @@ func serve(port int, pro bool) error {
 	h := handlers.New(broker)
 	r.Route(basePath, func(r chi.Router) {
 		r.Get("/stream", broker.Handler())
-		ui.RegisterRoutes(r, false,
-			ui.WithMarkdownPreview(),
-			ui.WithDecimalParser(),
-			ui.WithMoneyParser(),
+		ui.RegisterRoutes(r,
+			calendar.Route(),
+			themecontroller.Route(false),
+			markdown.Route(),
+			moneyinput.DecimalRoute(),
+			moneyinput.MoneyRoute(),
+			validator.Route(),
 		)
 		h.RegisterRoutes(r)
 	})

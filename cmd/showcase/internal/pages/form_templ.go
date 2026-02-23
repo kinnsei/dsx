@@ -260,7 +260,7 @@ func Forms() templ.Component {
 				})
 				templ_7745c5c3_Err = form.Form(form.Props{
 					ID:      "login",
-					Action:  "/showcase/api/form/login",
+					Action:  "/showcase/form/login",
 					Signals: loginSignals{},
 				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -276,7 +276,7 @@ func Forms() templ.Component {
 				Title: "Login Form",
 				TemplCode: `@form.Form(form.Props{
     ID:      "login",
-    Action:  "/api/form/login",
+    Action:  "/form/login",
     Signals: loginSignals{},
 }) {
     @form.FormError("login")
@@ -582,7 +582,7 @@ func Forms() templ.Component {
 				})
 				templ_7745c5c3_Err = form.Form(form.Props{
 					ID:      "contact",
-					Action:  "/showcase/api/form/contact",
+					Action:  "/showcase/form/contact",
 					Signals: contactSignals{},
 				}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var11), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -598,7 +598,7 @@ func Forms() templ.Component {
 				Title: "Contact Form",
 				TemplCode: `@form.Form(form.Props{
     ID:      "contact",
-    Action:  "/api/form/contact",
+    Action:  "/form/contact",
     Signals: contactSignals{},
 }) {
     @form.FormError("contact")

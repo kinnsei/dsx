@@ -69,7 +69,7 @@ func MoneyInputs() templ.Component {
 				}
 				templ_7745c5c3_Err = moneyinput.DecimalInput(moneyinput.DecimalProps{
 					ID:          "decimal-basic",
-					ParseURL:    "/showcase/api/parse/decimal",
+					ParseURL:    "/showcase/parse/decimal",
 					Placeholder: "e.g. 5k, 1.5M, 1,234.56",
 					Class:       "input-bordered w-full",
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -86,11 +86,11 @@ func MoneyInputs() templ.Component {
 				Title: "Basic Decimal",
 				TemplCode: `@moneyinput.DecimalInput(moneyinput.DecimalProps{
     ID:          "decimal-basic",
-    ParseURL:    "/showcase/api/parse/decimal",
+    ParseURL:    "/showcase/parse/decimal",
     Placeholder: "e.g. 5k, 1.5M, 1,234.56",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/decimal", moneyinput.DecimalHandler())`,
+				HandlerCode: `r.Get("/parse/decimal", moneyinput.DecimalHandler())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -113,7 +113,7 @@ func MoneyInputs() templ.Component {
 				}
 				templ_7745c5c3_Err = moneyinput.DecimalInput(moneyinput.DecimalProps{
 					ID:          "decimal-prefilled",
-					ParseURL:    "/showcase/api/parse/decimal",
+					ParseURL:    "/showcase/parse/decimal",
 					Placeholder: "e.g. 5k",
 					Value:       "2500",
 					Class:       "input-bordered w-full",
@@ -131,12 +131,12 @@ func MoneyInputs() templ.Component {
 				Title: "Pre-filled Decimal",
 				TemplCode: `@moneyinput.DecimalInput(moneyinput.DecimalProps{
     ID:          "decimal-prefilled",
-    ParseURL:    "/showcase/api/parse/decimal",
+    ParseURL:    "/showcase/parse/decimal",
     Placeholder: "e.g. 5k",
     Value:       "2500",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/decimal", moneyinput.DecimalHandler())`,
+				HandlerCode: `r.Get("/parse/decimal", moneyinput.DecimalHandler())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -159,7 +159,7 @@ func MoneyInputs() templ.Component {
 				}
 				templ_7745c5c3_Err = moneyinput.MoneyInput(moneyinput.MoneyProps{
 					ID:          "money-any",
-					ParseURL:    "/showcase/api/parse/money",
+					ParseURL:    "/showcase/parse/money",
 					Placeholder: "e.g. USD 5k, 100 EUR",
 					Class:       "input-bordered w-full",
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -176,11 +176,11 @@ func MoneyInputs() templ.Component {
 				Title: "Money with Currency",
 				TemplCode: `@moneyinput.MoneyInput(moneyinput.MoneyProps{
     ID:          "money-any",
-    ParseURL:    "/showcase/api/parse/money",
+    ParseURL:    "/showcase/parse/money",
     Placeholder: "e.g. USD 5k, 100 EUR",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/money", moneyinput.MoneyHandler())`,
+				HandlerCode: `r.Get("/parse/money", moneyinput.MoneyHandler())`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -203,7 +203,7 @@ func MoneyInputs() templ.Component {
 				}
 				templ_7745c5c3_Err = moneyinput.MoneyInput(moneyinput.MoneyProps{
 					ID:          "money-restricted",
-					ParseURL:    "/showcase/api/parse/money-restricted",
+					ParseURL:    "/showcase/parse/money-restricted",
 					Placeholder: "e.g. USD 100, 50 EUR",
 					Class:       "input-bordered w-full",
 				}).Render(ctx, templ_7745c5c3_Buffer)
@@ -220,11 +220,11 @@ func MoneyInputs() templ.Component {
 				Title: "Restricted Currencies",
 				TemplCode: `@moneyinput.MoneyInput(moneyinput.MoneyProps{
     ID:          "money-restricted",
-    ParseURL:    "/showcase/api/parse/money-restricted",
+    ParseURL:    "/showcase/parse/money-restricted",
     Placeholder: "e.g. USD 100, 50 EUR",
     Class:       "input-bordered w-full",
 })`,
-				HandlerCode: `r.Get("/api/parse/money-restricted", moneyinput.MoneyHandler("USD", "EUR"))`,
+				HandlerCode: `r.Get("/parse/money-restricted", moneyinput.MoneyHandler("USD", "EUR"))`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

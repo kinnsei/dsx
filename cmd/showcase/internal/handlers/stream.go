@@ -20,10 +20,10 @@ func newStreamHandlers(broker *stream.Broker) *streamHandlers {
 }
 
 func (s *streamHandlers) register(r chi.Router) {
-	r.Get("/api/stream/counter", s.getCounter())
-	r.Get("/api/stream/increment", s.increment())
-	r.Get("/api/stream/decrement", s.decrement())
-	r.Get("/api/stream/reset", s.reset())
+	r.Get("/stream/counter", s.getCounter())
+	r.Get("/stream/increment", s.increment())
+	r.Get("/stream/decrement", s.decrement())
+	r.Get("/stream/reset", s.reset())
 }
 
 func (s *streamHandlers) getCounter() http.HandlerFunc {

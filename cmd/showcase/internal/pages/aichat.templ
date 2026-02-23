@@ -28,7 +28,7 @@ templ AIChats() {
 				Title: "Live Demo",
 				TemplCode: `@aichat.AIChat(aichat.Props{
     ID:        "demo-aichat",
-    SubmitURL: "/showcase/api/aichat/send",
+    SubmitURL: "/showcase/aichat/send",
 })`,
 				HandlerCode: `func (h *handler) send() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +58,7 @@ templ AIChats() {
         // Or append any component (cards, quick replies, etc.)
         _ = chat.Append(aichat.QuickReplies(aichat.QuickRepliesProps{
             ChatID:    "demo-aichat",
-            SubmitURL: "/api/chat/send",
+            SubmitURL: "/chat/send",
             Options:   []aichat.QuickReply{{Label: "Yes", Value: "yes"}},
         }))
     }
@@ -67,7 +67,7 @@ templ AIChats() {
 				<div class="max-w-lg mx-auto">
 					@aichat.AIChat(aichat.Props{
 						ID:        "demo-aichat",
-						SubmitURL: "/showcase/api/aichat/send",
+						SubmitURL: "/showcase/aichat/send",
 					})
 				</div>
 			}
@@ -77,7 +77,7 @@ templ AIChats() {
     Placeholder:      "Ask the AI assistant...",
     ReplyPlaceholder: "Follow up...",
     Shortcut:         "⌘J",
-    SubmitURL:        "/showcase/api/aichat/send",
+    SubmitURL:        "/showcase/aichat/send",
 })`,
 			}) {
 				<div class="max-w-lg mx-auto">
@@ -86,7 +86,7 @@ templ AIChats() {
 						Placeholder:      "Ask the AI assistant...",
 						ReplyPlaceholder: "Follow up...",
 						Shortcut:         "⌘J",
-						SubmitURL:        "/showcase/api/aichat/send",
+						SubmitURL:        "/showcase/aichat/send",
 					})
 				</div>
 			}
@@ -129,7 +129,7 @@ templ AIChats() {
 }
 @aichat.QuickReplies(aichat.QuickRepliesProps{
     ChatID:    "demo-aichat",
-    SubmitURL: "/showcase/api/aichat/send",
+    SubmitURL: "/showcase/aichat/send",
     Options: []aichat.QuickReply{
         {Label: "Netflix €12.99", Value: "Netflix"},
         {Label: "Spotify €17.99", Value: "Spotify"},
@@ -144,7 +144,7 @@ templ AIChats() {
 					}
 					@aichat.QuickReplies(aichat.QuickRepliesProps{
 						ChatID:    "demo-aichat",
-						SubmitURL: "/showcase/api/aichat/send",
+						SubmitURL: "/showcase/aichat/send",
 						Options: []aichat.QuickReply{
 							{Label: "Netflix €12.99", Value: "Netflix"},
 							{Label: "Spotify €17.99", Value: "Spotify"},
@@ -192,8 +192,8 @@ templ AIChats() {
 							})
 							@aichat.ActionBar(aichat.ActionBarProps{
 								PrimaryLabel: "Add to inbox ✦",
-								PrimaryURL:   "/showcase/api/aichat/action",
-								DiscardURL:   "/showcase/api/aichat/action",
+								PrimaryURL:   "/showcase/aichat/action",
+								DiscardURL:   "/showcase/aichat/action",
 							})
 						}
 					}
@@ -207,9 +207,9 @@ templ AIChats() {
         ID:          "combined-bar",
         Embedded:    true,
         Placeholder: "Type, upload, or record...",
-        SubmitURL:   "/showcase/api/aichat/send-combined",
-        UploadURL:   "/showcase/api/aichat/upload",
-        VoiceURL:    "/showcase/api/aichat/voice",
+        SubmitURL:   "/showcase/aichat/send-combined",
+        UploadURL:   "/showcase/aichat/upload",
+        VoiceURL:    "/showcase/aichat/voice",
         Suggestions: []string{"Cancel a subscription", "Plan date night"},
     }),
 })`,
@@ -248,9 +248,9 @@ func (h *handler) sendCombined() http.HandlerFunc {
 							ID:          "combined-bar",
 							Embedded:    true,
 							Placeholder: "Type, upload, or record...",
-							SubmitURL:   "/showcase/api/aichat/send-combined",
-							UploadURL:   "/showcase/api/aichat/upload",
-							VoiceURL:    "/showcase/api/aichat/voice",
+							SubmitURL:   "/showcase/aichat/send-combined",
+							UploadURL:   "/showcase/aichat/upload",
+							VoiceURL:    "/showcase/aichat/voice",
 							Suggestions: []string{"Cancel a subscription", "Plan date night"},
 						}),
 					})

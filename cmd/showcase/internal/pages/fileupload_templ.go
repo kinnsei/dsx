@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	fuUploadURL           = "/showcase/api/upload/files"
-	fuRemoveURL           = "/showcase/api/upload/remove"
-	fuRestrictedUploadURL = "/showcase/api/upload/files-restricted"
+	fuUploadURL           = "/showcase/upload/files"
+	fuRemoveURL           = "/showcase/upload/remove"
+	fuRestrictedUploadURL = "/showcase/upload/files-restricted"
 )
 
 func FileUploads() templ.Component {
@@ -87,13 +87,13 @@ func FileUploads() templ.Component {
 				Title: "Basic File Upload",
 				TemplCode: `@fileupload.FileUpload(fileupload.Props{
     ID:        "upload-basic",
-    UploadURL: "/api/upload/files",
-    RemoveURL: "/api/upload/remove",
+    UploadURL: "/upload/files",
+    RemoveURL: "/upload/remove",
 })`,
 				HandlerCode: `store := fileupload.NewStore()
 
-r.Post("/api/upload/files", fileupload.UploadHandler(store))
-r.Post("/api/upload/remove", fileupload.RemoveHandler(store))`,
+r.Post("/upload/files", fileupload.UploadHandler(store))
+r.Post("/upload/remove", fileupload.RemoveHandler(store))`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -130,13 +130,13 @@ r.Post("/api/upload/remove", fileupload.RemoveHandler(store))`,
 				TemplCode: `@fileupload.FileUpload(fileupload.Props{
     ID:        "upload-multi",
     Multiple:  true,
-    UploadURL: "/api/upload/files",
-    RemoveURL: "/api/upload/remove",
+    UploadURL: "/upload/files",
+    RemoveURL: "/upload/remove",
 })`,
 				HandlerCode: `store := fileupload.NewStore()
 
-r.Post("/api/upload/files", fileupload.UploadHandler(store))
-r.Post("/api/upload/remove", fileupload.RemoveHandler(store))`,
+r.Post("/upload/files", fileupload.UploadHandler(store))
+r.Post("/upload/remove", fileupload.RemoveHandler(store))`,
 			}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -175,10 +175,10 @@ r.Post("/api/upload/remove", fileupload.RemoveHandler(store))`,
     ID:        "upload-restricted",
     Multiple:  true,
     Accept:    "image/*",
-    UploadURL: "/api/upload/files-restricted",
-    RemoveURL: "/api/upload/remove",
+    UploadURL: "/upload/files-restricted",
+    RemoveURL: "/upload/remove",
 })`,
-				HandlerCode: `r.Post("/api/upload/files-restricted", fileupload.UploadHandler(store,
+				HandlerCode: `r.Post("/upload/files-restricted", fileupload.UploadHandler(store,
     fileupload.WithAllowedTypes("image/"),
     fileupload.WithMaxFiles(3),
 ))`,

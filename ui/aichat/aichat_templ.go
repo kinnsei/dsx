@@ -83,7 +83,7 @@ func AIChat(props Props) templ.Component {
 		inputSignal := signals.Signal("input")
 		isOpen := signals.Signal("open")
 		isClosed := fmt.Sprintf("!%s", isOpen)
-		openExpr := signals.Set("open", "true")
+		openExpr := fmt.Sprintf("%s; requestAnimationFrame(()=>document.querySelector('#%s input')?.focus())", signals.Set("open", "true"), id)
 		closeExpr := fmt.Sprintf("%s; %s", signals.Set("open", "false"), signals.SetString("input", ""))
 		messagesID := MessagesID(id)
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("rounded-box border border-base-300 bg-base-100 overflow-hidden", props.Class)}

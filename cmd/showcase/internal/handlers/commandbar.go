@@ -20,7 +20,7 @@ func newCommandbarHandlers() *commandbarHandlers {
 }
 
 func (h *commandbarHandlers) register(r chi.Router) {
-	r.Post("/api/commandbar/capture", h.capture())
+	r.Post("/commandbar/capture", h.capture())
 }
 
 func (h *commandbarHandlers) capture() http.HandlerFunc {

@@ -30,7 +30,7 @@ templ Toasts() {
 				Title: "Auto-dismiss",
 				TemplCode: `<button
     class="btn btn-success"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/success")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/success")))... }
 >
     Success
 </button>`,
@@ -47,25 +47,25 @@ templ Toasts() {
 				<div class="flex flex-wrap gap-3">
 					<button
 						class="btn btn-info"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/info")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/info")))... }
 					>
 						Info
 					</button>
 					<button
 						class="btn btn-success"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/success")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/success")))... }
 					>
 						Success
 					</button>
 					<button
 						class="btn btn-warning"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/warning")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/warning")))... }
 					>
 						Warning
 					</button>
 					<button
 						class="btn btn-error"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/error")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/error")))... }
 					>
 						Error
 					</button>
@@ -75,7 +75,7 @@ templ Toasts() {
 				Title: "Persistent",
 				TemplCode: `<button
     class="btn btn-warning"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/persistent")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/persistent")))... }
 >
     Persistent Toast
 </button>`,
@@ -94,7 +94,7 @@ templ Toasts() {
 				<div class="flex flex-wrap gap-3">
 					<button
 						class="btn btn-warning"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/persistent")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/persistent")))... }
 					>
 						Persistent Toast
 					</button>
@@ -104,7 +104,7 @@ templ Toasts() {
 				Title: "Action Required",
 				TemplCode: `<button
     class="btn btn-error"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/action")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/action")))... }
 >
     Action Toast (Undo)
 </button>`,
@@ -113,7 +113,7 @@ templ Toasts() {
         wctx := webx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Toast(sse, ds.ToastError, "Item deleted.",
-            ds.WithToastAction("Undo", wxctx.APIPath("/api/toast/action-callback")),
+            ds.WithToastAction("Undo", wxctx.APIPath("/toast/action-callback")),
         )
     }
 }`,
@@ -124,7 +124,7 @@ templ Toasts() {
 				<div class="flex flex-wrap gap-3">
 					<button
 						class="btn btn-error"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/action")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/action")))... }
 					>
 						Action Toast (Undo)
 					</button>
@@ -134,7 +134,7 @@ templ Toasts() {
 				Title: "Link",
 				TemplCode: `<button
     class="btn btn-info"
-    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/link")))... }
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/link")))... }
 >
     Link Toast
 </button>`,
@@ -155,7 +155,7 @@ templ Toasts() {
 				<div class="flex flex-wrap gap-3">
 					<button
 						class="btn btn-info"
-						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/api/toast/link")))... }
+						{ ds.OnClick(ds.GetOnce(wxctx.APIPath("/toast/link")))... }
 					>
 						Link Toast
 					</button>

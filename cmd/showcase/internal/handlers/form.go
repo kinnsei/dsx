@@ -18,8 +18,8 @@ func newFormHandlers() *formHandlers {
 }
 
 func (f *formHandlers) register(r chi.Router) {
-	r.Post("/api/form/login", f.login())
-	r.Post("/api/form/contact", f.contact())
+	r.Post("/form/login", f.login())
+	r.Post("/form/contact", f.contact())
 }
 
 type loginFormSignals struct {
