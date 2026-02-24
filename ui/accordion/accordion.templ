@@ -30,12 +30,14 @@ type Props struct {
 
 // ItemProps configures a single accordion item.
 type ItemProps struct {
-	AccordionID string // must match the parent Accordion's ID
-	Value       string // unique identifier for this item
-	Title       string
-	Class       string
-	Modifier    Modifier
-	Attributes  templ.Attributes
+	AccordionID  string          // must match the parent Accordion's ID
+	Value        string          // unique identifier for this item
+	Title        string          // plain text title (ignored when TitleContent is set)
+	TitleContent templ.Component // rich title slot — renders custom HTML instead of Title string
+	TitleClass   string          // additional classes on the collapse-title div
+	Class        string
+	Modifier     Modifier
+	Attributes   templ.Attributes
 }
 
 // Accordion renders a group container that manages which item is open.
@@ -57,8 +59,8 @@ templ Accordion(props Props) {
 	</div>
 }
 
-// Item renders a single collapsible accordion item. The AccordionID must
-// match the parent Accordion's ID so signals are shared.
+// Item renders a single collapsible accordion item with a plain text title.
+// The AccordionID must match the parent Accordion's ID so signals are shared.
 templ Item(props ItemProps) {
 	{{
 		signals := ds.NewSignals(props.AccordionID, AccordionSignals{})
@@ -79,14 +81,18 @@ templ Item(props ItemProps) {
 		{ props.Attributes... }
 	>
 		<div
-			class="collapse-title font-semibold cursor-pointer"
+			class={ utils.TwMerge("collapse-title font-semibold cursor-pointer", props.TitleClass) }
 			tabindex="0"
 			role="button"
 			data-attr:aria-expanded={ isActive }
 			{ ds.OnClick(toggleExpr)... }
 			data-on:keydown={ fmt.Sprintf("(evt.key === 'Enter' || evt.key === ' ') && (evt.preventDefault(), %s)", toggleExpr) }
 		>
-			{ props.Title }
+			if props.TitleContent != nil {
+				@props.TitleContent
+			} else {
+				{ props.Title }
+			}
 		</div>
 		<div class="collapse-content">
 			{ children... }

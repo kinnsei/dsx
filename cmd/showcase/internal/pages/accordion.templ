@@ -93,6 +93,22 @@ templ Accordions() {
 				@joinedDemo()
 			}
 			@components.Example(components.ExampleProps{
+				Title: "Rich Title",
+				TemplCode: `@accordion.Accordion(accordion.Props{ID: "rich"}) {
+    @accordion.Item(accordion.ItemProps{
+        AccordionID:  "rich",
+        Value:        "item1",
+        Modifier:     accordion.ModifierArrow,
+        TitleContent: richTitle("Billing", "badge-primary", "3 new"),
+    }) {
+        <p>Manage payment methods and invoices.</p>
+    }
+}`,
+			}) {
+				<p class="mb-4 text-sm">Use TitleContent to render custom HTML (badges, icons, status indicators) instead of a plain string title.</p>
+				@richTitleDemo()
+			}
+			@components.Example(components.ExampleProps{
 				Title: "State Indicator",
 				TemplCode: `@accordion.Accordion(accordion.Props{ID: "state-accordion"}) {
     @accordion.Item(accordion.ItemProps{
@@ -229,6 +245,42 @@ templ joinedDemo() {
 			<p>Each item adds the join-item class via the Class prop.</p>
 		}
 	}
+}
+
+templ richTitleDemo() {
+	@accordion.Accordion(accordion.Props{ID: "rich-accordion"}) {
+		@accordion.Item(accordion.ItemProps{
+			AccordionID:  "rich-accordion",
+			Value:        "billing",
+			Modifier:     accordion.ModifierArrow,
+			TitleContent: richTitle("Billing", "badge-primary", "3 new"),
+		}) {
+			<p>Manage your payment methods, view invoices, and update billing information.</p>
+		}
+		@accordion.Item(accordion.ItemProps{
+			AccordionID:  "rich-accordion",
+			Value:        "security",
+			Modifier:     accordion.ModifierArrow,
+			TitleContent: richTitle("Security", "badge-success", "All good"),
+		}) {
+			<p>Configure two-factor authentication, manage sessions, and review login activity.</p>
+		}
+		@accordion.Item(accordion.ItemProps{
+			AccordionID:  "rich-accordion",
+			Value:        "notifications",
+			Modifier:     accordion.ModifierArrow,
+			TitleContent: richTitle("Notifications", "badge-warning", "5 unread"),
+		}) {
+			<p>Choose which notifications you receive and how they are delivered.</p>
+		}
+	}
+}
+
+templ richTitle(label string, badgeClass string, badgeText string) {
+	<div class="flex items-center gap-2">
+		<span>{ label }</span>
+		<span class={ "badge badge-sm " + badgeClass }>{ badgeText }</span>
+	</div>
 }
 
 templ accordionStateDemo() {
