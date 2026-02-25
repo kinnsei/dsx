@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/plaenen/webx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -43,12 +44,16 @@ func Handler(validate SubmitFunc, onSuccess func(formID string, sse *datastar.Se
 		sse := datastar.NewSSE(w, r)
 
 		if len(errors) > 0 {
-			// Patch field errors and clear submitting
+			// Separate form-level errors (shown as toasts) from field errors (patched as signals).
 			patch := map[string]any{
 				"submitting": false,
 			}
 			for _, e := range errors {
-				patch[e.Field] = e.Message
+				if e.Field == "error" {
+					ds.Send.Toast(sse, ds.ToastError, e.Message)
+				} else {
+					patch[e.Field] = e.Message
+				}
 			}
 			sse.MarshalAndPatchSignals(map[string]any{
 				sanitizedID: patch,

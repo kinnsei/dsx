@@ -15,6 +15,11 @@ type loginSignals struct {
 	Success       string `json:"success"`
 }
 
+type errorDemoSignals struct {
+	Username      string `json:"username"`
+	UsernameError string `json:"username_error"`
+}
+
 type contactSignals struct {
 	Name         string `json:"name"`
 	Email        string `json:"email"`
@@ -45,7 +50,6 @@ templ Forms() {
     Action:  "/form/login",
     Signals: loginSignals{},
 }) {
-    @form.FormError("login")
     @form.Field() {
         @form.Label() { Email }
         <input type="email" class="input input-bordered w-full"
@@ -104,7 +108,6 @@ templ Forms() {
 						Action:  "/showcase/form/login",
 						Signals: loginSignals{},
 					}) {
-						@form.FormError("login")
 						@form.Field() {
 							@form.Label() {
 								Email
@@ -143,7 +146,6 @@ templ Forms() {
     Action:  "/form/contact",
     Signals: contactSignals{},
 }) {
-    @form.FormError("contact")
     @form.Field() {
         @form.Label() { Name }
         <input type="text" class="input input-bordered w-full"
@@ -209,7 +211,6 @@ templ Forms() {
 						Action:  "/showcase/form/contact",
 						Signals: contactSignals{},
 					}) {
-						@form.FormError("contact")
 						@form.Field() {
 							@form.Label() {
 								Name
@@ -250,6 +251,67 @@ templ Forms() {
 							Send Message
 						}
 						@form.Success("$contact.success")
+					}
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Form Error Toast",
+				TemplCode: `@form.Form(form.Props{
+    ID:      "error-demo",
+    Action:  "/form/error-demo",
+    Signals: errorDemoSignals{},
+}) {
+    @form.Field() {
+        @form.Label() { Username }
+        <input type="text" class="input input-bordered w-full"
+            { ds.Bind("error_demo", "username")... } />
+        @form.Error("$error_demo.username_error")
+    }
+    @form.Submit(form.SubmitProps{FormID: "error-demo"}) {
+        Submit
+    }
+}`,
+				HandlerCode: `func (f *formHandlers) errorDemo() http.HandlerFunc {
+    return form.Handler(
+        func(formID string, r *http.Request) []form.FieldError {
+            var signals errorDemoSignals
+            if err := ds.ReadSignals(formID, r, &signals); err != nil {
+                return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
+            }
+            if signals.Username == "" {
+                return []form.FieldError{{Field: "username_error", Message: "Username is required"}}
+            }
+            // Simulate a server error
+            return []form.FieldError{{Field: "error", Message: "Service temporarily unavailable. Please try again later."}}
+        },
+        nil,
+    )
+}`,
+			}) {
+				<p class="text-sm mb-4">
+					Form-level errors (Field: "error") appear as toast notifications instead of inline banners. Enter a username and submit to trigger a simulated server error toast.
+				</p>
+				<div class="w-full max-w-sm">
+					@form.Form(form.Props{
+						ID:      "error-demo",
+						Action:  "/showcase/form/error-demo",
+						Signals: errorDemoSignals{},
+					}) {
+						@form.Field() {
+							@form.Label() {
+								Username
+							}
+							<input
+								type="text"
+								class="input input-bordered w-full"
+								placeholder="Enter username"
+								{ ds.Bind("error_demo", "username")... }
+							/>
+							@form.Error("$error_demo.username_error")
+						}
+						@form.Submit(form.SubmitProps{FormID: "error-demo"}) {
+							Submit
+						}
 					}
 				</div>
 			}

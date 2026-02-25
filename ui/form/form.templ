@@ -68,6 +68,7 @@ templ Form(props Props) {
 	{{ props.defaults() }}
 	{{
 		signals := ds.NewSignals(props.ID, props.Signals)
+		formSignals := ds.NewSignals(props.ID, FormSignals{})
 
 		// Build action URL with form ID for the handler.
 		actionURL := fmt.Sprintf("%s?id=%s", props.Action, props.ID)
@@ -93,7 +94,9 @@ templ Form(props Props) {
 		novalidate
 		{ props.Attributes... }
 	>
-		{ children... }
+		<div data-signals={ formSignals.DataSignals } class="contents">
+			{ children... }
+		</div>
 	</form>
 }
 

@@ -20,6 +20,7 @@ func newFormHandlers() *formHandlers {
 func (f *formHandlers) register(r chi.Router) {
 	r.Post("/form/login", f.login())
 	r.Post("/form/contact", f.contact())
+	r.Post("/form/error-demo", f.errorDemo())
 }
 
 type loginFormSignals struct {
@@ -59,6 +60,29 @@ func (f *formHandlers) login() http.HandlerFunc {
 				},
 			})
 		},
+	)
+}
+
+type errorDemoSignals struct {
+	Username string `json:"username"`
+}
+
+func (f *formHandlers) errorDemo() http.HandlerFunc {
+	return form.Handler(
+		func(formID string, r *http.Request) []form.FieldError {
+			var signals errorDemoSignals
+			if err := ds.ReadSignals(formID, r, &signals); err != nil {
+				return []form.FieldError{{Field: "error", Message: "Failed to read form data"}}
+			}
+
+			if signals.Username == "" {
+				return []form.FieldError{{Field: "username_error", Message: "Username is required"}}
+			}
+
+			// Simulate a server error
+			return []form.FieldError{{Field: "error", Message: "Service temporarily unavailable. Please try again later."}}
+		},
+		nil,
 	)
 }
 
