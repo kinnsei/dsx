@@ -1,0 +1,65 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/button"
+	"github.com/plaenen/webx/ui/form"
+)
+
+type newCustomerSignals struct {
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	Company string `json:"company"`
+}
+
+templ CustomerDrawer(actionURL string) {
+	<h2 class="text-xl font-bold mb-6">Add Customer</h2>
+	@form.Form(form.Props{
+		ID:      "new-customer",
+		Action:  actionURL,
+		Signals: newCustomerSignals{},
+	}) {
+		@form.Field() {
+			@form.Label() {
+				Name
+			}
+			<input
+				type="text"
+				class="input w-full"
+				placeholder="Full name"
+				{ ds.Bind("new-customer", "name")... }
+			/>
+			@form.Error("$new_customer.name_error")
+		}
+		@form.Field() {
+			@form.Label() {
+				Email
+			}
+			<input
+				type="email"
+				class="input w-full"
+				placeholder="email@example.com"
+				{ ds.Bind("new-customer", "email")... }
+			/>
+			@form.Error("$new_customer.email_error")
+		}
+		@form.Field() {
+			@form.Label() {
+				Company
+			}
+			<input
+				type="text"
+				class="input w-full"
+				placeholder="Company name (optional)"
+				{ ds.Bind("new-customer", "company")... }
+			/>
+		}
+		@form.Submit(form.SubmitProps{
+			FormID:  "new-customer",
+			Variant: button.VariantPrimary,
+			Class:   "w-full",
+		}) {
+			Save Customer
+		}
+	}
+}

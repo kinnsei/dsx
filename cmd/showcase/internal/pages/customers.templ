@@ -1,0 +1,174 @@
+package pages
+
+import (
+	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/stream"
+	"github.com/plaenen/webx/ui/button"
+	"github.com/plaenen/webx/ui/card"
+)
+
+// CustomerRow holds data for a single table row.
+type CustomerRow struct {
+	Name    string
+	Email   string
+	Company string
+}
+
+templ Customers() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Customer List — WebX Showcase",
+		Description: "Real-time customer list with drawer form and stream invalidation",
+		CurrentPath: "/examples/customers",
+	}) {
+		{{ wxctx := webx.FromContext(ctx) }}
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Customer List</h1>
+				<p class="text-base-content/70 mt-2">
+					Add customers via a drawer form. The list auto-updates across all browser tabs
+					using stream invalidation. Open this page in two tabs and try it.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Reactive Customer Table",
+				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+<div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/list"))... }>
+    <div id="customer-table-body"
+        { ds.Init(ds.GetOnce(wxctx.APIPath("/customers/list")))... }>
+        <tr><td colspan="3" class="text-center py-8 text-base-content/50">Loading...</td></tr>
+    </div>
+</div>
+<button class="btn btn-primary"
+    { ds.OnClick(ds.GetOnce(wxctx.APIPath("/customers/new")))... }>
+    Add Customer
+</button>`,
+				HandlerCode: `func (h *customerHandlers) list() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Patch(sse, pages.CustomerTableBody(customers))
+    }
+}
+
+func (h *customerHandlers) create() http.HandlerFunc {
+    return form.Handler(
+        func(formID string, r *http.Request) []form.FieldError {
+            // validate, save...
+            broker.Invalidate("customers:" + strconv.Itoa(id))
+            return nil
+        },
+        func(formID string, sse *datastar.ServerSentEventGenerator) {
+            ds.Send.HideDrawer(sse)
+            ds.Send.Toast(sse, ds.ToastSuccess, "Customer added")
+        },
+    )
+}`,
+			}) {
+				@card.Card() {
+					@card.Body() {
+						<div class="flex items-center justify-between mb-4">
+							@card.Title() {
+								Customers
+							}
+							@button.Button(button.Props{
+								Variant:    button.VariantPrimary,
+								Size:       button.SizeSm,
+								Attributes: ds.Merge(ds.OnClick(ds.GetOnce(wxctx.APIPath("/customers/new")))),
+							}) {
+								Add Customer
+							}
+						</div>
+						<div
+							{ stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/list"))... }
+						>
+							<div class="overflow-x-auto">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>Name</th>
+											<th>Email</th>
+											<th>Company</th>
+										</tr>
+									</thead>
+									<tbody
+										id="customer-table-body"
+										{ ds.Init(ds.GetOnce(wxctx.APIPath("/customers/list")))... }
+									>
+										<tr>
+											<td colspan="3" class="text-center py-8 text-base-content/50">Loading...</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					}
+				}
+			}
+			@card.Card() {
+				@card.Body() {
+					@card.Title() {
+						How It Works
+					}
+					<ol class="list-decimal list-inside space-y-3 text-sm">
+						<li>
+							<span class="font-medium">Register wildcard scope</span> —
+							The table wrapper uses
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `stream.Attrs(ctx, "customers:*", reloadURL)` }</code>
+							to watch all customer changes
+						</li>
+						<li>
+							<span class="font-medium">Open drawer</span> —
+							"Add Customer" triggers
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `ds.Send.Drawer(sse, pages.CustomerDrawer())` }</code>
+						</li>
+						<li>
+							<span class="font-medium">Submit form</span> —
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `form.Handler` }</code>
+							validates, saves, then calls
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `broker.Invalidate("customers:{id}")` }</code>
+						</li>
+						<li>
+							<span class="font-medium">Close + notify</span> —
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `ds.Send.HideDrawer(sse)` }</code>
+							and
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `ds.Send.Toast(sse, ds.ToastSuccess, ...)` }</code>
+						</li>
+						<li>
+							<span class="font-medium">All tabs update</span> —
+							The wildcard scope
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `customers:*` }</code>
+							matches
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `customers:{id}` }</code>
+							so every tab's table auto-reloads
+						</li>
+					</ol>
+				}
+			}
+		</div>
+	}
+}
+
+templ CustomerTableBody(customers []CustomerRow) {
+	<tbody id="customer-table-body">
+		if len(customers) == 0 {
+			<tr>
+				<td colspan="3" class="text-center py-8 text-base-content/50">No customers yet</td>
+			</tr>
+		}
+		for _, c := range customers {
+			<tr>
+				<td>{ c.Name }</td>
+				<td>{ c.Email }</td>
+				<td>
+					if c.Company != "" {
+						{ c.Company }
+					} else {
+						<span class="text-base-content/30">—</span>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
+}

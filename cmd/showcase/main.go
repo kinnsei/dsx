@@ -211,6 +211,7 @@ func serve(port int, pro bool) error {
 	r.Get("/components/command-bar", templ.Handler(pages.CommandBars()).ServeHTTP)
 	r.Get("/components/yaml-tree", templ.Handler(pages.YamlTrees()).ServeHTTP)
 	r.Get("/examples/butler", templ.Handler(pages.Butler()).ServeHTTP)
+	r.Get("/examples/customers", templ.Handler(pages.Customers()).ServeHTTP)
 
 	// SSE API endpoints
 	h := handlers.New(broker)

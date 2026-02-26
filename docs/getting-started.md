@@ -41,7 +41,8 @@ internal/       -- internal packages
 ui/             -- DaisyUI components (one dir per component, e.g. ui/button/)
 ds/             -- Datastar helpers (frontend attributes + backend SSE helpers)
 layouts/        -- base HTML layout with toast/modal/drawer containers
-stream/         -- reactive streaming via NATS
+stream/         -- reactive streaming via pluggable pub/sub
+pubsub/         -- pub/sub interface + adapters (NATS, Redis, Go channels)
 utils/          -- shared templ utilities (TwMerge, If, RandomID, etc.)
 static/css/     -- Tailwind CSS + DaisyUI plugin files
 docs/           -- reference documentation
@@ -63,6 +64,7 @@ import (
     "github.com/nats-io/nats-server/v2/server"
     "github.com/nats-io/nats.go"
     "github.com/plaenen/webx"
+    "github.com/plaenen/webx/pubsub/natspubsub"
     "github.com/plaenen/webx/stream"
     "github.com/plaenen/webx/ui"
     "github.com/plaenen/webx/ui/calendar"
@@ -81,7 +83,7 @@ func main() {
     nc, _ := nats.Connect(ns.ClientURL(), nats.InProcessServer(ns))
     defer nc.Close()
 
-    broker := stream.NewBroker(nc)
+    broker := stream.NewBroker(natspubsub.New(nc))
 
     // 2. Create router with middleware
     r := chi.NewRouter()
@@ -293,7 +295,7 @@ The base layout includes container elements (`#modal-panel`, `#drawer-panel`, `#
 
 ## Reactive Streaming
 
-The `stream` package enables real-time updates via NATS pub/sub:
+The `stream` package enables real-time updates via pluggable pub/sub (NATS, Redis, or Go channels):
 
 ```go
 // In a templ component — watch a scope and re-fetch on invalidation

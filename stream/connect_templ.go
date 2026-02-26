@@ -10,6 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"encoding/json"
+	"net/url"
 	"strings"
 
 	"github.com/plaenen/webx"
@@ -45,12 +46,10 @@ func Connect() templ.Component {
 		wxctx := webx.FromContext(ctx)
 		scopes := wxctx.Scopes
 		if len(scopes) > 0 && wxctx.StreamURL != "" {
-			// Build URL with scope query params.
-			params := make([]string, len(scopes))
-			for i, s := range scopes {
-				params[i] = "scope=" + s
-			}
-			url := wxctx.StreamURL + "?" + strings.Join(params, "&")
+			// Build URL with grouped scope params.
+			// Scopes like "customers:1", "customers:2", "files:5" become
+			// ?customers=1,2&files=5 — scopes without a colon use ?scope=
+			streamURL := buildScopeURL(wxctx.StreamURL, scopes)
 
 			// Build initial signal object: {invoice_42: false, invoices_WILD: false}
 			signalMap := make(map[string]any, len(scopes))
@@ -66,7 +65,7 @@ func Connect() templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(signalsAttr)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 40, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 39, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -77,9 +76,9 @@ func Connect() templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(ds.Get(url, ds.WithRequestCancellation("disabled")))
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(ds.Get(streamURL, ds.WithRequestCancellation("disabled")))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 41, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 40, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -92,6 +91,39 @@ func Connect() templ.Component {
 		}
 		return nil
 	})
+}
+
+// buildScopeURL constructs a stream URL with grouped scope params.
+// Scopes with a colon prefix (e.g. "customers:42") are grouped by entity:
+//
+//	customers:1, customers:2, files:5  →  ?customers=1,2&files=5
+//
+// Scopes without a colon fall back to ?scope=value.
+func buildScopeURL(base string, scopes []string) string {
+	groups := make(map[string][]string)
+	var plain []string
+	var order []string
+
+	for _, s := range scopes {
+		if prefix, rest, ok := strings.Cut(s, ":"); ok {
+			if _, exists := groups[prefix]; !exists {
+				order = append(order, prefix)
+			}
+			groups[prefix] = append(groups[prefix], rest)
+		} else {
+			plain = append(plain, s)
+		}
+	}
+
+	q := url.Values{}
+	if len(plain) > 0 {
+		q.Set("scope", strings.Join(plain, ","))
+	}
+	for _, prefix := range order {
+		q.Set(prefix, strings.Join(groups[prefix], ","))
+	}
+
+	return base + "?" + q.Encode()
 }
 
 var _ = templruntime.GeneratedTemplate

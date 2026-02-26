@@ -385,8 +385,8 @@ func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
 	if !strings.Contains(html, "data-init") {
 		t.Error("Connect should have data-init attribute")
 	}
-	if !strings.Contains(html, "/showcase/stream?scope=counter:shared") {
-		t.Error("Connect should have stream URL with scope param")
+	if !strings.Contains(html, "/showcase/stream?counter=shared") {
+		t.Error("Connect should have stream URL with grouped scope param")
 	}
 
 	// Should have requestCancellation disabled
@@ -642,9 +642,9 @@ func TestE2E_MultipleScopes(t *testing.T) {
 	html := buf.String()
 	t.Logf("Connect HTML with 2 scopes:\n%s", html)
 
-	// Should use comma-separated scope format
-	if !strings.Contains(html, "scope=counter:shared,invoice:42") {
-		t.Error("missing comma-separated scope param")
+	// Should use grouped scope format (counter=shared&invoice=42)
+	if !strings.Contains(html, "counter=shared") || !strings.Contains(html, "invoice=42") {
+		t.Error("missing grouped scope params")
 	}
 
 	// Test stream handler with multiple scopes

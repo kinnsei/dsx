@@ -7,39 +7,27 @@ import (
 	"github.com/plaenen/webx/ds"
 	"github.com/plaenen/webx/stream"
 	"github.com/plaenen/webx/ui/card"
+	"github.com/plaenen/webx/ui/markdown"
 )
 
-templ Stream() {
+templ Stream(specContent string) {
 	@layouts.Showcase(layouts.ShowcaseProps{
 		Title:       "Stream — WebX Showcase",
-		Description: "Reactive SSE stream with NATS pub/sub",
+		Description: "Reactive SSE stream with pluggable pub/sub",
 		CurrentPath: "/components/stream",
 	}) {
-		{{
-			wxctx := webx.FromContext(ctx)
-			counterEffect := stream.WatchEffect(ctx,
-				"counter:shared",
-				wxctx.APIPath("/stream/counter"),
-			)
-		}}
+		{{ wxctx := webx.FromContext(ctx) }}
 		<div class="space-y-8">
 			<div>
 				<h1 class="text-3xl font-bold">Stream</h1>
 				<p class="text-base-content/70 mt-2">
-					Reactive SSE stream backed by embedded NATS. Components auto-reload when server-side data changes. Open this page in multiple tabs to see real-time sync.
+					Reactive SSE stream backed by pluggable pub/sub (NATS, Redis, or Go channels). Components auto-reload when server-side data changes. Open this page in multiple tabs to see real-time sync.
 				</p>
 			</div>
 			@components.Example(components.ExampleProps{
 				Title: "Shared Counter",
-				TemplCode: `{{
-    wxctx := webx.FromContext(ctx)
-    counterEffect := stream.WatchEffect(ctx,
-        "counter:shared",
-        wxctx.APIPath("/stream/counter"),
-    )
-}}
-<div data-signals={ stream.ScopeSignals("counter:shared") }
-    { ds.Effect(counterEffect)... }>
+				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+<div { stream.Attrs(ctx, "counter:shared", wxctx.APIPath("/stream/counter"))... }>
     <span id="stream-counter-value"
         { ds.Init(ds.GetOnce(wxctx.APIPath("/stream/counter")))... }
         class="text-6xl font-bold tabular-nums">
@@ -82,8 +70,7 @@ func (s *streamHandlers) increment() http.HandlerFunc {
 				</p>
 				<div class="flex flex-col items-center gap-6">
 					<div
-						data-signals={ stream.ScopeSignals("counter:shared") }
-						{ ds.Effect(counterEffect)... }
+						{ stream.Attrs(ctx, "counter:shared", wxctx.APIPath("/stream/counter"))... }
 					>
 						<span
 							id="stream-counter-value"
@@ -123,8 +110,8 @@ func (s *streamHandlers) increment() http.HandlerFunc {
 					<ol class="list-decimal list-inside space-y-3 text-sm">
 						<li>
 							<span class="font-medium">Register scope</span> —
-							Component calls
-							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "stream.WatchEffect(ctx, scope, reloadURL)" }</code>
+							Component spreads
+							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ "stream.Attrs(ctx, scope, reloadURL)" }</code>
 						</li>
 						<li>
 							<span class="font-medium">Connect</span> —
@@ -139,7 +126,7 @@ func (s *streamHandlers) increment() http.HandlerFunc {
 						</li>
 						<li>
 							<span class="font-medium">Push</span> —
-							NATS delivers the message, stream pushes a stale signal to all connected browsers
+							The pub/sub backend delivers the message, stream pushes a stale signal to all connected browsers
 						</li>
 						<li>
 							<span class="font-medium">Reload</span> —
@@ -147,6 +134,11 @@ func (s *streamHandlers) increment() http.HandlerFunc {
 						</li>
 					</ol>
 				}
+			}
+			if specContent != "" {
+				@markdown.Markdown(markdown.Props{
+					Content: specContent,
+				})
 			}
 		</div>
 	}

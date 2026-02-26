@@ -2,6 +2,7 @@ package stream
 
 import (
 	"encoding/json"
+	"net/url"
 	"strings"
 
 	"github.com/plaenen/webx"
@@ -20,12 +21,10 @@ templ Connect() {
 	}}
 	if len(scopes) > 0 && wxctx.StreamURL != "" {
 		{{
-			// Build URL with scope query params.
-			params := make([]string, len(scopes))
-			for i, s := range scopes {
-				params[i] = "scope=" + s
-			}
-			url := wxctx.StreamURL + "?" + strings.Join(params, "&")
+			// Build URL with grouped scope params.
+			// Scopes like "customers:1", "customers:2", "files:5" become
+			// ?customers=1,2&files=5 — scopes without a colon use ?scope=
+			streamURL := buildScopeURL(wxctx.StreamURL, scopes)
 
 			// Build initial signal object: {invoice_42: false, invoices_WILD: false}
 			signalMap := make(map[string]any, len(scopes))
@@ -38,7 +37,40 @@ templ Connect() {
 		<div
 			style="display:none"
 			data-signals={ signalsAttr }
-			data-init={ ds.Get(url, ds.WithRequestCancellation("disabled")) }
+			data-init={ ds.Get(streamURL, ds.WithRequestCancellation("disabled")) }
 		></div>
 	}
+}
+
+// buildScopeURL constructs a stream URL with grouped scope params.
+// Scopes with a colon prefix (e.g. "customers:42") are grouped by entity:
+//
+//	customers:1, customers:2, files:5  →  ?customers=1,2&files=5
+//
+// Scopes without a colon fall back to ?scope=value.
+func buildScopeURL(base string, scopes []string) string {
+	groups := make(map[string][]string)
+	var plain []string
+	var order []string
+
+	for _, s := range scopes {
+		if prefix, rest, ok := strings.Cut(s, ":"); ok {
+			if _, exists := groups[prefix]; !exists {
+				order = append(order, prefix)
+			}
+			groups[prefix] = append(groups[prefix], rest)
+		} else {
+			plain = append(plain, s)
+		}
+	}
+
+	q := url.Values{}
+	if len(plain) > 0 {
+		q.Set("scope", strings.Join(plain, ","))
+	}
+	for _, prefix := range order {
+		q.Set(prefix, strings.Join(groups[prefix], ","))
+	}
+
+	return base + "?" + q.Encode()
 }

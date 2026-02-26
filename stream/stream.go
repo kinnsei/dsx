@@ -293,16 +293,27 @@ func (b *Broker) Handler() http.HandlerFunc {
 }
 
 // parseScopes extracts scopes from the request query string.
-// It supports both repeated params (?scope=a&scope=b) and
-// comma-separated values (?scope=a,b) or a mix of both.
+// It supports three formats that can be mixed:
+//
+//	?scope=invoice:42,invoices:*          (comma-separated)
+//	?scope=invoice:42&scope=invoices:*    (repeated params)
+//	?customers=1,2,4&files=5,6           (grouped by entity)
+//
+// The grouped format expands each value into entity:value scopes.
 func parseScopes(r *http.Request) []string {
-	raw := r.URL.Query()["scope"]
 	var scopes []string
-	for _, v := range raw {
-		for _, p := range strings.Split(v, ",") {
-			p = strings.TrimSpace(p)
-			if p != "" {
-				scopes = append(scopes, p)
+	for key, values := range r.URL.Query() {
+		for _, v := range values {
+			for _, p := range strings.Split(v, ",") {
+				p = strings.TrimSpace(p)
+				if p == "" {
+					continue
+				}
+				if key == "scope" {
+					scopes = append(scopes, p)
+				} else {
+					scopes = append(scopes, key+":"+p)
+				}
 			}
 		}
 	}
