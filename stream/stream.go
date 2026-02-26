@@ -17,6 +17,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/plaenen/webx"
@@ -57,8 +58,9 @@ type controlMsg struct {
 // Broker wraps a PubSub backend and provides publish/subscribe for scope
 // invalidation. One Broker per application.
 type Broker struct {
-	ps     pubsub.PubSub
-	prefix string
+	ps              pubsub.PubSub
+	prefix          string
+	maxConnDuration time.Duration
 }
 
 // Option configures the Broker.
@@ -67,6 +69,13 @@ type Option func(*Broker)
 // WithSubjectPrefix overrides the default topic prefix ("webx.scope").
 func WithSubjectPrefix(prefix string) Option {
 	return func(b *Broker) { b.prefix = prefix }
+}
+
+// WithMaxConnectionDuration sets a maximum lifetime for SSE connections.
+// When the duration elapses the handler returns, causing Datastar to
+// reconnect and re-run any auth middleware.
+func WithMaxConnectionDuration(d time.Duration) Option {
+	return func(b *Broker) { b.maxConnDuration = d }
 }
 
 // NewBroker creates a Broker from any PubSub backend.
@@ -198,6 +207,11 @@ func (b *Broker) Handler() http.HandlerFunc {
 
 		sse := datastar.NewSSE(w, r)
 		ctx := r.Context()
+		if b.maxConnDuration > 0 {
+			var cancel context.CancelFunc
+			ctx, cancel = context.WithTimeout(ctx, b.maxConnDuration)
+			defer cancel()
+		}
 
 		staleC := make(chan staleMsg, 64)
 

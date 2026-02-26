@@ -986,6 +986,31 @@ func TestDynamicScopeRegistration(t *testing.T) {
 	}
 }
 
+func TestStreamHandler_MaxConnectionDuration(t *testing.T) {
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps, stream.WithMaxConnectionDuration(500*time.Millisecond))
+
+	// Use a context without cancellation — the handler should exit on its own.
+	req := httptest.NewRequest("GET", "/stream?scope=counter:shared", nil)
+	w := httptest.NewRecorder()
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		broker.Handler().ServeHTTP(w, req)
+	}()
+
+	select {
+	case <-done:
+		// Handler exited on its own — good.
+	case <-time.After(2 * time.Second):
+		t.Fatal("handler did not exit within expected max connection duration")
+	}
+
+	// Verify that invalidating after exit doesn't panic (subscriptions cleaned up).
+	broker.Invalidate("counter:shared")
+}
+
 func TestSubscribeHandler(t *testing.T) {
 	ps := newPubSub(t)
 	broker := stream.NewBroker(ps)
