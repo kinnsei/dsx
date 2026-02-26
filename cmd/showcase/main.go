@@ -202,6 +202,7 @@ func serve(port int, pro bool) error {
 	r.Get("/components/feed", templ.Handler(pages.Feeds()).ServeHTTP)
 	r.Get("/components/feed-item", templ.Handler(pages.FeedItems()).ServeHTTP)
 	r.Get("/components/command-bar", templ.Handler(pages.CommandBars()).ServeHTTP)
+	r.Get("/components/yaml-tree", templ.Handler(pages.YamlTrees()).ServeHTTP)
 	r.Get("/examples/butler", templ.Handler(pages.Butler()).ServeHTTP)
 
 	// SSE API endpoints

@@ -4507,6 +4507,18 @@
       }
     }
   }
+  .input-xs {
+    @layer daisyui.l1.l2 {
+      --size: calc(var(--size-field, 0.25rem) * 6);
+      font-size: max(var(--font-size, 0.6875rem), 0.6875rem);
+      &[type="number"] {
+        &::-webkit-inner-spin-button {
+          margin-block: calc(0.25rem * -1);
+          margin-inline-end: calc(0.25rem * -3);
+        }
+      }
+    }
+  }
   .label {
     @layer daisyui.l1.l2.l3 {
       display: inline-flex;
@@ -5644,6 +5656,9 @@
   .w-32 {
     width: calc(var(--spacing) * 32);
   }
+  .w-36 {
+    width: calc(var(--spacing) * 36);
+  }
   .w-48 {
     width: calc(var(--spacing) * 48);
   }
@@ -5864,6 +5879,9 @@
   }
   .list-disc {
     list-style-type: disc;
+  }
+  .list-none {
+    list-style-type: none;
   }
   .columns-2 {
     columns: 2;
@@ -6981,6 +6999,9 @@
   .py-0\.5 {
     padding-block: calc(var(--spacing) * 0.5);
   }
+  .py-1 {
+    padding-block: calc(var(--spacing) * 1);
+  }
   .py-2 {
     padding-block: calc(var(--spacing) * 2);
   }
@@ -7036,6 +7057,9 @@
   }
   .pb-4 {
     padding-bottom: calc(var(--spacing) * 4);
+  }
+  .pl-3 {
+    padding-left: calc(var(--spacing) * 3);
   }
   .text-center {
     text-align: center;
@@ -8142,6 +8166,10 @@
       --btn-fg: var(--color-warning-content);
     }
   }
+  .select-none {
+    -webkit-user-select: none;
+    user-select: none;
+  }
   .timeline-snap-icon {
     @layer daisyui.l1.l2 {
       > li {
@@ -8498,6 +8526,16 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-base-content);
+      }
+    }
+  }
+  .hover\:text-base-content\/60 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-base-content);
+        @supports (color: color-mix(in lab, red, red)) {
+          color: color-mix(in oklab, var(--color-base-content) 60%, transparent);
+        }
       }
     }
   }
@@ -9511,6 +9549,11 @@
   .lg\:grid-cols-3 {
     @media (width >= 64rem) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .\[\&\:\:-webkit-details-marker\]\:hidden {
+    &::-webkit-details-marker {
+      display: none;
     }
   }
 }

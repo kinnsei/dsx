@@ -1,0 +1,234 @@
+package yamltree
+
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/plaenen/webx/ds"
+	"github.com/plaenen/webx/ui/icon"
+	"github.com/plaenen/webx/utils"
+)
+
+// YamlTree renders an interactive YAML tree editor.
+// Data should be unmarshalled YAML (map[string]any or []any).
+// Each edit/add/remove posts to ActionURL and triggers a server callback.
+templ YamlTree(props Props) {
+	{{
+		id := props.ID
+		if id == "" {
+			id = "yt-" + utils.RandomID()
+		}
+		signals := ds.NewSignals(id, TreeSignals{})
+		nodes := BuildTree(props.Data)
+
+		editURL := props.ActionURL + "/edit?id=" + id
+		addURL := props.ActionURL + "/add?id=" + id
+		removeURL := props.ActionURL + "/remove?id=" + id
+	}}
+	<div
+		id={ id }
+		data-signals={ signals.DataSignals }
+		class={ utils.TwMerge("font-mono text-sm bg-base-200 rounded-box p-4 overflow-x-auto", props.Class) }
+		{ props.Attributes... }
+	>
+		if len(nodes) == 0 {
+			<p class="text-base-content/50 italic">Empty</p>
+		} else {
+			for _, node := range nodes {
+				@yamlNode(node, signals, editURL, addURL, removeURL, props.ReadOnly, 0)
+			}
+		}
+	</div>
+}
+
+templ yamlNode(node Node, signals *ds.SignalManager, editURL, addURL, removeURL string, readOnly bool, depth int) {
+	if node.Type == NodeScalar {
+		@yamlScalar(node, signals, editURL, removeURL, readOnly)
+	} else {
+		@yamlCollection(node, signals, editURL, addURL, removeURL, readOnly, depth)
+	}
+}
+
+templ yamlScalar(node Node, signals *ds.SignalManager, editURL, removeURL string, readOnly bool) {
+	{{
+		isEditing := signals.Equals("editing_path", node.Path)
+		isNotEditing := signals.NotEquals("editing_path", node.Path)
+		startEdit := fmt.Sprintf("%s; %s",
+			signals.SetString("editing_path", node.Path),
+			signals.SetString("editing_value", node.Value))
+		cancelEdit := signals.SetString("editing_path", "")
+		submitEdit := ds.Post(editURL, ds.WithRetries(0), ds.WithFilterSignals(signals.ID))
+		submitOrCancel := fmt.Sprintf("evt.key === 'Enter' ? (evt.preventDefault(), %s) : evt.key === 'Escape' ? (evt.preventDefault(), %s) : void 0",
+			submitEdit, cancelEdit)
+	}}
+	// Display mode
+	<div
+		class="flex items-center gap-2 py-0.5 group"
+		style="display: none;"
+		{ ds.Show(isNotEditing)... }
+	>
+		<span class="text-secondary font-medium">{ node.Key }:</span>
+		<span class={ scalarColor(node.Value) }>{ node.Value }</span>
+		if !readOnly {
+			<button
+				class="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity"
+				{ ds.OnClick(startEdit)... }
+				title="Edit value"
+			>
+				@icon.Pencil(icon.Props{Size: 12})
+			</button>
+			<button
+				class="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity text-error"
+				{ ds.OnClick(ds.Post(removeURL + "&path=" + node.Path, ds.WithRetries(0), ds.WithFilterSignals(signals.ID)))... }
+				title="Remove"
+			>
+				@icon.Trash2(icon.Props{Size: 12})
+			</button>
+		}
+	</div>
+	// Edit mode
+	<div
+		class="flex items-center gap-2 py-0.5"
+		style="display: none;"
+		{ ds.Show(isEditing)... }
+	>
+		<span class="text-secondary font-medium">{ node.Key }:</span>
+		<input
+			type="text"
+			class="input input-xs input-bordered w-48"
+			{ ds.Bind(signals.ID, "editing_value")... }
+			{ ds.On("keydown", submitOrCancel)... }
+		/>
+		<button
+			class="btn btn-ghost btn-xs text-success"
+			{ ds.OnClick(submitEdit)... }
+			title="Save"
+		>
+			@icon.Check(icon.Props{Size: 12})
+		</button>
+		<button
+			class="btn btn-ghost btn-xs"
+			{ ds.OnClick(cancelEdit)... }
+			title="Cancel"
+		>
+			@icon.X(icon.Props{Size: 12})
+		</button>
+	</div>
+}
+
+templ yamlCollection(node Node, signals *ds.SignalManager, editURL, addURL, removeURL string, readOnly bool, depth int) {
+	{{
+		isAddingHere := signals.Equals("add_parent", node.Path)
+		isNotAddingHere := signals.NotEquals("add_parent", node.Path)
+		startAdd := fmt.Sprintf("%s; %s; %s",
+			signals.SetString("add_parent", node.Path),
+			signals.SetString("add_key", ""),
+			signals.SetString("add_value", ""))
+		cancelAdd := signals.SetString("add_parent", "")
+		submitAdd := ds.Post(addURL, ds.WithRetries(0), ds.WithFilterSignals(signals.ID))
+		submitAddOrCancel := fmt.Sprintf("evt.key === 'Enter' ? (evt.preventDefault(), %s) : evt.key === 'Escape' ? (evt.preventDefault(), %s) : void 0",
+			submitAdd, cancelAdd)
+		typeLabel := "map"
+		if node.Type == NodeSequence {
+			typeLabel = "list"
+		}
+		childCount := strconv.Itoa(len(node.Children))
+	}}
+	<details open>
+		<summary class="cursor-pointer select-none flex items-center gap-1 py-0.5 group list-none [&::-webkit-details-marker]:hidden">
+			<span class="text-base-content/50 transition-transform details-open:rotate-90">
+				@icon.ChevronRight(icon.Props{Size: 12})
+			</span>
+			<span class="text-secondary font-medium">{ node.Key }</span>
+			<span class="badge badge-ghost badge-xs">{ typeLabel } · { childCount }</span>
+			if !readOnly && node.Type == NodeMap {
+				<button
+					class="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity"
+					{ ds.OnClick(startAdd)... }
+					title="Add key"
+				>
+					@icon.Plus(icon.Props{Size: 12})
+				</button>
+			}
+			if !readOnly {
+				<button
+					class="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity text-error"
+					{ ds.OnClick(ds.Post(removeURL + "&path=" + node.Path, ds.WithRetries(0), ds.WithFilterSignals(signals.ID)))... }
+					title="Remove"
+				>
+					@icon.Trash2(icon.Props{Size: 12})
+				</button>
+			}
+		</summary>
+		<div class="ml-4 border-l border-base-300 pl-3">
+			for _, child := range node.Children {
+				@yamlNode(child, signals, editURL, addURL, removeURL, readOnly, depth+1)
+			}
+			// Add key inline form
+			if !readOnly && node.Type == NodeMap {
+				<div
+					class="flex items-center gap-2 py-1"
+					style="display: none;"
+					{ ds.Show(isAddingHere)... }
+				>
+					<input
+						type="text"
+						class="input input-xs input-bordered w-28"
+						placeholder="key"
+						{ ds.Bind(signals.ID, "add_key")... }
+						{ ds.On("keydown", submitAddOrCancel)... }
+					/>
+					<input
+						type="text"
+						class="input input-xs input-bordered w-36"
+						placeholder="value"
+						{ ds.Bind(signals.ID, "add_value")... }
+						{ ds.On("keydown", submitAddOrCancel)... }
+					/>
+					<button
+						class="btn btn-ghost btn-xs text-success"
+						{ ds.OnClick(submitAdd)... }
+						title="Add"
+					>
+						@icon.Check(icon.Props{Size: 12})
+					</button>
+					<button
+						class="btn btn-ghost btn-xs"
+						{ ds.OnClick(cancelAdd)... }
+						title="Cancel"
+					>
+						@icon.X(icon.Props{Size: 12})
+					</button>
+				</div>
+				// Small "+" hint when not adding
+				<div
+					class="py-0.5"
+					style="display: none;"
+					{ ds.Show(isNotAddingHere)... }
+				>
+					<button
+						class="btn btn-ghost btn-xs text-base-content/30 hover:text-base-content/60"
+						{ ds.OnClick(startAdd)... }
+					>
+						@icon.Plus(icon.Props{Size: 10})
+						<span class="text-xs">add</span>
+					</button>
+				</div>
+			}
+		</div>
+	</details>
+}
+
+// scalarColor returns a CSS class based on the scalar value type.
+func scalarColor(value string) string {
+	switch value {
+	case "true", "false":
+		return "text-warning"
+	case "null":
+		return "text-base-content/50 italic"
+	}
+	if _, err := strconv.ParseFloat(value, 64); err == nil {
+		return "text-info"
+	}
+	return "text-success"
+}

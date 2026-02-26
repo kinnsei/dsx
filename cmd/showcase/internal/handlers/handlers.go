@@ -15,6 +15,7 @@ type Handlers struct {
 	modal      *modalHandlers
 	commandbar *commandbarHandlers
 	aichat     *aichatHandlers
+	yamltree   *yamltreeHandlers
 }
 
 func New(broker *stream.Broker) *Handlers {
@@ -28,6 +29,7 @@ func New(broker *stream.Broker) *Handlers {
 		modal:      newModalHandlers(),
 		commandbar: newCommandbarHandlers(),
 		aichat:     newAIChatHandlers(),
+		yamltree:   newYamlTreeHandlers(),
 	}
 }
 
@@ -41,4 +43,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.modal.register(r)
 	h.commandbar.register(r)
 	h.aichat.register(r)
+	h.yamltree.register(r)
 }

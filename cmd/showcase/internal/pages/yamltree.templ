@@ -1,0 +1,93 @@
+package pages
+
+import (
+	"github.com/plaenen/webx/cmd/showcase/internal/components"
+	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
+	"github.com/plaenen/webx/ui/yamltree"
+)
+
+var sampleYAML = map[string]any{
+	"server": map[string]any{
+		"host": "0.0.0.0",
+		"port": 3000,
+		"tls": map[string]any{
+			"enabled": true,
+			"cert":    "/etc/ssl/cert.pem",
+			"key":     "/etc/ssl/key.pem",
+		},
+	},
+	"database": map[string]any{
+		"driver": "postgres",
+		"host":   "localhost",
+		"port":   5432,
+		"name":   "myapp",
+		"pool": map[string]any{
+			"max_open": 25,
+			"max_idle": 5,
+		},
+	},
+	"logging": map[string]any{
+		"level":  "info",
+		"format": "json",
+	},
+	"features": map[string]any{
+		"signup":      true,
+		"maintenance": false,
+	},
+}
+
+templ YamlTrees() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "YAML Tree — WebX Showcase",
+		Description: "Structured YAML tree editor with inline editing",
+		CurrentPath: "/components/yaml-tree",
+	}) {
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">YAML Tree</h1>
+				<p class="text-base-content/70 mt-2">
+					A structured tree editor for YAML config files. Expand/collapse sections, edit values inline, add new keys, and remove entries. Each change triggers a server callback via SSE.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Config Editor",
+				TemplCode: `@yamltree.YamlTree(yamltree.Props{
+    ID:        "config",
+    Data:      configData,
+    ActionURL: "/showcase/yaml-tree",
+})`,
+				HandlerCode: `yamltree.RegisterHandlers(r, "/yaml-tree", getData, func(id string, data any) error {
+    // Persist the updated config
+    slog.Info("config updated", "component", id)
+    return nil
+})`,
+			}) {
+				<p class="text-sm mb-4">
+					Click the pencil icon to edit a value. Use the "+" button to add keys. Click the trash icon to remove entries. Changes are saved via SSE.
+				</p>
+				@yamltree.YamlTree(yamltree.Props{
+					ID:        "config",
+					Data:      sampleYAML,
+					ActionURL: "/showcase/yaml-tree",
+				})
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Read-Only View",
+				TemplCode: `@yamltree.YamlTree(yamltree.Props{
+    ID:       "readonly",
+    Data:     configData,
+    ReadOnly: true,
+})`,
+			}) {
+				<p class="text-sm mb-4">
+					With ReadOnly set to true, the tree is purely a viewer — no edit, add, or remove controls.
+				</p>
+				@yamltree.YamlTree(yamltree.Props{
+					ID:       "readonly",
+					Data:     sampleYAML,
+					ReadOnly: true,
+				})
+			}
+		</div>
+	}
+}
