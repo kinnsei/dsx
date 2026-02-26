@@ -44,17 +44,25 @@ func Connect() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		wxctx := webx.FromContext(ctx)
-		scopes := wxctx.Scopes
-		if len(scopes) > 0 && wxctx.StreamURL != "" {
-			// Build URL with grouped scope params.
-			// Scopes like "customers:1", "customers:2", "files:5" become
-			// ?customers=1,2&files=5 — scopes without a colon use ?scope=
-			streamURL := buildScopeURL(wxctx.StreamURL, scopes)
+		watchers := wxctx.Watchers
+		if len(watchers) > 0 && wxctx.StreamURL != "" {
+			// Deduplicate scopes for the URL (multiple watchers may share a scope).
+			scopeSet := make(map[string]bool, len(watchers))
+			var scopes []string
+			for _, w := range watchers {
+				if !scopeSet[w.Scope] {
+					scopeSet[w.Scope] = true
+					scopes = append(scopes, w.Scope)
+				}
+			}
 
-			// Build initial signal object: {invoice_42: false, invoices_WILD: false}
-			signalMap := make(map[string]any, len(scopes))
-			for _, s := range scopes {
-				signalMap[ScopeKey(s)] = false
+			// Build URL with grouped scope params + key map.
+			streamURL := buildScopeURL(wxctx.StreamURL, scopes, watchers)
+
+			// Build initial signal object from all watcher keys.
+			signalMap := make(map[string]any, len(watchers))
+			for _, w := range watchers {
+				signalMap[w.Key] = false
 			}
 			signalJSON, _ := json.Marshal(signalMap)
 			signalsAttr := "{" + SignalNamespace + ": " + string(signalJSON) + "}"
@@ -65,7 +73,7 @@ func Connect() templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(signalsAttr)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 39, Col: 29}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 47, Col: 29}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -78,7 +86,7 @@ func Connect() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(ds.Get(streamURL, ds.WithRequestCancellation("disabled")))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 40, Col: 72}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `stream/connect.templ`, Line: 48, Col: 72}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -93,13 +101,15 @@ func Connect() templ.Component {
 	})
 }
 
-// buildScopeURL constructs a stream URL with grouped scope params.
+// buildScopeURL constructs a stream URL with grouped scope params and a key map.
 // Scopes with a colon prefix (e.g. "customers:42") are grouped by entity:
 //
 //	customers:1, customers:2, files:5  →  ?customers=1,2&files=5
 //
 // Scopes without a colon fall back to ?scope=value.
-func buildScopeURL(base string, scopes []string) string {
+// The key map encodes scope→keys mapping as JSON in the "keys" query param
+// so the stream handler knows which signal keys to push for each scope.
+func buildScopeURL(base string, scopes []string, watchers []webx.Watcher) string {
 	groups := make(map[string][]string)
 	var plain []string
 	var order []string
@@ -121,6 +131,23 @@ func buildScopeURL(base string, scopes []string) string {
 	}
 	for _, prefix := range order {
 		q.Set(prefix, strings.Join(groups[prefix], ","))
+	}
+
+	// Build scope→keys map. Only needed when any scope has multiple watchers.
+	keyMap := make(map[string][]string, len(scopes))
+	needsKeyMap := false
+	for _, w := range watchers {
+		keyMap[w.Scope] = append(keyMap[w.Scope], w.Key)
+	}
+	for _, keys := range keyMap {
+		if len(keys) > 1 {
+			needsKeyMap = true
+			break
+		}
+	}
+	if needsKeyMap {
+		j, _ := json.Marshal(keyMap)
+		q.Set("keys", string(j))
 	}
 
 	return base + "?" + q.Encode()

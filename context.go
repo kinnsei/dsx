@@ -4,8 +4,15 @@ package webx
 import (
 	"context"
 	"fmt"
-	"slices"
+	"strconv"
 )
+
+// Watcher pairs a scope with a unique signal key for that watcher.
+// Multiple components can watch the same scope, each with its own key.
+type Watcher struct {
+	Scope string // e.g. "customers:*"
+	Key   string // unique signal key, e.g. "customers_WILD", "customers_WILD_2"
+}
 
 // Context carries request-scoped state through the middleware chain and into
 // templ components. Retrieve it with FromContext.
@@ -13,19 +20,27 @@ type Context struct {
 	SessionID string
 	CSRFToken string
 	Theme     string
-	BasePath  string   // prefix for all SSE handler routes (e.g. "/showcase")
-	StreamURL string   // URL for the reactive SSE stream endpoint (e.g. "/showcase/stream")
-	Scopes    []string // reactive scopes accumulated during render by components
+	BasePath  string    // prefix for all SSE handler routes (e.g. "/showcase")
+	StreamURL string    // URL for the reactive SSE stream endpoint (e.g. "/showcase/stream")
+	Watchers  []Watcher // reactive scope watchers accumulated during render
+
+	keyCounts map[string]int // tracks how many watchers use each base key
 }
 
-// WatchScope registers a scope to be watched by the stream SSE connection.
-// Components call this during render to declare what data they depend on.
-// Duplicates are ignored.
-func (ctx *Context) WatchScope(scope string) {
-	if slices.Contains(ctx.Scopes, scope) {
-		return
+// WatchScope registers a scope watcher and returns its unique signal key.
+// Multiple components can watch the same scope — each gets a distinct key
+// so their data-effects don't interfere with each other.
+func (ctx *Context) WatchScope(scope string, baseKey string) string {
+	if ctx.keyCounts == nil {
+		ctx.keyCounts = make(map[string]int)
 	}
-	ctx.Scopes = append(ctx.Scopes, scope)
+	ctx.keyCounts[baseKey]++
+	key := baseKey
+	if ctx.keyCounts[baseKey] > 1 {
+		key = baseKey + "_" + strconv.Itoa(ctx.keyCounts[baseKey])
+	}
+	ctx.Watchers = append(ctx.Watchers, Watcher{Scope: scope, Key: key})
+	return key
 }
 
 // NewContext returns an empty Context.

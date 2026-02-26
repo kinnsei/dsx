@@ -1,6 +1,8 @@
 package pages
 
 import (
+	"fmt"
+
 	"github.com/plaenen/webx"
 	"github.com/plaenen/webx/cmd/showcase/internal/components"
 	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
@@ -8,6 +10,7 @@ import (
 	"github.com/plaenen/webx/stream"
 	"github.com/plaenen/webx/ui/button"
 	"github.com/plaenen/webx/ui/card"
+	"github.com/plaenen/webx/ui/stat"
 )
 
 // CustomerRow holds data for a single table row.
@@ -32,6 +35,48 @@ templ Customers() {
 					using stream invalidation. Open this page in two tabs and try it.
 				</p>
 			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Reactive Customer Count",
+				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+<div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/count"))... }>
+    @stat.Stats(stat.Props{Direction: stat.DirectionHorizontal}) {
+        @stat.Stat() {
+            <div class="stat-title">Total Customers</div>
+            <div id="customer-count" class="stat-value"
+                { ds.Init(ds.GetOnce(wxctx.APIPath("/customers/count")))... }>
+                —
+            </div>
+            <div class="stat-desc">Updates in real-time across all tabs</div>
+        }
+    }
+</div>`,
+				HandlerCode: `func (h *customerHandlers) count() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        h.mu.RLock()
+        n := len(h.customers)
+        h.mu.RUnlock()
+
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Patch(sse, pages.CustomerCount(n))
+    }
+}`,
+			}) {
+				<div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/count"))... }>
+					@stat.Stats(stat.Props{Direction: stat.DirectionHorizontal}) {
+						@stat.Stat() {
+							<div class="stat-title">Total Customers</div>
+							<div
+								id="customer-count"
+								class="stat-value"
+								{ ds.Init(ds.GetOnce(wxctx.APIPath("/customers/count")))... }
+							>
+								—
+							</div>
+							<div class="stat-desc">Updates in real-time across all tabs</div>
+						}
+					}
+				</div>
+			}
 			@components.Example(components.ExampleProps{
 				Title: "Reactive Customer Table",
 				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
@@ -136,18 +181,24 @@ func (h *customerHandlers) create() http.HandlerFunc {
 							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `ds.Send.Toast(sse, ds.ToastSuccess, ...)` }</code>
 						</li>
 						<li>
-							<span class="font-medium">All tabs update</span> —
-							The wildcard scope
+							<span class="font-medium">All subscribers update</span> —
+							Both the count stat and the table subscribe to
 							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `customers:*` }</code>
-							matches
+							which matches
 							<code class="bg-base-200 px-1.5 py-0.5 rounded text-xs">{ `customers:{id}` }</code>
-							so every tab's table auto-reloads
+							— so a single invalidation reloads all components across all tabs
 						</li>
 					</ol>
 				}
 			}
 		</div>
 	}
+}
+
+templ CustomerCount(count int) {
+	<div id="customer-count" class="stat-value">
+		{ fmt.Sprintf("%d", count) }
+	</div>
 }
 
 templ CustomerTableBody(customers []CustomerRow) {

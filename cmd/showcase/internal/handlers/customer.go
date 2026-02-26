@@ -45,6 +45,7 @@ func newCustomerHandlers(broker *stream.Broker) *customerHandlers {
 
 func (h *customerHandlers) register(r chi.Router) {
 	r.Get("/customers/list", h.list())
+	r.Get("/customers/count", h.count())
 	r.Get("/customers/new", h.newDrawer())
 	r.Post("/customers/create", h.create())
 }
@@ -64,6 +65,17 @@ func (h *customerHandlers) list() http.HandlerFunc {
 
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Patch(sse, pages.CustomerTableBody(customers))
+	}
+}
+
+func (h *customerHandlers) count() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		h.mu.RLock()
+		n := len(h.customers)
+		h.mu.RUnlock()
+
+		sse := datastar.NewSSE(w, r)
+		ds.Send.Patch(sse, pages.CustomerCount(n))
 	}
 }
 

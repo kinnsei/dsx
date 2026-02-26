@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -70,9 +71,9 @@ func TestWatchEffect(t *testing.T) {
 
 	effect := stream.WatchEffect(ctx, "counter:shared", "/api/counter")
 
-	// Should register the scope
-	if len(wctx.Scopes) != 1 || wctx.Scopes[0] != "counter:shared" {
-		t.Errorf("WatchEffect should register scope, got: %v", wctx.Scopes)
+	// Should register a watcher
+	if len(wctx.Watchers) != 1 || wctx.Watchers[0].Scope != "counter:shared" {
+		t.Errorf("WatchEffect should register watcher, got: %v", wctx.Watchers)
 	}
 
 	// Should return a data-effect expression
@@ -85,16 +86,25 @@ func TestWatchEffect(t *testing.T) {
 	t.Logf("WatchEffect output: %s", effect)
 }
 
-func TestWatchEffect_Dedup(t *testing.T) {
+func TestWatchEffect_UniqueKeys(t *testing.T) {
 	wctx := &webx.Context{}
 	ctx := wctx.WithContext(context.Background())
 
-	stream.WatchEffect(ctx, "counter:shared", "/api/counter")
-	stream.WatchEffect(ctx, "counter:shared", "/api/counter")
+	effect1 := stream.WatchEffect(ctx, "counter:shared", "/api/counter")
+	effect2 := stream.WatchEffect(ctx, "counter:shared", "/api/count")
 
-	if len(wctx.Scopes) != 1 {
-		t.Errorf("WatchEffect should deduplicate scopes, got %d", len(wctx.Scopes))
+	// Should register two watchers with unique keys
+	if len(wctx.Watchers) != 2 {
+		t.Fatalf("expected 2 watchers, got %d", len(wctx.Watchers))
 	}
+	if wctx.Watchers[0].Key == wctx.Watchers[1].Key {
+		t.Errorf("watchers should have unique keys, both got: %s", wctx.Watchers[0].Key)
+	}
+	// Effects should reference different signals
+	if effect1 == effect2 {
+		t.Error("effects for same scope should have different signal keys")
+	}
+	t.Logf("Key 1: %s, Key 2: %s", wctx.Watchers[0].Key, wctx.Watchers[1].Key)
 }
 
 func TestBrokerInvalidate(t *testing.T) {
@@ -353,7 +363,7 @@ func TestCounterHandler_GetCounter(t *testing.T) {
 func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
 	wctx := &webx.Context{
 		StreamURL: "/showcase/stream",
-		Scopes:    []string{"counter:shared"},
+		Watchers:  []webx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
 	}
 	ctx := wctx.WithContext(context.Background())
 
@@ -398,7 +408,7 @@ func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
 func TestConnectTemplate_NoRenderWithoutScopes(t *testing.T) {
 	wctx := &webx.Context{
 		StreamURL: "/showcase/stream",
-		Scopes:    nil,
+		Watchers:  nil,
 	}
 	ctx := wctx.WithContext(context.Background())
 
@@ -416,7 +426,7 @@ func TestConnectTemplate_NoRenderWithoutScopes(t *testing.T) {
 func TestConnectTemplate_NoRenderWithoutStreamURL(t *testing.T) {
 	wctx := &webx.Context{
 		StreamURL: "",
-		Scopes:    []string{"counter:shared"},
+		Watchers:  []webx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
 	}
 	ctx := wctx.WithContext(context.Background())
 
@@ -450,10 +460,10 @@ func TestE2E_FullFlow(t *testing.T) {
 	// Component registers scope (like the stream page does)
 	effect := stream.WatchEffect(ctx, "counter:shared", "/showcase/api/stream/counter")
 	t.Logf("Step 1 - WatchEffect returned: %s", effect)
-	t.Logf("Step 1 - Scopes registered: %v", wctx.Scopes)
+	t.Logf("Step 1 - Watchers registered: %v", wctx.Watchers)
 
-	if len(wctx.Scopes) == 0 {
-		t.Fatal("no scopes registered after WatchEffect")
+	if len(wctx.Watchers) == 0 {
+		t.Fatal("no watchers registered after WatchEffect")
 	}
 
 	// === Step 2: Render Connect template ===
@@ -605,7 +615,7 @@ func TestE2E_DataSignalsFormat(t *testing.T) {
 	// Test Connect template produces the same format
 	wctx := &webx.Context{
 		StreamURL: "/stream",
-		Scopes:    []string{"counter:shared"},
+		Watchers:  []webx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
 	}
 	ctx := wctx.WithContext(context.Background())
 
@@ -632,8 +642,8 @@ func TestE2E_MultipleScopes(t *testing.T) {
 	stream.WatchEffect(ctx, "counter:shared", "/api/counter")
 	stream.WatchEffect(ctx, "invoice:42", "/api/invoice/42")
 
-	if len(wctx.Scopes) != 2 {
-		t.Fatalf("expected 2 scopes, got %d", len(wctx.Scopes))
+	if len(wctx.Watchers) != 2 {
+		t.Fatalf("expected 2 watchers, got %d", len(wctx.Watchers))
 	}
 
 	// Render Connect
@@ -681,6 +691,56 @@ func TestE2E_MultipleScopes(t *testing.T) {
 	}
 	if !invoiceStale {
 		t.Error("should have received stale signal for invoice_42")
+	}
+}
+
+// TestMultiWatcher_SameScopeBothReceive verifies that two components watching
+// the same scope both get their stale signals pushed when invalidation occurs.
+func TestMultiWatcher_SameScopeBothReceive(t *testing.T) {
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
+
+	// Simulate two components watching customers:* with unique keys.
+	keysJSON := `{"customers:*":["customers_WILD","customers_WILD_2"]}`
+
+	streamCtx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	req := httptest.NewRequest("GET",
+		"/stream?customers=*&keys="+url.QueryEscape(keysJSON), nil).WithContext(streamCtx)
+	w := httptest.NewRecorder()
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		broker.Handler().ServeHTTP(w, req)
+	}()
+
+	time.Sleep(150 * time.Millisecond)
+	broker.Invalidate("customers:42")
+	time.Sleep(200 * time.Millisecond)
+
+	cancel()
+	<-done
+
+	body := w.Body.String()
+	t.Logf("SSE body:\n%s", body)
+
+	// Both keys should be present in a single patch-signals event.
+	events := parseSSEEvents(strings.NewReader(body))
+	found1, found2 := false, false
+	for _, evt := range events {
+		if evt["event"] == "datastar-patch-signals" {
+			if strings.Contains(evt["data"], "customers_WILD") {
+				found1 = true
+			}
+			if strings.Contains(evt["data"], "customers_WILD_2") {
+				found2 = true
+			}
+		}
+	}
+	if !found1 || !found2 {
+		t.Errorf("expected both customers_WILD and customers_WILD_2 in stale signals, got key1=%v key2=%v", found1, found2)
 	}
 }
 

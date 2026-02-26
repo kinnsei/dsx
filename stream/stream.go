@@ -41,9 +41,9 @@ const (
 	maxScopes = 64
 )
 
-// staleMsg carries a scope key and optional JSON payload through the event channel.
+// staleMsg carries scope signal keys and optional JSON payload through the event channel.
 type staleMsg struct {
-	key  string
+	keys []string
 	data []byte // nil for plain invalidations
 }
 
@@ -173,10 +173,14 @@ func (b *Broker) controlSubject(sessionID string) string {
 }
 
 // Handler returns an http.HandlerFunc that serves the persistent SSE stream.
-// It reads scopes from the "scope" query parameter (comma-separated or repeated)
+// It reads scopes from the query parameters (comma-separated or grouped by entity)
 // and subscribes to pub/sub topics for each scope (supporting exact and wildcard
 // patterns). It also listens on a per-session control channel for dynamic scope
 // additions.
+//
+// When a "keys" query param is present (JSON map of scope→[]signalKey), the handler
+// pushes all signal keys for a matching scope. This supports multiple components
+// watching the same scope with independent signals.
 func (b *Broker) Handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		scopes := parseScopes(r)
@@ -188,6 +192,10 @@ func (b *Broker) Handler() http.HandlerFunc {
 			return
 		}
 
+		// Parse the optional key map: scope → list of signal keys.
+		// Without it, each scope uses its default ScopeKey.
+		scopeKeys := parseScopeKeys(r, scopes)
+
 		sse := datastar.NewSSE(w, r)
 		ctx := r.Context()
 
@@ -198,7 +206,7 @@ func (b *Broker) Handler() http.HandlerFunc {
 		subscribed := make(map[string]bool)
 
 		// addScope subscribes to a scope's topic. Thread-safe.
-		addScope := func(scope string) {
+		addScope := func(scope string, keys []string) {
 			mu.Lock()
 			defer mu.Unlock()
 
@@ -211,9 +219,8 @@ func (b *Broker) Handler() http.HandlerFunc {
 				return
 			}
 
-			scopeKey := ScopeKey(scope)
 			sub, err := b.ps.Subscribe(subject, func(data []byte) {
-				sm := staleMsg{key: scopeKey, data: data}
+				sm := staleMsg{keys: keys, data: data}
 				select {
 				case staleC <- sm:
 				default:
@@ -229,7 +236,7 @@ func (b *Broker) Handler() http.HandlerFunc {
 
 		// Subscribe to initial scopes.
 		for _, scope := range scopes {
-			addScope(scope)
+			addScope(scope, scopeKeys[scope])
 		}
 
 		// Subscribe to session control channel for dynamic scope additions.
@@ -243,9 +250,10 @@ func (b *Broker) Handler() http.HandlerFunc {
 					return
 				}
 				if ctrl.Action == "subscribe" && ctrl.Scope != "" {
-					addScope(ctrl.Scope)
+					keys := []string{ScopeKey(ctrl.Scope)}
+					addScope(ctrl.Scope, keys)
 					// Push init signal so the client knows about the new scope.
-					sm := staleMsg{key: ScopeKey(ctrl.Scope)}
+					sm := staleMsg{keys: keys}
 					select {
 					case staleC <- sm:
 					default:
@@ -269,19 +277,27 @@ func (b *Broker) Handler() http.HandlerFunc {
 			}
 		}()
 
-		// Event loop: wait for NATS messages or client disconnect.
+		// Event loop: wait for pub/sub messages or client disconnect.
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			case msg := <-staleC:
+				staleSignals := make(map[string]any, len(msg.keys))
+				for _, k := range msg.keys {
+					staleSignals[k] = true
+				}
 				signals := map[string]any{
-					SignalNamespace: map[string]any{msg.key: true},
+					SignalNamespace: staleSignals,
 				}
 				if len(msg.data) > 0 {
 					var payload any
 					if err := json.Unmarshal(msg.data, &payload); err == nil {
-						signals[DataNamespace] = map[string]any{msg.key: payload}
+						dataSignals := make(map[string]any, len(msg.keys))
+						for _, k := range msg.keys {
+							dataSignals[k] = payload
+						}
+						signals[DataNamespace] = dataSignals
 					}
 				}
 				if err := sse.MarshalAndPatchSignals(signals); err != nil {
@@ -290,6 +306,25 @@ func (b *Broker) Handler() http.HandlerFunc {
 			}
 		}
 	}
+}
+
+// parseScopeKeys extracts the scope→keys mapping from the "keys" query param.
+// Falls back to ScopeKey(scope) for each scope when no key map is present.
+func parseScopeKeys(r *http.Request, scopes []string) map[string][]string {
+	result := make(map[string][]string, len(scopes))
+
+	if keysJSON := r.URL.Query().Get("keys"); keysJSON != "" {
+		var keyMap map[string][]string
+		if err := json.Unmarshal([]byte(keysJSON), &keyMap); err == nil {
+			return keyMap
+		}
+	}
+
+	// Default: one key per scope.
+	for _, scope := range scopes {
+		result[scope] = []string{ScopeKey(scope)}
+	}
+	return result
 }
 
 // parseScopes extracts scopes from the request query string.
@@ -338,11 +373,13 @@ func ScopeKey(scope string) string {
 //
 //	stream.WatchEffect(ctx, "invoice:42", "/showcase/api/invoice/42")
 //	// registers scope, returns: "if($_stream.invoice_42) { $_stream.invoice_42 = false; @get('/showcase/api/invoice/42') }"
+//
+// Multiple components can watch the same scope — each gets a unique signal key.
 func WatchEffect(ctx context.Context, scope string, reloadURL string) string {
 	wxctx := webx.FromContext(ctx)
-	wxctx.WatchScope(scope)
+	baseKey := ScopeKey(scope)
+	key := wxctx.WatchScope(scope, baseKey)
 
-	key := ScopeKey(scope)
 	signal := fmt.Sprintf("$%s.%s", SignalNamespace, key)
 	return fmt.Sprintf("if(%s) { %s = false; @get('%s') }", signal, signal, reloadURL)
 }
@@ -353,9 +390,19 @@ func WatchEffect(ctx context.Context, scope string, reloadURL string) string {
 //
 //	<div { stream.Attrs(ctx, "invoice:42", wxctx.APIPath("/invoice/42"))... }>
 func Attrs(ctx context.Context, scope string, reloadURL string) templ.Attributes {
-	effect := WatchEffect(ctx, scope, reloadURL)
+	wxctx := webx.FromContext(ctx)
+	baseKey := ScopeKey(scope)
+	key := wxctx.WatchScope(scope, baseKey)
+
+	signal := fmt.Sprintf("$%s.%s", SignalNamespace, key)
+	effect := fmt.Sprintf("if(%s) { %s = false; @get('%s') }", signal, signal, reloadURL)
+
+	m := map[string]any{key: false}
+	j, _ := json.Marshal(m)
+	signals := "{" + SignalNamespace + ": " + string(j) + "}"
+
 	return templ.Attributes{
-		"data-signals": ScopeSignals(scope),
+		"data-signals": signals,
 		"data-effect":  effect,
 	}
 }
