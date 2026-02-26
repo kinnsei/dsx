@@ -56,6 +56,14 @@ type InputProps struct {
 	// HintText is the error hint shown when validation fails.
 	// If empty, the backend error message is used.
 	HintText string
+	// FormID binds the input's value to a form's signal namespace via ds.Bind.
+	// When set, the value lives in the form namespace (e.g. $login.email)
+	// while valid/error signals stay in the validator's own namespace.
+	// Must be used together with Field.
+	FormID string
+	// Field is the signal field name within the form namespace.
+	// Used with FormID for ds.Bind(FormID, Field).
+	Field string
 }
 
 func (p *InputProps) defaults() {
@@ -95,6 +103,9 @@ templ Input(props InputProps) {
 
 		validateURL := fmt.Sprintf("%s?id=%s", validatePath, props.ID)
 
+		// When inside a form, track value locally for the validation handler
+		// but bind the input to the form's namespace so form submit includes it.
+		inForm := props.FormID != "" && props.Field != ""
 		onInput := fmt.Sprintf(
 			"%s; %s",
 			signals.Set("value", "evt.target.value"),
@@ -106,22 +117,42 @@ templ Input(props InputProps) {
 		id={ props.ID + "-wrapper" }
 		data-signals={ signals.DataSignals }
 	>
-		<input
-			id={ props.ID }
-			type={ string(props.Type) }
-			if props.Name != "" {
-				name={ props.Name }
-			}
-			if props.Placeholder != "" {
-				placeholder={ props.Placeholder }
-			}
-			if props.Value != "" {
-				value={ props.Value }
-			}
-			class={ utils.TwMerge("input", props.Class) }
-			{ ds.On("input" + debounce, onInput)... }
-			{ props.Attributes... }
-		/>
+		if inForm {
+			<input
+				id={ props.ID }
+				type={ string(props.Type) }
+				if props.Name != "" {
+					name={ props.Name }
+				}
+				if props.Placeholder != "" {
+					placeholder={ props.Placeholder }
+				}
+				if props.Value != "" {
+					value={ props.Value }
+				}
+				class={ utils.TwMerge("input", props.Class) }
+				{ ds.Bind(props.FormID, props.Field)... }
+				{ ds.On("input" + debounce, onInput)... }
+				{ props.Attributes... }
+			/>
+		} else {
+			<input
+				id={ props.ID }
+				type={ string(props.Type) }
+				if props.Name != "" {
+					name={ props.Name }
+				}
+				if props.Placeholder != "" {
+					placeholder={ props.Placeholder }
+				}
+				if props.Value != "" {
+					value={ props.Value }
+				}
+				class={ utils.TwMerge("input", props.Class) }
+				{ ds.On("input" + debounce, onInput)... }
+				{ props.Attributes... }
+			/>
+		}
 		<div
 			id={ props.ID + "-hint" }
 			class="mt-2 text-xs text-error"
