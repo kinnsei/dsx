@@ -1,12 +1,12 @@
-// Package stream provides a reactive SSE stream backed by NATS pub/sub.
+// Package stream provides a reactive SSE stream backed by pub/sub messaging.
 //
 // Components register scopes during render via [WatchEffect]. The stream
-// handler subscribes to NATS subjects for those scopes and pushes stale
+// handler subscribes to pub/sub topics for those scopes and pushes stale
 // signals when invalidations occur. Components watch the stale signal
 // via data-effect and reload themselves.
 //
 // Scopes use colon-separated naming: "invoice:42", "invoices:*", "workspace:1:*".
-// Wildcards map to NATS wildcards (* = single level, > via multi-level scope).
+// Wildcards: * = single level, > = rest (NATS convention, supported by all adapters).
 package stream
 
 import (
@@ -16,9 +16,11 @@ import (
 	"log/slog"
 	"net/http"
 	"strings"
+	"sync"
 
-	"github.com/nats-io/nats.go"
+	"github.com/a-h/templ"
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/pubsub"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -26,6 +28,10 @@ const (
 	// SignalNamespace is the Datastar signal namespace for stream stale flags.
 	// The underscore prefix makes it local-only (never sent to backend).
 	SignalNamespace = "_stream"
+
+	// DataNamespace is the Datastar signal namespace for scope payload data.
+	// When InvalidateWithData is used, entity data is pushed under this namespace.
+	DataNamespace = "_streamData"
 
 	defaultSubjectPrefix = "webx.scope"
 
@@ -35,25 +41,40 @@ const (
 	maxScopes = 64
 )
 
-// Broker wraps a NATS connection and provides publish/subscribe for scope
+// staleMsg carries a scope key and optional JSON payload through the event channel.
+type staleMsg struct {
+	key  string
+	data []byte // nil for plain invalidations
+}
+
+// controlMsg is the JSON structure sent over the NATS control channel
+// for dynamic scope management on a live SSE connection.
+type controlMsg struct {
+	Action string `json:"action"`
+	Scope  string `json:"scope"`
+}
+
+// Broker wraps a PubSub backend and provides publish/subscribe for scope
 // invalidation. One Broker per application.
 type Broker struct {
-	conn   *nats.Conn
+	ps     pubsub.PubSub
 	prefix string
 }
 
 // Option configures the Broker.
 type Option func(*Broker)
 
-// WithSubjectPrefix overrides the default NATS subject prefix ("webx.scope").
+// WithSubjectPrefix overrides the default topic prefix ("webx.scope").
 func WithSubjectPrefix(prefix string) Option {
 	return func(b *Broker) { b.prefix = prefix }
 }
 
-// NewBroker creates a Broker from an existing NATS connection.
-// Use embedded NATS or connect to an external NATS server.
-func NewBroker(conn *nats.Conn, opts ...Option) *Broker {
-	b := &Broker{conn: conn, prefix: defaultSubjectPrefix}
+// NewBroker creates a Broker from any PubSub backend.
+//
+//	broker := stream.NewBroker(natspubsub.New(nc))
+//	broker := stream.NewBroker(chanpubsub.New())
+func NewBroker(ps pubsub.PubSub, opts ...Option) *Broker {
+	b := &Broker{ps: ps, prefix: defaultSubjectPrefix}
 	for _, opt := range opts {
 		opt(b)
 	}
@@ -66,8 +87,25 @@ func NewBroker(conn *nats.Conn, opts ...Option) *Broker {
 //	broker.Invalidate("invoice:42")
 func (b *Broker) Invalidate(scope string) error {
 	subject := scopeToSubject(b.prefix, scope)
-	if err := b.conn.Publish(subject, nil); err != nil {
+	if err := b.ps.Publish(subject, nil); err != nil {
 		return fmt.Errorf("publishing invalidation for %q: %w", scope, err)
+	}
+	return nil
+}
+
+// InvalidateWithData publishes an invalidation with an attached data payload.
+// The data is JSON-encoded and pushed to clients under the DataNamespace
+// alongside the stale flag.
+//
+//	broker.InvalidateWithData("invoice:42", invoice)
+func (b *Broker) InvalidateWithData(scope string, data any) error {
+	payload, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("marshaling data for %q: %w", scope, err)
+	}
+	subject := scopeToSubject(b.prefix, scope)
+	if err := b.ps.Publish(subject, payload); err != nil {
+		return fmt.Errorf("publishing invalidation with data for %q: %w", scope, err)
 	}
 	return nil
 }
@@ -82,12 +120,66 @@ func (b *Broker) InvalidateMany(scopes ...string) error {
 	return nil
 }
 
+// AddScope publishes a control message to add a NATS subscription to a live
+// SSE connection identified by sessionID.
+func (b *Broker) AddScope(sessionID, scope string) error {
+	msg := controlMsg{Action: "subscribe", Scope: scope}
+	payload, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("marshaling control message: %w", err)
+	}
+	subject := b.controlSubject(sessionID)
+	if err := b.ps.Publish(subject, payload); err != nil {
+		return fmt.Errorf("publishing control message for session %q: %w", sessionID, err)
+	}
+	return nil
+}
+
+// SubscribeHandler returns an http.HandlerFunc that accepts POST requests
+// to dynamically add scopes to a live SSE connection. The request must
+// include "scope" form value and the session must have an active stream.
+func (b *Broker) SubscribeHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		scope := r.FormValue("scope")
+		if scope == "" {
+			http.Error(w, "missing scope parameter", http.StatusBadRequest)
+			return
+		}
+
+		wxctx := webx.FromContext(r.Context())
+		if wxctx.SessionID == "" {
+			http.Error(w, "no session", http.StatusBadRequest)
+			return
+		}
+
+		if err := b.AddScope(wxctx.SessionID, scope); err != nil {
+			slog.Error("stream: add scope failed", "session", wxctx.SessionID, "scope", scope, "error", err)
+			http.Error(w, "failed to add scope", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+	}
+}
+
+// controlSubject returns the topic for the control channel of a session.
+func (b *Broker) controlSubject(sessionID string) string {
+	return b.prefix + ".ctrl." + sessionID
+}
+
 // Handler returns an http.HandlerFunc that serves the persistent SSE stream.
-// It reads scopes from the "scope" query parameter and subscribes to NATS
-// subjects for each scope (supporting exact and wildcard patterns).
+// It reads scopes from the "scope" query parameter (comma-separated or repeated)
+// and subscribes to pub/sub topics for each scope (supporting exact and wildcard
+// patterns). It also listens on a per-session control channel for dynamic scope
+// additions.
 func (b *Broker) Handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		scopes := r.URL.Query()["scope"]
+		scopes := parseScopes(r)
 		if len(scopes) == 0 {
 			return
 		}
@@ -99,29 +191,79 @@ func (b *Broker) Handler() http.HandlerFunc {
 		sse := datastar.NewSSE(w, r)
 		ctx := r.Context()
 
-		// Subscribe to each scope's NATS subject.
-		staleC := make(chan string, 64)
-		var subs []*nats.Subscription
+		staleC := make(chan staleMsg, 64)
 
-		for _, scope := range scopes {
+		var mu sync.Mutex
+		var subs []pubsub.Subscription
+		subscribed := make(map[string]bool)
+
+		// addScope subscribes to a scope's topic. Thread-safe.
+		addScope := func(scope string) {
+			mu.Lock()
+			defer mu.Unlock()
+
 			subject := scopeToSubject(b.prefix, scope)
-			scopeKey := ScopeKey(scope)
+			if subscribed[subject] {
+				return
+			}
+			if len(subscribed) >= maxScopes {
+				slog.Warn("stream: max scopes reached, ignoring", "scope", scope)
+				return
+			}
 
-			sub, err := b.conn.Subscribe(subject, func(msg *nats.Msg) {
+			scopeKey := ScopeKey(scope)
+			sub, err := b.ps.Subscribe(subject, func(data []byte) {
+				sm := staleMsg{key: scopeKey, data: data}
 				select {
-				case staleC <- scopeKey:
+				case staleC <- sm:
 				default:
-					// Drop if channel full (backpressure).
 				}
 			})
 			if err != nil {
 				slog.Error("stream: subscribe failed", "scope", scope, "subject", subject, "error", err)
-				continue
+				return
 			}
 			subs = append(subs, sub)
+			subscribed[subject] = true
+		}
+
+		// Subscribe to initial scopes.
+		for _, scope := range scopes {
+			addScope(scope)
+		}
+
+		// Subscribe to session control channel for dynamic scope additions.
+		wxctx := webx.FromContext(r.Context())
+		if wxctx.SessionID != "" {
+			ctrlSubject := b.controlSubject(wxctx.SessionID)
+			ctrlSub, err := b.ps.Subscribe(ctrlSubject, func(data []byte) {
+				var ctrl controlMsg
+				if err := json.Unmarshal(data, &ctrl); err != nil {
+					slog.Error("stream: bad control message", "error", err)
+					return
+				}
+				if ctrl.Action == "subscribe" && ctrl.Scope != "" {
+					addScope(ctrl.Scope)
+					// Push init signal so the client knows about the new scope.
+					sm := staleMsg{key: ScopeKey(ctrl.Scope)}
+					select {
+					case staleC <- sm:
+					default:
+					}
+				}
+			})
+			if err != nil {
+				slog.Error("stream: control channel subscribe failed", "subject", ctrlSubject, "error", err)
+			} else {
+				mu.Lock()
+				subs = append(subs, ctrlSub)
+				mu.Unlock()
+			}
 		}
 
 		defer func() {
+			mu.Lock()
+			defer mu.Unlock()
 			for _, sub := range subs {
 				_ = sub.Unsubscribe()
 			}
@@ -132,16 +274,39 @@ func (b *Broker) Handler() http.HandlerFunc {
 			select {
 			case <-ctx.Done():
 				return
-			case key := <-staleC:
-				err := sse.MarshalAndPatchSignals(map[string]any{
-					SignalNamespace: map[string]any{key: true},
-				})
-				if err != nil {
+			case msg := <-staleC:
+				signals := map[string]any{
+					SignalNamespace: map[string]any{msg.key: true},
+				}
+				if len(msg.data) > 0 {
+					var payload any
+					if err := json.Unmarshal(msg.data, &payload); err == nil {
+						signals[DataNamespace] = map[string]any{msg.key: payload}
+					}
+				}
+				if err := sse.MarshalAndPatchSignals(signals); err != nil {
 					return
 				}
 			}
 		}
 	}
+}
+
+// parseScopes extracts scopes from the request query string.
+// It supports both repeated params (?scope=a&scope=b) and
+// comma-separated values (?scope=a,b) or a mix of both.
+func parseScopes(r *http.Request) []string {
+	raw := r.URL.Query()["scope"]
+	var scopes []string
+	for _, v := range raw {
+		for _, p := range strings.Split(v, ",") {
+			p = strings.TrimSpace(p)
+			if p != "" {
+				scopes = append(scopes, p)
+			}
+		}
+	}
+	return scopes
 }
 
 // ScopeKey converts a scope string to a safe signal property name.
@@ -171,6 +336,19 @@ func WatchEffect(ctx context.Context, scope string, reloadURL string) string {
 	return fmt.Sprintf("if(%s) { %s = false; @get('%s') }", signal, signal, reloadURL)
 }
 
+// Attrs registers a scope and returns templ.Attributes that set up both
+// data-signals (stale flag initialization) and data-effect (auto-reload on
+// stale). Place these on the component's wrapper element.
+//
+//	<div { stream.Attrs(ctx, "invoice:42", wxctx.APIPath("/invoice/42"))... }>
+func Attrs(ctx context.Context, scope string, reloadURL string) templ.Attributes {
+	effect := WatchEffect(ctx, scope, reloadURL)
+	return templ.Attributes{
+		"data-signals": ScopeSignals(scope),
+		"data-effect":  effect,
+	}
+}
+
 // InitScope pushes a PatchSignals to initialize a stale signal for a scope
 // that wasn't known at initial render (e.g. new rows from infinite scroll).
 func InitScope(sse *datastar.ServerSentEventGenerator, scope string) error {
@@ -194,8 +372,8 @@ func ScopeSignals(scopes ...string) string {
 	return "{" + SignalNamespace + ": " + string(j) + "}"
 }
 
-// scopeToSubject converts a scope string to a NATS subject.
-// Colons become dots, * stays as NATS wildcard.
+// scopeToSubject converts a scope string to a pub/sub topic.
+// Colons become dots, * and > stay as wildcards.
 //
 //	"invoice:42"      → "webx.scope.invoice.42"
 //	"invoices:*"      → "webx.scope.invoices.*"

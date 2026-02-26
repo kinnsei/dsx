@@ -18,6 +18,7 @@ import (
 	"github.com/plaenen/webx/cmd/showcase/internal/handlers"
 	"github.com/plaenen/webx/cmd/showcase/internal/pages"
 	"github.com/plaenen/webx/cmd/showcase/internal/static"
+	"github.com/plaenen/webx/pubsub/natspubsub"
 	"github.com/plaenen/webx/stream"
 	"github.com/plaenen/webx/ui"
 	"github.com/plaenen/webx/ui/calendar"
@@ -73,6 +74,12 @@ func serve(port int, pro bool) error {
 	}
 	gettingStarted := string(gettingStartedBytes)
 
+	streamSpecBytes, err := os.ReadFile("docs/stream-spec.md")
+	if err != nil {
+		slog.Warn("could not read docs/stream-spec.md", "error", err)
+	}
+	streamSpec := string(streamSpecBytes)
+
 	// Start embedded NATS server (in-process, no TCP port).
 	ns, err := server.NewServer(&server.Options{DontListen: true})
 	if err != nil {
@@ -90,7 +97,7 @@ func serve(port int, pro bool) error {
 	}
 	defer nc.Close()
 
-	broker := stream.NewBroker(nc)
+	broker := stream.NewBroker(natspubsub.New(nc))
 	slog.Info("embedded NATS started (in-process)")
 
 	// Generate random HMAC secret for CSRF.
@@ -176,7 +183,7 @@ func serve(port int, pro bool) error {
 	r.Get("/components/select", templ.Handler(pages.SelectInputs()).ServeHTTP)
 	r.Get("/components/separator", templ.Handler(pages.Separators()).ServeHTTP)
 	r.Get("/components/skeleton", templ.Handler(pages.Skeletons()).ServeHTTP)
-	r.Get("/components/stream", templ.Handler(pages.Stream()).ServeHTTP)
+	r.Get("/components/stream", templ.Handler(pages.Stream(streamSpec)).ServeHTTP)
 	r.Get("/components/tab", templ.Handler(pages.Tabs()).ServeHTTP)
 	r.Get("/components/table", templ.Handler(pages.Tables()).ServeHTTP)
 	r.Get("/components/textarea", templ.Handler(pages.Textareas()).ServeHTTP)
@@ -209,6 +216,7 @@ func serve(port int, pro bool) error {
 	h := handlers.New(broker)
 	r.Route(basePath, func(r chi.Router) {
 		r.Get("/stream", broker.Handler())
+		r.Post("/stream/subscribe", broker.SubscribeHandler())
 		ui.RegisterRoutes(r,
 			calendar.Route(),
 			themecontroller.Route(false),

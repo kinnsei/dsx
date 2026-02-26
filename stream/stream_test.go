@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,33 +14,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nats-io/nats-server/v2/server"
-	"github.com/nats-io/nats.go"
 	"github.com/plaenen/webx"
+	"github.com/plaenen/webx/pubsub/chanpubsub"
 	"github.com/plaenen/webx/stream"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
-// startNATS starts an in-process NATS server and returns a connection.
-func startNATS(t *testing.T) *nats.Conn {
+// newPubSub creates an in-process pub/sub for testing.
+func newPubSub(t *testing.T) *chanpubsub.ChanPubSub {
 	t.Helper()
-	ns, err := server.NewServer(&server.Options{DontListen: true})
-	if err != nil {
-		t.Fatalf("creating NATS server: %v", err)
-	}
-	ns.Start()
-	t.Cleanup(ns.Shutdown)
-
-	if !ns.ReadyForConnections(4 * time.Second) {
-		t.Fatal("NATS server not ready")
-	}
-
-	nc, err := nats.Connect(ns.ClientURL(), nats.InProcessServer(ns))
-	if err != nil {
-		t.Fatalf("connecting to NATS: %v", err)
-	}
-	t.Cleanup(nc.Close)
-	return nc
+	ps := chanpubsub.New()
+	t.Cleanup(func() { ps.Close() })
+	return ps
 }
 
 func TestScopeKey(t *testing.T) {
@@ -112,18 +98,14 @@ func TestWatchEffect_Dedup(t *testing.T) {
 }
 
 func TestBrokerInvalidate(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
-	// Subscribe to the expected NATS subject
-	received := make(chan string, 1)
-	sub, err := nc.Subscribe("webx.scope.counter.shared", func(msg *nats.Msg) {
-		received <- msg.Subject
+	// Subscribe to the expected subject
+	received := make(chan []byte, 1)
+	ps.Subscribe("webx.scope.counter.shared", func(data []byte) {
+		received <- data
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer sub.Unsubscribe()
 
 	// Invalidate
 	if err := broker.Invalidate("counter:shared"); err != nil {
@@ -131,70 +113,49 @@ func TestBrokerInvalidate(t *testing.T) {
 	}
 
 	select {
-	case subj := <-received:
-		if subj != "webx.scope.counter.shared" {
-			t.Errorf("unexpected subject: %s", subj)
-		}
+	case <-received:
+		// ok
 	case <-time.After(2 * time.Second):
-		t.Fatal("did not receive NATS message within 2s")
+		t.Fatal("did not receive message within 2s")
 	}
 }
 
 func TestBrokerInvalidate_CustomPrefix(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc, stream.WithSubjectPrefix("myapp.scope"))
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps, stream.WithSubjectPrefix("myapp.scope"))
 
-	received := make(chan string, 1)
-	sub, err := nc.Subscribe("myapp.scope.counter.shared", func(msg *nats.Msg) {
-		received <- msg.Subject
+	received := make(chan []byte, 1)
+	ps.Subscribe("myapp.scope.counter.shared", func(data []byte) {
+		received <- data
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer sub.Unsubscribe()
 
 	broker.Invalidate("counter:shared")
 
 	select {
-	case subj := <-received:
-		if subj != "myapp.scope.counter.shared" {
-			t.Errorf("unexpected subject: %s", subj)
-		}
+	case <-received:
+		// ok
 	case <-time.After(2 * time.Second):
-		t.Fatal("did not receive NATS message")
+		t.Fatal("did not receive message")
 	}
 }
 
 func TestBrokerInvalidateMany(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
 	received := make(chan string, 10)
-	sub, err := nc.Subscribe("webx.scope.>", func(msg *nats.Msg) {
-		received <- msg.Subject
+	ps.Subscribe("webx.scope.>", func(data []byte) {
+		received <- "got"
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer sub.Unsubscribe()
 
 	broker.InvalidateMany("counter:shared", "invoice:42")
 
-	subjects := map[string]bool{}
-	for i := 0; i < 2; i++ {
+	for range 2 {
 		select {
-		case subj := <-received:
-			subjects[subj] = true
+		case <-received:
 		case <-time.After(2 * time.Second):
 			t.Fatal("timeout waiting for messages")
 		}
-	}
-
-	if !subjects["webx.scope.counter.shared"] {
-		t.Error("missing counter:shared")
-	}
-	if !subjects["webx.scope.invoice.42"] {
-		t.Error("missing invoice:42")
 	}
 }
 
@@ -226,8 +187,8 @@ func parseSSEEvents(r io.Reader) []map[string]string {
 }
 
 func TestStreamHandler_NoScopes(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
 	req := httptest.NewRequest("GET", "/stream", nil)
 	w := httptest.NewRecorder()
@@ -241,8 +202,8 @@ func TestStreamHandler_NoScopes(t *testing.T) {
 }
 
 func TestStreamHandler_ReceivesInvalidation(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
 	// Create a cancellable context for the SSE request
 	ctx, cancel := context.WithCancel(context.Background())
@@ -304,8 +265,8 @@ func TestStreamHandler_ReceivesInvalidation(t *testing.T) {
 }
 
 func TestStreamHandler_WildcardScope(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -347,10 +308,6 @@ func TestStreamHandler_WildcardScope(t *testing.T) {
 func TestCounterHandler_GetCounter(t *testing.T) {
 	req := httptest.NewRequest("GET", "/api/stream/counter", nil)
 	w := httptest.NewRecorder()
-
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
-	_ = broker // counter handler doesn't use broker
 
 	// Simulate the counter handler directly
 	var counter atomic.Int64
@@ -420,7 +377,6 @@ func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
 	}
 
 	// Check the data-signals value is properly formatted
-	// After HTML escaping, the value should decode to: {_stream: {"counter_shared":false}}
 	if !strings.Contains(html, "_stream") {
 		t.Error("data-signals should contain _stream namespace")
 	}
@@ -481,8 +437,8 @@ func TestConnectTemplate_NoRenderWithoutStreamURL(t *testing.T) {
 // 3. Stream handler subscribes and receives invalidation
 // 4. Counter handler returns correct SSE response
 func TestE2E_FullFlow(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
 	// === Step 1: Simulate page render ===
 	wctx := &webx.Context{
@@ -593,8 +549,8 @@ func TestE2E_FullFlow(t *testing.T) {
 // TestE2E_MutationHandler_NoEmptyPatch verifies mutation handlers
 // don't send PatchElements with no target (which causes the browser error).
 func TestE2E_MutationHandler_NoEmptyPatch(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
 	var counter atomic.Int64
 
@@ -641,7 +597,6 @@ func TestE2E_DataSignalsFormat(t *testing.T) {
 	}
 
 	// The format should be: {_stream: {"counter_shared":false}}
-	// Datastar parses this as a JavaScript object expression
 	expected := `{_stream: {"counter_shared":false}}`
 	if signals != expected {
 		t.Errorf("ScopeSignals format mismatch\n  got:  %s\n  want: %s", signals, expected)
@@ -659,10 +614,6 @@ func TestE2E_DataSignalsFormat(t *testing.T) {
 	html := buf.String()
 	t.Logf("Connect HTML: %s", html)
 
-	// The HTML-escaped version should decode to the same thing
-	// In HTML: {_stream: {&#34;counter_shared&#34;:false}}
-	// or: {_stream: {&quot;counter_shared&quot;:false}}
-	// Both decode to: {_stream: {"counter_shared":false}}
 	if !strings.Contains(html, "_stream") {
 		t.Error("Connect HTML should contain _stream")
 	}
@@ -670,8 +621,8 @@ func TestE2E_DataSignalsFormat(t *testing.T) {
 
 // TestE2E_MultipleScopes tests with multiple scopes registered.
 func TestE2E_MultipleScopes(t *testing.T) {
-	nc := startNATS(t)
-	broker := stream.NewBroker(nc)
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
 
 	wctx := &webx.Context{
 		StreamURL: "/stream",
@@ -691,12 +642,9 @@ func TestE2E_MultipleScopes(t *testing.T) {
 	html := buf.String()
 	t.Logf("Connect HTML with 2 scopes:\n%s", html)
 
-	// Should have both scopes in query params
-	if !strings.Contains(html, "scope=counter:shared") {
-		t.Error("missing counter:shared scope param")
-	}
-	if !strings.Contains(html, "scope=invoice:42") {
-		t.Error("missing invoice:42 scope param")
+	// Should use comma-separated scope format
+	if !strings.Contains(html, "scope=counter:shared,invoice:42") {
+		t.Error("missing comma-separated scope param")
 	}
 
 	// Test stream handler with multiple scopes
@@ -733,5 +681,294 @@ func TestE2E_MultipleScopes(t *testing.T) {
 	}
 	if !invoiceStale {
 		t.Error("should have received stale signal for invoice_42")
+	}
+}
+
+func TestParseScopes(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		want []string
+	}{
+		{"single", "/stream?scope=a:1", []string{"a:1"}},
+		{"multiple repeated", "/stream?scope=a:1&scope=b:2", []string{"a:1", "b:2"}},
+		{"comma-separated", "/stream?scope=a:1,b:2", []string{"a:1", "b:2"}},
+		{"mixed", "/stream?scope=a:1,b:2&scope=c:3", []string{"a:1", "b:2", "c:3"}},
+		{"empty values trimmed", "/stream?scope=a:1,,b:2", []string{"a:1", "b:2"}},
+		{"whitespace trimmed", "/stream?scope=%20a:1%20,%20b:2%20", []string{"a:1", "b:2"}},
+		{"no scope param", "/stream", nil},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ps := newPubSub(t)
+			broker := stream.NewBroker(ps)
+
+			ctx, cancel := context.WithCancel(context.Background())
+
+			req := httptest.NewRequest("GET", tt.url, nil).WithContext(ctx)
+			w := httptest.NewRecorder()
+
+			done := make(chan struct{})
+			go func() {
+				defer close(done)
+				broker.Handler().ServeHTTP(w, req)
+			}()
+
+			time.Sleep(100 * time.Millisecond)
+
+			// Invalidate all expected scopes
+			for _, scope := range tt.want {
+				broker.Invalidate(scope)
+			}
+
+			time.Sleep(200 * time.Millisecond)
+			cancel()
+			<-done
+
+			body := w.Body.String()
+			events := parseSSEEvents(strings.NewReader(body))
+
+			// Verify we received events for each expected scope
+			for _, scope := range tt.want {
+				key := stream.ScopeKey(scope)
+				found := false
+				for _, evt := range events {
+					if evt["event"] == "datastar-patch-signals" && strings.Contains(evt["data"], key) {
+						found = true
+						break
+					}
+				}
+				if !found {
+					t.Errorf("expected stale event for scope %q (key %q), not found in %d events", scope, key, len(events))
+				}
+			}
+		})
+	}
+}
+
+func TestBrokerInvalidateWithData(t *testing.T) {
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
+
+	type payload struct {
+		Name  string `json:"name"`
+		Value int    `json:"value"`
+	}
+
+	received := make(chan []byte, 1)
+	ps.Subscribe("webx.scope.invoice.42", func(data []byte) {
+		received <- data
+	})
+
+	data := payload{Name: "test", Value: 99}
+	if err := broker.InvalidateWithData("invoice:42", data); err != nil {
+		t.Fatalf("InvalidateWithData failed: %v", err)
+	}
+
+	select {
+	case raw := <-received:
+		if raw == nil || len(raw) == 0 {
+			t.Fatal("expected non-nil payload")
+		}
+		var got payload
+		if err := json.Unmarshal(raw, &got); err != nil {
+			t.Fatalf("unmarshal payload: %v", err)
+		}
+		if got.Name != "test" || got.Value != 99 {
+			t.Errorf("unexpected payload: %+v", got)
+		}
+	case <-time.After(2 * time.Second):
+		t.Fatal("did not receive message")
+	}
+}
+
+func TestStreamHandler_ReceivesPayload(t *testing.T) {
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	req := httptest.NewRequest("GET", "/stream?scope=invoice:42", nil).WithContext(ctx)
+	w := httptest.NewRecorder()
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		broker.Handler().ServeHTTP(w, req)
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+
+	broker.InvalidateWithData("invoice:42", map[string]any{"total": 100})
+
+	time.Sleep(200 * time.Millisecond)
+	cancel()
+	<-done
+
+	body := w.Body.String()
+	t.Logf("SSE body:\n%s", body)
+
+	events := parseSSEEvents(strings.NewReader(body))
+	foundStale := false
+	foundData := false
+	for _, evt := range events {
+		if evt["event"] == "datastar-patch-signals" {
+			data := evt["data"]
+			if strings.Contains(data, "_stream") && strings.Contains(data, "invoice_42") {
+				foundStale = true
+			}
+			if strings.Contains(data, "_streamData") && strings.Contains(data, "invoice_42") {
+				foundData = true
+			}
+		}
+	}
+	if !foundStale {
+		t.Error("expected stale signal for invoice_42")
+	}
+	if !foundData {
+		t.Error("expected _streamData payload for invoice_42")
+	}
+}
+
+func TestStreamHandler_PayloadFallbackToStaleOnly(t *testing.T) {
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	req := httptest.NewRequest("GET", "/stream?scope=counter:shared", nil).WithContext(ctx)
+	w := httptest.NewRecorder()
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		broker.Handler().ServeHTTP(w, req)
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+
+	// Plain Invalidate (no data)
+	broker.Invalidate("counter:shared")
+
+	time.Sleep(200 * time.Millisecond)
+	cancel()
+	<-done
+
+	body := w.Body.String()
+	events := parseSSEEvents(strings.NewReader(body))
+
+	foundStale := false
+	for _, evt := range events {
+		if evt["event"] == "datastar-patch-signals" {
+			data := evt["data"]
+			if strings.Contains(data, "_stream") && strings.Contains(data, "counter_shared") {
+				foundStale = true
+			}
+			// Should NOT contain _streamData for plain invalidation
+			if strings.Contains(data, "_streamData") {
+				t.Error("plain Invalidate should not include _streamData")
+			}
+		}
+	}
+	if !foundStale {
+		t.Error("expected stale signal for counter_shared")
+	}
+}
+
+func TestDynamicScopeRegistration(t *testing.T) {
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
+
+	// Create a session context
+	wctx := &webx.Context{SessionID: "test-session-123"}
+	ctx, cancel := context.WithCancel(wctx.WithContext(context.Background()))
+	defer cancel()
+
+	req := httptest.NewRequest("GET", "/stream?scope=counter:shared", nil).WithContext(ctx)
+	w := httptest.NewRecorder()
+
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		broker.Handler().ServeHTTP(w, req)
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+
+	// Dynamically add a new scope
+	if err := broker.AddScope("test-session-123", "invoice:42"); err != nil {
+		t.Fatalf("AddScope failed: %v", err)
+	}
+
+	time.Sleep(100 * time.Millisecond)
+
+	// Now invalidate the dynamically added scope
+	broker.Invalidate("invoice:42")
+
+	time.Sleep(200 * time.Millisecond)
+	cancel()
+	<-done
+
+	body := w.Body.String()
+	t.Logf("SSE body:\n%s", body)
+
+	events := parseSSEEvents(strings.NewReader(body))
+	found := false
+	for _, evt := range events {
+		if evt["event"] == "datastar-patch-signals" && strings.Contains(evt["data"], "invoice_42") {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("dynamic scope invoice:42 was not received after AddScope")
+	}
+}
+
+func TestSubscribeHandler(t *testing.T) {
+	ps := newPubSub(t)
+	broker := stream.NewBroker(ps)
+
+	// Test missing scope
+	req := httptest.NewRequest("POST", "/stream/subscribe", nil)
+	wctx := &webx.Context{SessionID: "sess1"}
+	req = req.WithContext(wctx.WithContext(req.Context()))
+	w := httptest.NewRecorder()
+	broker.SubscribeHandler().ServeHTTP(w, req)
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("expected 400 for missing scope, got %d", w.Code)
+	}
+
+	// Test missing session
+	req = httptest.NewRequest("POST", "/stream/subscribe", strings.NewReader("scope=invoice:42"))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	wctx2 := &webx.Context{SessionID: ""}
+	req = req.WithContext(wctx2.WithContext(req.Context()))
+	w = httptest.NewRecorder()
+	broker.SubscribeHandler().ServeHTTP(w, req)
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("expected 400 for missing session, got %d", w.Code)
+	}
+
+	// Test successful subscribe
+	req = httptest.NewRequest("POST", "/stream/subscribe", strings.NewReader("scope=invoice:42"))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	wctx3 := &webx.Context{SessionID: "sess1"}
+	req = req.WithContext(wctx3.WithContext(req.Context()))
+	w = httptest.NewRecorder()
+	broker.SubscribeHandler().ServeHTTP(w, req)
+	if w.Code != http.StatusNoContent {
+		t.Errorf("expected 204, got %d", w.Code)
+	}
+
+	// Test wrong method
+	req = httptest.NewRequest("GET", "/stream/subscribe?scope=x", nil)
+	wctx4 := &webx.Context{SessionID: "sess1"}
+	req = req.WithContext(wctx4.WithContext(req.Context()))
+	w = httptest.NewRecorder()
+	broker.SubscribeHandler().ServeHTTP(w, req)
+	if w.Code != http.StatusMethodNotAllowed {
+		t.Errorf("expected 405, got %d", w.Code)
 	}
 }
