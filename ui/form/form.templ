@@ -74,16 +74,18 @@ templ Form(props Props) {
 		actionURL := fmt.Sprintf("%s?id=%s", props.Action, props.ID)
 
 		// Build submit action based on method.
+		// WithFilterSignals scopes the payload to only this form's signals.
+		opts := []ds.ActionOption{ds.WithRetries(0), ds.WithFilterSignals(props.ID)}
 		var submitAction string
 		switch props.Method {
 		case "put":
-			submitAction = ds.PutOnce(actionURL)
+			submitAction = ds.Put(actionURL, opts...)
 		case "patch":
-			submitAction = ds.PatchOnce(actionURL)
+			submitAction = ds.Patch(actionURL, opts...)
 		case "delete":
-			submitAction = ds.DeleteOnce(actionURL)
+			submitAction = ds.Delete(actionURL, opts...)
 		default:
-			submitAction = ds.PostOnce(actionURL)
+			submitAction = ds.Post(actionURL, opts...)
 		}
 	}}
 	<form

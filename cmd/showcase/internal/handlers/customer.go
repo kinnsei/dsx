@@ -95,6 +95,7 @@ type newCustomerSignals struct {
 
 func (h *customerHandlers) create() http.HandlerFunc {
 	return form.Handler(
+		newCustomerSignals{},
 		func(formID string, r *http.Request) []form.FieldError {
 			var signals newCustomerSignals
 			if err := ds.ReadSignals(formID, r, &signals); err != nil {

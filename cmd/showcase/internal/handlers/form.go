@@ -30,6 +30,7 @@ type loginFormSignals struct {
 
 func (f *formHandlers) login() http.HandlerFunc {
 	return form.Handler(
+		loginFormSignals{},
 		func(formID string, r *http.Request) []form.FieldError {
 			var signals loginFormSignals
 			if err := ds.ReadSignals(formID, r, &signals); err != nil {
@@ -69,6 +70,7 @@ type errorDemoSignals struct {
 
 func (f *formHandlers) errorDemo() http.HandlerFunc {
 	return form.Handler(
+		errorDemoSignals{},
 		func(formID string, r *http.Request) []form.FieldError {
 			var signals errorDemoSignals
 			if err := ds.ReadSignals(formID, r, &signals); err != nil {
@@ -94,6 +96,7 @@ type contactFormSignals struct {
 
 func (f *formHandlers) contact() http.HandlerFunc {
 	return form.Handler(
+		contactFormSignals{},
 		func(formID string, r *http.Request) []form.FieldError {
 			var signals contactFormSignals
 			if err := ds.ReadSignals(formID, r, &signals); err != nil {

@@ -101,16 +101,18 @@ func Form(props Props) templ.Component {
 		actionURL := fmt.Sprintf("%s?id=%s", props.Action, props.ID)
 
 		// Build submit action based on method.
+		// WithFilterSignals scopes the payload to only this form's signals.
+		opts := []ds.ActionOption{ds.WithRetries(0), ds.WithFilterSignals(props.ID)}
 		var submitAction string
 		switch props.Method {
 		case "put":
-			submitAction = ds.PutOnce(actionURL)
+			submitAction = ds.Put(actionURL, opts...)
 		case "patch":
-			submitAction = ds.PatchOnce(actionURL)
+			submitAction = ds.Patch(actionURL, opts...)
 		case "delete":
-			submitAction = ds.DeleteOnce(actionURL)
+			submitAction = ds.Delete(actionURL, opts...)
 		default:
-			submitAction = ds.PostOnce(actionURL)
+			submitAction = ds.Post(actionURL, opts...)
 		}
 		var templ_7745c5c3_Var2 = []any{utils.TwMerge("space-y-4", props.Class)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
@@ -124,7 +126,7 @@ func Form(props Props) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(props.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 90, Col: 15}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 92, Col: 15}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -137,7 +139,7 @@ func Form(props Props) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(signals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 91, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 93, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -179,7 +181,7 @@ func Form(props Props) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(formSignals.DataSignals)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 97, Col: 45}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/form/form.templ`, Line: 99, Col: 45}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {

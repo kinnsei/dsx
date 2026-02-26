@@ -317,6 +317,7 @@ func Customers() templ.Component {
 
 func (h *customerHandlers) create() http.HandlerFunc {
     return form.Handler(
+        newCustomerSignals{},
         func(formID string, r *http.Request) []form.FieldError {
             // validate, save...
             broker.Invalidate("customers:" + strconv.Itoa(id))
@@ -385,7 +386,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var14 string
 					templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(`stream.Attrs(ctx, "customers:*", reloadURL)`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 163, Col: 110}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 164, Col: 110}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 					if templ_7745c5c3_Err != nil {
@@ -398,7 +399,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var15 string
 					templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(`ds.Send.Drawer(sse, pages.CustomerDrawer())`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 169, Col: 110}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 170, Col: 110}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 					if templ_7745c5c3_Err != nil {
@@ -411,7 +412,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var16 string
 					templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(`form.Handler`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 173, Col: 79}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 174, Col: 79}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 					if templ_7745c5c3_Err != nil {
@@ -424,7 +425,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var17 string
 					templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(`broker.Invalidate("customers:{id}")`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 175, Col: 102}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 176, Col: 102}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 					if templ_7745c5c3_Err != nil {
@@ -437,7 +438,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var18 string
 					templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(`ds.Send.HideDrawer(sse)`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 179, Col: 90}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 180, Col: 90}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 					if templ_7745c5c3_Err != nil {
@@ -450,7 +451,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var19 string
 					templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(`ds.Send.Toast(sse, ds.ToastSuccess, ...)`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 181, Col: 107}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 182, Col: 107}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 					if templ_7745c5c3_Err != nil {
@@ -463,7 +464,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(`customers:*`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 186, Col: 78}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 187, Col: 78}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -476,7 +477,7 @@ func (h *customerHandlers) create() http.HandlerFunc {
 					var templ_7745c5c3_Var21 string
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(`customers:{id}`)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 188, Col: 81}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 189, Col: 81}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {
@@ -544,7 +545,7 @@ func CustomerCount(count int) templ.Component {
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", count))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 200, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 201, Col: 28}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -597,7 +598,7 @@ func CustomerTableBody(customers []CustomerRow) templ.Component {
 			var templ_7745c5c3_Var25 string
 			templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(c.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 213, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 214, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 			if templ_7745c5c3_Err != nil {
@@ -610,7 +611,7 @@ func CustomerTableBody(customers []CustomerRow) templ.Component {
 			var templ_7745c5c3_Var26 string
 			templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(c.Email)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 214, Col: 17}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 215, Col: 17}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 			if templ_7745c5c3_Err != nil {
@@ -624,7 +625,7 @@ func CustomerTableBody(customers []CustomerRow) templ.Component {
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(c.Company)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 217, Col: 17}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `cmd/showcase/internal/pages/customers.templ`, Line: 218, Col: 17}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {

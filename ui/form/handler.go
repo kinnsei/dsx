@@ -2,6 +2,7 @@ package form
 
 import (
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/plaenen/webx/ds"
@@ -21,14 +22,53 @@ type FieldError struct {
 // Return nil or empty slice for success.
 type SubmitFunc func(formID string, r *http.Request) []FieldError
 
+// errorFieldsFromSignals derives error field names from a signals struct.
+// For each field with a json tag, it appends "_error" to create the
+// corresponding error signal name.
+//
+//	type loginSignals struct {
+//	    Email    string `json:"email"`
+//	    Password string `json:"password"`
+//	}
+//	// → ["email_error", "password_error"]
+func errorFieldsFromSignals(signals any) []string {
+	t := reflect.TypeOf(signals)
+	if t.Kind() == reflect.Pointer {
+		t = t.Elem()
+	}
+	if t.Kind() != reflect.Struct {
+		return nil
+	}
+
+	var fields []string
+	for i := range t.NumField() {
+		f := t.Field(i)
+		tag := f.Tag.Get("json")
+		if tag == "" || tag == "-" {
+			continue
+		}
+		// Strip json options (e.g. "name,omitempty" → "name").
+		name, _, _ := strings.Cut(tag, ",")
+		if name == "" {
+			continue
+		}
+		fields = append(fields, name+"_error")
+	}
+	return fields
+}
+
 // Handler returns an http.HandlerFunc that processes form submissions via SSE.
-// On validation failure, it patches field error signals.
-// On success, it calls the onSuccess callback to patch success state.
+// The signals parameter declares the form's field shape — error signal names
+// are derived automatically by appending "_error" to each json tag.
+// On every submit, all derived error fields are cleared before applying actual
+// errors, preventing stale errors from persisting across resubmissions.
 //
 // Mount at your form's Action path:
 //
-//	r.Post("/auth/login", form.Handler(loginHandler, loginSuccess))
-func Handler(validate SubmitFunc, onSuccess func(formID string, sse *datastar.ServerSentEventGenerator)) http.HandlerFunc {
+//	r.Post("/auth/login", form.Handler(loginFormSignals{}, loginValidator, onSuccess))
+func Handler(signals any, validate SubmitFunc, onSuccess func(formID string, sse *datastar.ServerSentEventGenerator)) http.HandlerFunc {
+	errorFields := errorFieldsFromSignals(signals)
+
 	return func(w http.ResponseWriter, r *http.Request) {
 		formID := r.URL.Query().Get("id")
 		if formID == "" {
@@ -44,9 +84,12 @@ func Handler(validate SubmitFunc, onSuccess func(formID string, sse *datastar.Se
 		sse := datastar.NewSSE(w, r)
 
 		if len(errors) > 0 {
-			// Separate form-level errors (shown as toasts) from field errors (patched as signals).
+			// Start with all error fields cleared, then overwrite with actual errors.
 			patch := map[string]any{
 				"submitting": false,
+			}
+			for _, f := range errorFields {
+				patch[f] = ""
 			}
 			for _, e := range errors {
 				if e.Field == "error" {
@@ -61,11 +104,15 @@ func Handler(validate SubmitFunc, onSuccess func(formID string, sse *datastar.Se
 			return
 		}
 
-		// Clear submitting on success
+		// Clear submitting and all error fields on success.
+		successPatch := map[string]any{
+			"submitting": false,
+		}
+		for _, f := range errorFields {
+			successPatch[f] = ""
+		}
 		sse.MarshalAndPatchSignals(map[string]any{
-			sanitizedID: map[string]any{
-				"submitting": false,
-			},
+			sanitizedID: successPatch,
 		})
 
 		if onSuccess != nil {

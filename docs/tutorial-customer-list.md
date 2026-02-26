@@ -187,6 +187,8 @@ func (h *customerHandlers) newDrawer() http.HandlerFunc {
 ```go
 func (h *customerHandlers) create() http.HandlerFunc {
     return form.Handler(
+        // Signals struct — error fields derived automatically (name_error, email_error, company_error)
+        newCustomerSignals{},
         // Validate
         func(formID string, r *http.Request) []form.FieldError {
             var signals newCustomerSignals
@@ -261,5 +263,5 @@ func (h *customerHandlers) register(r chi.Router) {
 | `ds.Send.HideDrawer(sse)` | Closes the drawer from the server side |
 | `ds.Send.Toast(sse, level, msg)` | Appends a toast notification via SSE |
 | `ds.Send.Patch(sse, component)` | Patches a templ component into the DOM via SSE |
-| `form.Handler(validate, onSuccess)` | Handles form submission with validation and SSE responses |
+| `form.Handler(signals, validate, onSuccess)` | Handles form submission with validation and SSE responses |
 | Wildcard scopes | `customers:*` matches any `customers:{id}` invalidation |

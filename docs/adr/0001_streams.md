@@ -373,6 +373,7 @@ func (h *customerHandlers) newDrawer() http.HandlerFunc {
 // POST /customers/create — validates, saves, invalidates
 func (h *customerHandlers) create() http.HandlerFunc {
     return form.Handler(
+        newCustomerSignals{},
         func(formID string, r *http.Request) []form.FieldError {
             var signals newCustomerSignals
             ds.ReadSignals(formID, r, &signals)

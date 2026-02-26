@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/starfederation/datastar-go/datastar"
 	"github.com/valyala/bytebufferpool"
 )
 
@@ -53,6 +54,20 @@ func ReadSignals(componentID string, r *http.Request, dest any) error {
 		return fmt.Errorf("read signals for %q: unmarshal namespace: %w", componentID, err)
 	}
 	return nil
+}
+
+// ReadAndSSE reads namespaced signals from a Datastar request and then creates
+// the SSE writer. This enforces the correct ordering — ReadSignals must happen
+// before NewSSE because SSE creation consumes the request body.
+//
+//	sse, err := ds.ReadAndSSE("my-form", w, r, &signals)
+//	if err != nil { ... }
+//	sse.MarshalAndPatchSignals(...)
+func ReadAndSSE(componentID string, w http.ResponseWriter, r *http.Request, dest any) (*datastar.ServerSentEventGenerator, error) {
+	if err := ReadSignals(componentID, r, dest); err != nil {
+		return nil, err
+	}
+	return datastar.NewSSE(w, r), nil
 }
 
 // ReadRaw reads all signal namespaces from a Datastar request as raw JSON.

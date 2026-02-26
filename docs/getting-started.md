@@ -200,8 +200,8 @@ r.Route(basePath, func(r chi.Router) {
 // Validator — each field needs its own validation function
 r.Get("/validate/email", validator.Handler(emailValidator))
 
-// Form — needs validation function + success callback
-r.Post("/auth/login", form.Handler(loginValidator, onSuccess))
+// Form — signals struct + validation function + success callback
+r.Post("/auth/login", form.Handler(loginSignals{}, loginValidator, onSuccess))
 ```
 
 Each handler package exports a path constant (e.g. `markdown.PreviewPath`, `moneyinput.DecimalPath`, `fileupload.UploadPath`) for use when registering handlers manually.

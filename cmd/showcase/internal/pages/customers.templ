@@ -99,6 +99,7 @@ templ Customers() {
 
 func (h *customerHandlers) create() http.HandlerFunc {
     return form.Handler(
+        newCustomerSignals{},
         func(formID string, r *http.Request) []form.FieldError {
             // validate, save...
             broker.Invalidate("customers:" + strconv.Itoa(id))
