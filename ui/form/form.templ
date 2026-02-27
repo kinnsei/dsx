@@ -154,8 +154,8 @@ templ Description(props ...DescriptionProps) {
 // The signal parameter is the full Datastar signal reference (e.g. "$login.email_error").
 templ Error(signal string) {
 	<p
-		class="label text-xs text-error"
-		{ ds.Show(signal + " !== ''")... }
+		class="label text-xs text-error hidden"
+		{ ds.ClassToggle("hidden", signal + " === ''")... }
 	>
 		<span { ds.Text(signal)... }></span>
 	</p>
@@ -165,8 +165,8 @@ templ Error(signal string) {
 // Use this when the error text is known at render time, not from a signal.
 templ ErrorStatic(signal string) {
 	<p
-		class="label text-xs text-error"
-		{ ds.Show(signal + " !== ''")... }
+		class="label text-xs text-error hidden"
+		{ ds.ClassToggle("hidden", signal + " === ''")... }
 	>
 		{ children... }
 	</p>
@@ -175,8 +175,8 @@ templ ErrorStatic(signal string) {
 // Success renders a success message that shows when a signal is non-empty.
 templ Success(signal string) {
 	<p
-		class="label text-xs text-success"
-		{ ds.Show(signal + " !== ''")... }
+		class="label text-xs text-success hidden"
+		{ ds.ClassToggle("hidden", signal + " === ''")... }
 	>
 		<span { ds.Text(signal)... }></span>
 	</p>
@@ -207,8 +207,8 @@ templ Submit(props SubmitProps) {
 		{ props.Attributes... }
 	>
 		<span
-			class="loading loading-spinner loading-sm"
-			{ ds.Show(signals.Signal("submitting"))... }
+			class="loading loading-spinner loading-sm hidden"
+			{ ds.ClassToggle("hidden", "!" + signals.Signal("submitting"))... }
 		></span>
 		{ children... }
 	</button>
@@ -221,8 +221,8 @@ templ FormError(formID string) {
 		signals := ds.NewSignals(formID, FormSignals{})
 	}}
 	<div
-		class="alert alert-error text-sm"
-		{ ds.Show(signals.Signal("error") + " !== ''")... }
+		class="alert alert-error text-sm hidden"
+		{ ds.ClassToggle("hidden", signals.Signal("error") + " === ''")... }
 	>
 		<span { ds.Text(signals.Signal("error"))... }></span>
 	</div>

@@ -431,11 +431,11 @@ func Input(props InputProps) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" class=\"mt-2 text-xs text-error\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" class=\"mt-2 text-xs text-error hidden\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Show(signals.Signal("error")+" !== ''"))
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.ClassToggle("hidden", signals.Signal("error")+" === ''"))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -499,11 +499,11 @@ func SuccessHint(id string) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		signals := ds.NewSignals(id, validatorSignals{})
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div class=\"mt-2 text-xs text-success\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div class=\"mt-2 text-xs text-success hidden\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.Show(signals.Signal("error")+" === '' && "+signals.Signal("value")+" !== ''"))
+		templ_7745c5c3_Err = templ.RenderAttributes(ctx, templ_7745c5c3_Buffer, ds.ClassToggle("hidden", signals.Signal("error")+" !== '' || "+signals.Signal("value")+" === ''"))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

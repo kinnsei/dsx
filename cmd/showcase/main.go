@@ -226,6 +226,7 @@ func serve(port int, pro bool) error {
 			moneyinput.MoneyRoute(),
 			validator.Route(),
 		)
+		r.Get("/parse/money-restricted", moneyinput.MoneyHandler("USD", "EUR"))
 		h.RegisterRoutes(r)
 	})
 

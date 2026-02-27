@@ -155,8 +155,8 @@ templ Input(props InputProps) {
 		}
 		<div
 			id={ props.ID + "-hint" }
-			class="mt-2 text-xs text-error"
-			{ ds.Show(signals.Signal("error") + " !== ''")... }
+			class="mt-2 text-xs text-error hidden"
+			{ ds.ClassToggle("hidden", signals.Signal("error") + " === ''")... }
 		>
 			if props.HintText != "" {
 				{ props.HintText }
@@ -174,8 +174,8 @@ templ SuccessHint(id string) {
 		signals := ds.NewSignals(id, validatorSignals{})
 	}}
 	<div
-		class="mt-2 text-xs text-success"
-		{ ds.Show(signals.Signal("error") + " === '' && " + signals.Signal("value") + " !== ''")... }
+		class="mt-2 text-xs text-success hidden"
+		{ ds.ClassToggle("hidden", signals.Signal("error") + " !== '' || " + signals.Signal("value") + " === ''")... }
 	>
 		{ children... }
 	</div>

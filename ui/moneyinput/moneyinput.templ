@@ -87,15 +87,15 @@ templ DecimalInput(props DecimalProps) {
 		/>
 		<div
 			id={ props.ID + "-hint" }
-			class="mt-2 text-xs text-error"
-			{ ds.Show(signals.Signal("error") + " !== ''")... }
+			class="mt-2 text-xs text-error hidden"
+			{ ds.ClassToggle("hidden", signals.Signal("error") + " === ''")... }
 		>
 			<span { ds.Text(signals.Signal("error"))... }></span>
 		</div>
 		<div
 			id={ props.ID + "-amount" }
-			class="mt-2 text-xs text-success font-mono"
-			{ ds.Show(signals.Signal("amount") + " !== '' && " + signals.Signal("error") + " === ''")... }
+			class="mt-2 text-xs text-success font-mono hidden"
+			{ ds.ClassToggle("hidden", signals.Signal("amount") + " === '' || " + signals.Signal("error") + " !== ''")... }
 		>
 			<span { ds.Text(signals.Signal("amount"))... }></span>
 		</div>
@@ -185,19 +185,19 @@ templ MoneyInput(props MoneyProps) {
 		/>
 		<div
 			id={ props.ID + "-hint" }
-			class="mt-2 text-xs text-error"
-			{ ds.Show(signals.Signal("error") + " !== ''")... }
+			class="mt-2 text-xs text-error hidden"
+			{ ds.ClassToggle("hidden", signals.Signal("error") + " === ''")... }
 		>
 			<span { ds.Text(signals.Signal("error"))... }></span>
 		</div>
 		<div
 			id={ props.ID + "-result" }
-			class="mt-2 text-xs text-success font-mono flex items-center gap-2"
-			{ ds.Show(signals.Signal("amount") + " !== '' && " + signals.Signal("error") + " === ''")... }
+			class="mt-2 text-xs text-success font-mono flex items-center gap-2 hidden"
+			{ ds.ClassToggle("hidden", signals.Signal("amount") + " === '' || " + signals.Signal("error") + " !== ''")... }
 		>
 			<span
-				class="badge badge-sm badge-outline"
-				{ ds.Show(signals.Signal("currency") + " !== ''")... }
+				class="badge badge-sm badge-outline hidden"
+				{ ds.ClassToggle("hidden", signals.Signal("currency") + " === ''")... }
 				{ ds.Text(signals.Signal("currency"))... }
 			></span>
 			<span { ds.Text(signals.Signal("amount"))... }></span>
