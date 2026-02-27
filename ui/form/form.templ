@@ -28,6 +28,10 @@ type Props struct {
 	// Method overrides the HTTP method. Defaults to POST.
 	// Supported: "post", "put", "patch", "delete".
 	Method string
+	// Multipart sends the form as multipart/form-data.
+	// Required for file uploads. Adds enctype and tells Datastar
+	// to use contentType: 'form'.
+	Multipart bool
 	// Signals is the initial form signal state (your custom signals struct).
 	// The form merges FormSignals (submitting, error) with your struct.
 	Signals any
@@ -76,6 +80,9 @@ templ Form(props Props) {
 		// Build submit action based on method.
 		// WithFilterSignals scopes the payload to only this form's signals.
 		opts := []ds.ActionOption{ds.WithRetries(0), ds.WithFilterSignals(props.ID)}
+		if props.Multipart {
+			opts = append(opts, ds.WithContentType("form"))
+		}
 		var submitAction string
 		switch props.Method {
 		case "put":
@@ -94,6 +101,9 @@ templ Form(props Props) {
 		{ ds.On("submit__prevent", submitAction)... }
 		class={ utils.TwMerge("space-y-4", props.Class) }
 		novalidate
+		if props.Multipart {
+			enctype="multipart/form-data"
+		}
 		{ props.Attributes... }
 	>
 		<div data-signals={ formSignals.DataSignals } class="contents">
