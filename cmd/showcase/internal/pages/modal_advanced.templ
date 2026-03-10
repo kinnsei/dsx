@@ -14,7 +14,7 @@ templ ModalAdvanced() {
 		CurrentPath: "/components/sse-sdk",
 	}) {
 		{{
-			wxctx := webx.FromContext(ctx)
+			wxctx := dsx.FromContext(ctx)
 		}}
 		<div class="space-y-8">
 			<div>
@@ -70,7 +70,7 @@ templ ModalAdvanced() {
 </button>`,
 				HandlerCode: `func (h *modalHandlers) showConfirm() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Confirm(sse, "Are you sure?",
             wxctx.APIPath("/modal/confirmed"),
@@ -150,7 +150,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 </button>`,
 				HandlerCode: `func (h *modalHandlers) redirect() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Redirect(sse, wxctx.BasePath+"/")
     }
@@ -177,7 +177,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 </button>`,
 				HandlerCode: `func (h *modalHandlers) download() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Download(sse,
             wxctx.APIPath("/reports/export.csv"),

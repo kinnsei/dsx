@@ -34,7 +34,7 @@ const (
 	// When InvalidateWithData is used, entity data is pushed under this namespace.
 	DataNamespace = "_streamData"
 
-	defaultSubjectPrefix = "webx.scope"
+	defaultSubjectPrefix = "dsx.scope"
 
 	// maxScopes is the maximum number of scopes a single SSE connection may
 	// subscribe to. This prevents a malicious client from exhausting memory
@@ -66,7 +66,7 @@ type Broker struct {
 // Option configures the Broker.
 type Option func(*Broker)
 
-// WithSubjectPrefix overrides the default topic prefix ("webx.scope").
+// WithSubjectPrefix overrides the default topic prefix ("dsx.scope").
 func WithSubjectPrefix(prefix string) Option {
 	return func(b *Broker) { b.prefix = prefix }
 }
@@ -160,7 +160,7 @@ func (b *Broker) SubscribeHandler() http.HandlerFunc {
 			return
 		}
 
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		if wxctx.SessionID == "" {
 			http.Error(w, "no session", http.StatusBadRequest)
 			return
@@ -254,7 +254,7 @@ func (b *Broker) Handler() http.HandlerFunc {
 		}
 
 		// Subscribe to session control channel for dynamic scope additions.
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		if wxctx.SessionID != "" {
 			ctrlSubject := b.controlSubject(wxctx.SessionID)
 			ctrlSub, err := b.ps.Subscribe(ctrlSubject, func(data []byte) {
@@ -390,7 +390,7 @@ func ScopeKey(scope string) string {
 //
 // Multiple components can watch the same scope — each gets a unique signal key.
 func WatchEffect(ctx context.Context, scope string, reloadURL string) string {
-	wxctx := webx.FromContext(ctx)
+	wxctx := dsx.FromContext(ctx)
 	baseKey := ScopeKey(scope)
 	key := wxctx.WatchScope(scope, baseKey)
 
@@ -404,7 +404,7 @@ func WatchEffect(ctx context.Context, scope string, reloadURL string) string {
 //
 //	<div { stream.Attrs(ctx, "invoice:42", wxctx.APIPath("/invoice/42"))... }>
 func Attrs(ctx context.Context, scope string, reloadURL string) templ.Attributes {
-	wxctx := webx.FromContext(ctx)
+	wxctx := dsx.FromContext(ctx)
 	baseKey := ScopeKey(scope)
 	key := wxctx.WatchScope(scope, baseKey)
 
@@ -447,9 +447,9 @@ func ScopeSignals(scopes ...string) string {
 // scopeToSubject converts a scope string to a pub/sub topic.
 // Colons become dots, * and > stay as wildcards.
 //
-//	"invoice:42"      → "webx.scope.invoice.42"
-//	"invoices:*"      → "webx.scope.invoices.*"
-//	"workspace:1:*"   → "webx.scope.workspace.1.*"
+//	"invoice:42"      → "dsx.scope.invoice.42"
+//	"invoices:*"      → "dsx.scope.invoices.*"
+//	"workspace:1:*"   → "dsx.scope.workspace.1.*"
 func scopeToSubject(prefix, scope string) string {
 	safe := strings.ReplaceAll(scope, ":", ".")
 	return prefix + "." + safe

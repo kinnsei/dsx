@@ -51,7 +51,7 @@ func Toasts() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wxctx := webx.FromContext(ctx)
+			wxctx := dsx.FromContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">Toast</h1><p class=\"text-base-content/70 mt-2\">Toast sticks alert messages to a corner of the page. Click the buttons below to trigger real toast notifications via SSE.</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -206,7 +206,7 @@ func Toasts() templ.Component {
 </button>`,
 				HandlerCode: `func (t *toastHandlers) showAction() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wctx := webx.FromContext(r.Context())
+        wctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Toast(sse, ds.ToastError, "Item deleted.",
             ds.WithToastAction("Undo", wxctx.APIPath("/toast/action-callback")),
@@ -253,7 +253,7 @@ func Toasts() templ.Component {
 </button>`,
 				HandlerCode: `func (t *toastHandlers) showLink() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wctx := webx.FromContext(r.Context())
+        wctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Toast(sse, ds.ToastInfo, "New alert component available.",
             ds.WithToastLink("View Alert", wctx.BasePath+"/components/alert"),

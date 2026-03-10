@@ -157,7 +157,7 @@ r.Route("/api", func(r chi.Router) {
 })
 ```
 
-**Why the split matters**: In the split model, `webx.Context.APIPath()` already prefixes API paths with the base path. Page routes use human-readable URLs (`/customers`). API routes use a programmatic namespace (`/api/customers/list`). This separation makes it easy to add API-specific middleware (rate limiting, auth scoping) without affecting page routes.
+**Why the split matters**: In the split model, `dsx.Context.APIPath()` already prefixes API paths with the base path. Page routes use human-readable URLs (`/customers`). API routes use a programmatic namespace (`/api/customers/list`). This separation makes it easy to add API-specific middleware (rate limiting, auth scoping) without affecting page routes.
 
 ### 5. Validator endpoints under the resource
 

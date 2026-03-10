@@ -227,7 +227,7 @@ ds.Send.Drawer(sse, EditCustomerForm(customer), ds.WithDrawerMaxWidth("max-w-md"
 
 `ds.Send.HideDrawer(sse)` closes it.
 
-Important: Drawer and Modal content renders with `context.Background()`, not the request context. Components inside them cannot use `webx.FromContext(ctx)` — pass data as function parameters instead.
+Important: Drawer and Modal content renders with `context.Background()`, not the request context. Components inside them cannot use `dsx.FromContext(ctx)` — pass data as function parameters instead.
 
 #### Confirm
 

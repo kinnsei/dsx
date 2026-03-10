@@ -25,8 +25,8 @@ The stream package implements a **stale-signal pattern**: components register sc
         │                        │                        │
         ▼                        ▼                        ▼
  Registers watcher        Subscribes to            Publishes to
- on webx.Context          pub/sub topic            pub/sub topic
-        │                 webx.scope.customers.*   webx.scope.customers.42
+ on dsx.Context          pub/sub topic            pub/sub topic
+        │                 dsx.scope.customers.*   dsx.scope.customers.42
         │                        │                        │
         │                        │◄───────────────────────┘
         │                        │
@@ -56,9 +56,9 @@ A scope is a colon-separated string that identifies a piece of reactive data:
 Scopes map to pub/sub topics by replacing colons with dots:
 
 ```
-"invoice:42"    → "webx.scope.invoice.42"
-"invoices:*"    → "webx.scope.invoices.*"
-"workspace:1:*" → "webx.scope.workspace.1.*"
+"invoice:42"    → "dsx.scope.invoice.42"
+"invoices:*"    → "dsx.scope.invoices.*"
+"workspace:1:*" → "dsx.scope.workspace.1.*"
 ```
 
 Wildcards follow NATS conventions:
@@ -85,7 +85,7 @@ The primary API. Returns `templ.Attributes` with `data-signals` and `data-effect
 
 ```go
 templ CustomerList() {
-    {{ wxctx := webx.FromContext(ctx) }}
+    {{ wxctx := dsx.FromContext(ctx) }}
     <div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/list"))... }>
         <tbody id="customer-table-body"
             { ds.Init(ds.GetOnce(wxctx.APIPath("/customers/list")))... }>
@@ -175,7 +175,7 @@ broker.AddScope(sessionID, "invoice:99")
 r.Post("/stream/subscribe", broker.SubscribeHandler())
 ```
 
-The control channel (`webx.scope.ctrl.{sessionID}`) delivers the message to the running SSE handler, which subscribes to the new topic and pushes an init signal.
+The control channel (`dsx.scope.ctrl.{sessionID}`) delivers the message to the running SSE handler, which subscribes to the new topic and pushes an init signal.
 
 ### Connect Template
 
@@ -364,7 +364,7 @@ func (h *customerHandlers) count() http.HandlerFunc {
 // GET /customers/new — opens drawer with form
 func (h *customerHandlers) newDrawer() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Drawer(sse, pages.CustomerDrawer(wxctx.APIPath("/customers/create")))
     }
@@ -400,8 +400,8 @@ func (h *customerHandlers) create() http.HandlerFunc {
 **What happens when a customer is added:**
 
 1. Form submits via `@post` → `form.Handler` validates and saves
-2. `broker.Invalidate("customers:4")` publishes to `webx.scope.customers.4`
-3. The SSE subscription on `webx.scope.customers.*` matches
+2. `broker.Invalidate("customers:4")` publishes to `dsx.scope.customers.4`
+3. The SSE subscription on `dsx.scope.customers.*` matches
 4. Stream pushes `{_stream: {customers_WILD: true, customers_WILD_2: true}}`
 5. Count stat's effect fires `@get('/customers/count')` → patches `"4"`
 6. Table's effect fires `@get('/customers/list')` → patches updated rows

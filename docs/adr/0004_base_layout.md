@@ -15,7 +15,7 @@ The question is: can an application use WebX piecemeal — picking the component
 WebX's architecture has an implicit contract:
 
 ```
-Middleware (webx.Middleware)
+Middleware (dsx.Middleware)
     │
     │ populates Context: SessionID, CSRFToken, Theme
     │
@@ -83,9 +83,9 @@ const csrfJS = `document.querySelector('meta[name=csrf-token]')?.content||''`
 // headers: {'X-CSRF-Token': <csrfJS>}
 ```
 
-The middleware (`webx.Middleware`) validates this header on every non-GET request using constant-time HMAC comparison. Without the meta tag, the JavaScript expression returns an empty string and **every mutation fails with 403 Forbidden**.
+The middleware (`dsx.Middleware`) validates this header on every non-GET request using constant-time HMAC comparison. Without the meta tag, the JavaScript expression returns an empty string and **every mutation fails with 403 Forbidden**.
 
-The token value comes from `webx.Context.CSRFToken`, populated by the middleware from a signed `HttpOnly` cookie (`webx_csrf`). The layout bridges the middleware's server-side token to the client-side JavaScript that needs to send it back.
+The token value comes from `dsx.Context.CSRFToken`, populated by the middleware from a signed `HttpOnly` cookie (`dsx_csrf`). The layout bridges the middleware's server-side token to the client-side JavaScript that needs to send it back.
 
 **Without it**: Every `ds.PostOnce`, `ds.Put`, `ds.Delete`, and form submission returns 403.
 
@@ -153,7 +153,7 @@ The DaisyUI `toast toast-end toast-bottom` classes position the container as a f
 @stream.Connect()
 ```
 
-`stream.Connect()` is a templ component that reads `webx.Context.Watchers` — the scopes accumulated during page render by `stream.Attrs()` and `stream.WatchEffect()` calls — and opens a persistent SSE connection.
+`stream.Connect()` is a templ component that reads `dsx.Context.Watchers` — the scopes accumulated during page render by `stream.Attrs()` and `stream.WatchEffect()` calls — and opens a persistent SSE connection.
 
 It renders a hidden `<div>` with:
 - `data-signals` initializing stale flags for all watched scopes
@@ -171,7 +171,7 @@ It renders a hidden `<div>` with:
 
 DaisyUI uses CSS custom properties scoped by the `data-theme` attribute. All component classes (`btn-primary`, `bg-base-100`, `text-base-content`) resolve to theme-specific colors through these variables.
 
-The theme value comes from `webx.Context.Theme`, read by the middleware from the `webx_theme` cookie. The `themecontroller.IconToggle` component writes to this cookie and updates the `data-theme` attribute live.
+The theme value comes from `dsx.Context.Theme`, read by the middleware from the `dsx_theme` cookie. The `themecontroller.IconToggle` component writes to this cookie and updates the `data-theme` attribute live.
 
 **Without it**: DaisyUI falls back to its default theme. Theme switching via the controller has no effect because there's no `data-theme` attribute to update.
 
@@ -221,12 +221,12 @@ Applications that don't want the dashboard chrome use `layouts.Base` directly. B
 
 The middleware and layout form a two-phase pipeline:
 
-**Phase 1 — Middleware** (`webx.Middleware`):
-1. Reads or creates session ID → `webx_session` cookie
-2. Reads or creates signed CSRF token → `webx_csrf` cookie
+**Phase 1 — Middleware** (`dsx.Middleware`):
+1. Reads or creates session ID → `dsx_session` cookie
+2. Reads or creates signed CSRF token → `dsx_csrf` cookie
 3. Validates CSRF header on mutating requests → 403 on mismatch
-4. Reads theme preference → `webx_theme` cookie
-5. Populates `webx.Context{SessionID, CSRFToken, Theme}`
+4. Reads theme preference → `dsx_theme` cookie
+5. Populates `dsx.Context{SessionID, CSRFToken, Theme}`
 
 **Phase 2 — Layout** (`layouts.Base`):
 1. Reads `CSRFToken` from context → `<meta name="csrf-token">`
@@ -238,7 +238,7 @@ The layout cannot function without the middleware (no CSRF token, no theme). The
 
 ### Security headers
 
-`webx.SecurityHeadersMiddleware()` sets response headers that complement the layout:
+`dsx.SecurityHeadersMiddleware()` sets response headers that complement the layout:
 
 | Header | Value | Relevance |
 |--------|-------|-----------|

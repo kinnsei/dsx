@@ -1,5 +1,5 @@
-// Provides context for webx templates
-package webx
+// Provides context for dsx templates
+package dsx
 
 import (
 	"context"
@@ -50,7 +50,7 @@ func NewContext() *Context {
 
 type ctxKey struct{}
 
-// FromContext extracts the webx Context from a context.Context.
+// FromContext extracts the dsx Context from a context.Context.
 // If none is present, a new empty Context is returned.
 func FromContext(ctx context.Context) *Context {
 	if wctx, ok := ctx.Value(ctxKey{}).(*Context); ok {
@@ -59,7 +59,7 @@ func FromContext(ctx context.Context) *Context {
 	return NewContext()
 }
 
-// WithContext stores the webx Context into a context.Context.
+// WithContext stores the dsx Context into a context.Context.
 func (c *Context) WithContext(ctx context.Context) context.Context {
 	return context.WithValue(ctx, ctxKey{}, c)
 }

@@ -1,4 +1,4 @@
-package webx
+package dsx
 
 import "embed"
 

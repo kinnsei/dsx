@@ -43,7 +43,7 @@ func Connect() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		watchers := wxctx.Watchers
 		if len(watchers) > 0 && wxctx.StreamURL != "" {
 			// Deduplicate scopes for the URL (multiple watchers may share a scope).
@@ -109,7 +109,7 @@ func Connect() templ.Component {
 // Scopes without a colon fall back to ?scope=value.
 // The key map encodes scope→keys mapping as JSON in the "keys" query param
 // so the stream handler knows which signal keys to push for each scope.
-func buildScopeURL(base string, scopes []string, watchers []webx.Watcher) string {
+func buildScopeURL(base string, scopes []string, watchers []dsx.Watcher) string {
 	groups := make(map[string][]string)
 	var plain []string
 	var order []string

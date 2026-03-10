@@ -42,7 +42,7 @@ type ToggleProps struct {
 
 templ Toggle(props ToggleProps) {
 	{{
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -82,7 +82,7 @@ type RadioGroupProps struct {
 
 templ RadioGroup(props RadioGroupProps) {
 	{{
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -145,7 +145,7 @@ type IconToggleProps struct {
 
 templ IconToggle(props IconToggleProps) {
 	{{
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -196,7 +196,7 @@ templ IconToggle(props IconToggleProps) {
 
 templ ButtonGroup(props ButtonGroupProps) {
 	{{
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()

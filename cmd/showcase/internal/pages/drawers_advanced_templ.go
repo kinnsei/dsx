@@ -52,7 +52,7 @@ func DrawersAdvanced() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wxctx := webx.FromContext(ctx)
+			wxctx := dsx.FromContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">Advanced Drawer</h1><p class=\"text-base-content/70 mt-2\">Click a project card to open a detail drawer. The content is rendered server-side and delivered via SSE — no client-side JavaScript required.</p></div><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -144,7 +144,7 @@ func DrawersAdvanced() templ.Component {
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "How It Works",
-				TemplCode: `templ projectCard(wxctx *webx.Context, id, name string) {
+				TemplCode: `templ projectCard(wxctx *dsx.Context, id, name string) {
     @card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg"}) {
         @card.Body(card.Props{
             Attributes: ds.Merge(
@@ -186,7 +186,7 @@ func DrawersAdvanced() templ.Component {
 	})
 }
 
-func projectCard(wxctx *webx.Context, id, name, description, status string, progress int) templ.Component {
+func projectCard(wxctx *dsx.Context, id, name, description, status string, progress int) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {

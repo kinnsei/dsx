@@ -61,7 +61,7 @@ func Customers() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wxctx := webx.FromContext(ctx)
+			wxctx := dsx.FromContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">Customer List</h1><p class=\"text-base-content/70 mt-2\">Add customers via a drawer form. The list auto-updates across all browser tabs using stream invalidation. Open this page in two tabs and try it.</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -146,7 +146,7 @@ func Customers() templ.Component {
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "Reactive Customer Count",
-				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+				TemplCode: `{{ wxctx := dsx.FromContext(ctx) }}
 <div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/count"))... }>
     @stat.Stats(stat.Props{Direction: stat.DirectionHorizontal}) {
         @stat.Stat() {
@@ -297,7 +297,7 @@ func Customers() templ.Component {
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "Reactive Customer Table",
-				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+				TemplCode: `{{ wxctx := dsx.FromContext(ctx) }}
 <div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/list"))... }>
     <div id="customer-table-body"
         { ds.Init(ds.GetOnce(wxctx.APIPath("/customers/list")))... }>

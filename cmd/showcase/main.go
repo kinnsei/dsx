@@ -109,18 +109,18 @@ func serve(port int, pro bool) error {
 	r := chi.NewRouter()
 
 	// Session + CSRF middleware (cookie-based)
-	r.Use(webx.Middleware(webx.MiddlewareConfig{
+	r.Use(dsx.Middleware(dsx.MiddlewareConfig{
 		Secret: secret,
 		Secure: false, // development mode
 	}))
-	r.Use(webx.SecurityHeadersMiddleware())
+	r.Use(dsx.SecurityHeadersMiddleware())
 
 	// Set base path and stream URL on every request
 	const basePath = "/showcase"
 	streamURL := basePath + "/stream"
 	r.Use(func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			wxctx := webx.FromContext(r.Context())
+			wxctx := dsx.FromContext(r.Context())
 			wxctx.BasePath = basePath
 			wxctx.StreamURL = streamURL
 			next.ServeHTTP(w, r.WithContext(wxctx.WithContext(r.Context())))

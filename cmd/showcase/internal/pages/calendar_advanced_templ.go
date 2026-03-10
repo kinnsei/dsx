@@ -249,7 +249,7 @@ func navigableCalendarDemo() templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		now := time.Now()
 		calID := "nav-cal"
 		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
@@ -430,7 +430,7 @@ func combinedCalendarDemo() templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		now := time.Now()
 		calID := "combo-cal"
 		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{

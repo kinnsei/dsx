@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	webx "github.com/laenen-partners/dsx"
+	dsx "github.com/laenen-partners/dsx"
 	"github.com/laenen-partners/dsx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
@@ -79,7 +79,7 @@ func UploadHandler(store Store, opts ...HandlerOption) http.HandlerFunc {
 			return
 		}
 
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		key := StoreKey(wxctx.SessionID, componentID)
 
 		if err := r.ParseMultipartForm(32 << 20); err != nil {
@@ -182,7 +182,7 @@ func RemoveHandler(store Store) http.HandlerFunc {
 			return
 		}
 
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		key := StoreKey(wxctx.SessionID, componentID)
 
 		store.Remove(key, fileID)

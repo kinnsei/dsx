@@ -93,7 +93,7 @@ The table wrapper uses `stream.Attrs` to register the wildcard scope `customers:
 
 ```go
 templ Customers() {
-    {{ wxctx := webx.FromContext(ctx) }}
+    {{ wxctx := dsx.FromContext(ctx) }}
     <div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/list"))... }>
         <table class="table">
             <thead>
@@ -136,7 +136,7 @@ type newCustomerSignals struct {
 }
 
 templ CustomerDrawer() {
-    {{ wxctx := webx.FromContext(ctx) }}
+    {{ wxctx := dsx.FromContext(ctx) }}
     <h2 class="text-xl font-bold mb-6">Add Customer</h2>
     @form.Form(form.Props{
         ID:      "new-customer",

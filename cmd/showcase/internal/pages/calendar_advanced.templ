@@ -124,7 +124,7 @@ navURL := wxctx.APIPath(calendar.NavigatePath) + "?mode=range&id=" + calID
 
 templ navigableCalendarDemo() {
 	{{
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		now := time.Now()
 		calID := "nav-cal"
 		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{
@@ -194,7 +194,7 @@ templ rangeCalendarDemo() {
 
 templ combinedCalendarDemo() {
 	{{
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		now := time.Now()
 		calID := "combo-cal"
 		navSignals := ds.NewSignals(calID, calendar.NavigableSignals{

@@ -44,7 +44,7 @@ func (h *modalHandlers) showWideModal() http.HandlerFunc {
 
 func (h *modalHandlers) showConfirm() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Confirm(sse, "Are you sure you want to proceed with this action?",
 			wxctx.APIPath("/modal/confirmed"),
@@ -54,7 +54,7 @@ func (h *modalHandlers) showConfirm() http.HandlerFunc {
 
 func (h *modalHandlers) showDangerConfirm() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Confirm(sse, "This will permanently delete all data. This action cannot be undone.",
 			wxctx.APIPath("/modal/confirmed"),
@@ -82,7 +82,7 @@ func (h *modalHandlers) patchContent() http.HandlerFunc {
 
 func (h *modalHandlers) redirect() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Redirect(sse, wxctx.BasePath+"/")
 	}
@@ -90,7 +90,7 @@ func (h *modalHandlers) redirect() http.HandlerFunc {
 
 func (h *modalHandlers) download() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Download(sse, wxctx.APIPath("/modal/export.csv"), "export.csv")
 	}

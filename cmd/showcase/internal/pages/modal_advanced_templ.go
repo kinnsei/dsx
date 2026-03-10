@@ -48,7 +48,7 @@ func ModalAdvanced() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wxctx := webx.FromContext(ctx)
+			wxctx := dsx.FromContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">SSE SDK</h1><p class=\"text-base-content/70 mt-2\">Backend helpers that send SSE events to the browser via <code class=\"bg-base-200 px-1.5 py-0.5 rounded text-xs\">ds.Send.XXX</code>. All interactions are server-driven — no client-side JavaScript.</p></div><!-- Modal -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -153,7 +153,7 @@ func ModalAdvanced() templ.Component {
 </button>`,
 				HandlerCode: `func (h *modalHandlers) showConfirm() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Confirm(sse, "Are you sure?",
             wxctx.APIPath("/modal/confirmed"),
@@ -264,7 +264,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 </button>`,
 				HandlerCode: `func (h *modalHandlers) redirect() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Redirect(sse, wxctx.BasePath+"/")
     }
@@ -313,7 +313,7 @@ ds.Send.Confirm(sse, "Delete all data?",
 </button>`,
 				HandlerCode: `func (h *modalHandlers) download() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Download(sse,
             wxctx.APIPath("/reports/export.csv"),

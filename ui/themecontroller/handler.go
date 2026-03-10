@@ -23,7 +23,7 @@ func Route(secure bool) func(chi.Router) {
 
 // SetThemeHandler returns an HTTP handler that persists the selected theme
 // to a cookie. It reads the theme from Datastar signals and sets the
-// webx_theme cookie.
+// dsx_theme cookie.
 func SetThemeHandler(secure bool) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Datastar signals are namespaced by component ID, so we read the
@@ -41,7 +41,7 @@ func SetThemeHandler(secure bool) http.HandlerFunc {
 		}
 
 		http.SetCookie(w, &http.Cookie{
-			Name:     "webx_theme",
+			Name:     "dsx_theme",
 			Value:    theme,
 			Path:     "/",
 			HttpOnly: true,
@@ -49,7 +49,7 @@ func SetThemeHandler(secure bool) http.HandlerFunc {
 			Secure:   secure,
 		})
 
-		_ = webx.FromContext(r.Context()) // ensure context exists
+		_ = dsx.FromContext(r.Context()) // ensure context exists
 
 		sse := datastar.NewSSE(w, r)
 		sse.MarshalAndPatchSignals(signals)

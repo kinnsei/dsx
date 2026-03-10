@@ -51,7 +51,7 @@ func Stream(specContent string) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			wxctx := webx.FromContext(ctx)
+			wxctx := dsx.FromContext(ctx)
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-8\"><div><h1 class=\"text-3xl font-bold\">Stream</h1><p class=\"text-base-content/70 mt-2\">Reactive SSE stream backed by pluggable pub/sub (NATS, Redis, or Go channels). Components auto-reload when server-side data changes. Open this page in multiple tabs to see real-time sync.</p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -116,7 +116,7 @@ func Stream(specContent string) templ.Component {
 			})
 			templ_7745c5c3_Err = components.Example(components.ExampleProps{
 				Title: "Shared Counter",
-				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+				TemplCode: `{{ wxctx := dsx.FromContext(ctx) }}
 <div { stream.Attrs(ctx, "counter:shared", wxctx.APIPath("/stream/counter"))... }>
     <span id="stream-counter-value"
         { ds.Init(ds.GetOnce(wxctx.APIPath("/stream/counter")))... }

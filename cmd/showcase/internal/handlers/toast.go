@@ -49,7 +49,7 @@ func (t *toastHandlers) showPersistent() http.HandlerFunc {
 
 func (t *toastHandlers) showAction() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Toast(sse, ds.ToastError, "Item deleted.", ds.WithToastAction("Undo", wxctx.APIPath("/toast/action-callback")))
 	}
@@ -64,7 +64,7 @@ func (t *toastHandlers) actionCallback() http.HandlerFunc {
 
 func (t *toastHandlers) showLink() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Toast(sse, ds.ToastInfo, "New alert component available.",
 			ds.WithToastLink("View Alert", wxctx.BasePath+"/components/alert"),

@@ -1,10 +1,10 @@
-# webx
+# dsx
 
 Beautiful, accessible UI components built with Go, Templ, Tailwind CSS, DaisyUI, and Datastar.
 
 ## Philosophy
 
-webx is inspired by [daisyui](https://daisyui.com). Like daisyui, this is a component library you install as a dependency. Fork it and own it.
+dsx is inspired by [daisyui](https://daisyui.com). Like daisyui, this is a component library you install as a dependency. Fork it and own it.
 
 - **You own the code.** Need to change something? Just edit it.
 - **No versioning conflicts** or breaking changes to worry about.

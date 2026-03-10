@@ -16,7 +16,7 @@ import (
 // If no scopes have been registered, nothing is rendered.
 templ Connect() {
 	{{
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		watchers := wxctx.Watchers
 	}}
 	if len(watchers) > 0 && wxctx.StreamURL != "" {
@@ -58,7 +58,7 @@ templ Connect() {
 // Scopes without a colon fall back to ?scope=value.
 // The key map encodes scope→keys mapping as JSON in the "keys" query param
 // so the stream handler knows which signal keys to push for each scope.
-func buildScopeURL(base string, scopes []string, watchers []webx.Watcher) string {
+func buildScopeURL(base string, scopes []string, watchers []dsx.Watcher) string {
 	groups := make(map[string][]string)
 	var plain []string
 	var order []string

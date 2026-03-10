@@ -55,7 +55,7 @@ func Home(readmeContent string) templ.Component {
 			return nil
 		})
 		templ_7745c5c3_Err = layouts.Showcase(layouts.ShowcaseProps{
-			Title:       "webx showcase",
+			Title:       "dsx showcase",
 			Description: "Go web framework with DaisyUI and Datastar",
 			CurrentPath: "/",
 		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)

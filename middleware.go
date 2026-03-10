@@ -1,4 +1,4 @@
-package webx
+package dsx
 
 import (
 	"crypto/hmac"
@@ -13,12 +13,12 @@ import (
 )
 
 const (
-	sessionCookieName = "webx_session"
-	csrfCookieName    = "webx_csrf"
-	themeCookieName   = "webx_theme"
+	sessionCookieName = "dsx_session"
+	csrfCookieName    = "dsx_csrf"
+	themeCookieName   = "dsx_theme"
 )
 
-// MiddlewareConfig configures the webx middleware.
+// MiddlewareConfig configures the dsx middleware.
 type MiddlewareConfig struct {
 	Secret []byte // HMAC-SHA256 key, minimum 32 bytes — panics if shorter
 	Secure bool   // Secure flag on cookies (true for HTTPS / production)
@@ -29,7 +29,7 @@ type MiddlewareConfig struct {
 // double-submit CSRF token.
 func Middleware(cfg MiddlewareConfig) func(http.Handler) http.Handler {
 	if len(cfg.Secret) < 32 {
-		panic("webx: MiddlewareConfig.Secret must be at least 32 bytes")
+		panic("dsx: MiddlewareConfig.Secret must be at least 32 bytes")
 	}
 
 	return func(next http.Handler) http.Handler {

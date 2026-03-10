@@ -69,7 +69,7 @@ func Toggle(props ToggleProps) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -187,7 +187,7 @@ func RadioGroup(props RadioGroupProps) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -374,7 +374,7 @@ func IconToggle(props IconToggleProps) templ.Component {
 			templ_7745c5c3_Var14 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()
@@ -516,7 +516,7 @@ func ButtonGroup(props ButtonGroupProps) templ.Component {
 			templ_7745c5c3_Var18 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		wxctx := webx.FromContext(ctx)
+		wxctx := dsx.FromContext(ctx)
 		id := props.ID
 		if id == "" {
 			id = utils.RandomID()

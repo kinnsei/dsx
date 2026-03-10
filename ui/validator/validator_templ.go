@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	webx "github.com/laenen-partners/dsx"
+	dsx "github.com/laenen-partners/dsx"
 	"github.com/laenen-partners/dsx/ds"
 	"github.com/laenen-partners/dsx/utils"
 )
@@ -118,7 +118,7 @@ func Input(props InputProps) templ.Component {
 		// Resolve ValidateURL from Validation type if not set explicitly.
 		validatePath := props.ValidateURL
 		if validatePath == "" && props.Validate != "" {
-			wctx := webx.FromContext(ctx)
+			wctx := dsx.FromContext(ctx)
 			validatePath = wctx.APIPath(props.Validate.Path())
 		}
 

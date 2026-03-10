@@ -37,7 +37,7 @@ func (v Validation) path() string {
 }
 
 // Path returns the handler path for a built-in validation type.
-// Use with webx.Context.APIPath to build the full URL.
+// Use with dsx.Context.APIPath to build the full URL.
 func (v Validation) Path() string {
 	return v.path()
 }

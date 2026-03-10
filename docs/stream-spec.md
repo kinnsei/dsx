@@ -99,7 +99,7 @@ broker := stream.NewBroker(chanpubsub.New())
 // In your component template:
 templ InvoiceCard(invoice Invoice) {
     {{
-        wxctx := webx.FromContext(ctx)
+        wxctx := dsx.FromContext(ctx)
         scope := fmt.Sprintf("invoice:%d", invoice.ID)
         reloadURL := wxctx.APIPath(fmt.Sprintf("/invoice/%d", invoice.ID))
         effect := stream.WatchEffect(ctx, scope, reloadURL)
@@ -299,7 +299,7 @@ The client receives both the stale flag (triggering a full reload) and the paylo
 
 - **One SSE connection per tab** — each browser tab opens its own connection. The pub/sub backend handles fan-out efficiently.
 - **No custom JavaScript** — all reactivity is driven by Datastar's `data-effect` and `data-signals` attributes.
-- **Scopes are colon-separated** — `entity:id` pattern maps to pub/sub topics (`webx.scope.entity.id`).
+- **Scopes are colon-separated** — `entity:id` pattern maps to pub/sub topics (`dsx.scope.entity.id`).
 - **Stale-then-reload pattern** — the stream doesn't push HTML. It pushes a "stale" flag, and the component reloads itself. This keeps the SSE payload tiny and lets components own their rendering.
 - **Session-scoped control channel** — dynamic scope registration uses a per-session topic (`{prefix}.ctrl.{sessionID}`) for isolation.
 - **Backpressure** — the internal channel has a buffer of 64 messages. If a slow client can't keep up, excess messages are dropped (the next invalidation will catch up).

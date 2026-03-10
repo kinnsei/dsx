@@ -18,7 +18,7 @@ templ DrawersAdvanced() {
 		CurrentPath: "/components/drawer-advanced",
 	}) {
 		{{
-			wxctx := webx.FromContext(ctx)
+			wxctx := dsx.FromContext(ctx)
 		}}
 		<div class="space-y-8">
 			<div>
@@ -38,7 +38,7 @@ templ DrawersAdvanced() {
 			</div>
 			@components.Example(components.ExampleProps{
 				Title: "How It Works",
-				TemplCode: `templ projectCard(wxctx *webx.Context, id, name string) {
+				TemplCode: `templ projectCard(wxctx *dsx.Context, id, name string) {
     @card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg"}) {
         @card.Body(card.Props{
             Attributes: ds.Merge(
@@ -86,7 +86,7 @@ templ DrawersAdvanced() {
 	}
 }
 
-templ projectCard(wxctx *webx.Context, id, name, description, status string, progress int) {
+templ projectCard(wxctx *dsx.Context, id, name, description, status string, progress int) {
 	@card.Card(card.Props{Class: "cursor-pointer hover:shadow-lg transition-shadow"}) {
 		@card.Body(card.Props{
 			Attributes: ds.Merge(

@@ -89,17 +89,17 @@ func main() {
     r := chi.NewRouter()
 
     secret := []byte("your-secret-key-at-least-32-bytes!") // use a real secret in production
-    r.Use(webx.Middleware(webx.MiddlewareConfig{
+    r.Use(dsx.Middleware(dsx.MiddlewareConfig{
         Secret: secret,
         Secure: false, // set true in production (HTTPS)
     }))
-    r.Use(webx.SecurityHeadersMiddleware()) // pass true for HSTS: SecurityHeadersMiddleware(true)
+    r.Use(dsx.SecurityHeadersMiddleware()) // pass true for HSTS: SecurityHeadersMiddleware(true)
 
     // 3. Configure WebX context
     const basePath = "/app"
     r.Use(func(next http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-            wctx := webx.FromContext(r.Context())
+            wctx := dsx.FromContext(r.Context())
             wctx.BasePath = basePath
             wctx.StreamURL = basePath + "/stream"
             next.ServeHTTP(w, r.WithContext(wctx.WithContext(r.Context())))
@@ -129,10 +129,10 @@ func main() {
 
 ## WebX Context
 
-Every request carries a `webx.Context` set up by `webx.Middleware`. Access it in handlers and templ components:
+Every request carries a `dsx.Context` set up by `dsx.Middleware`. Access it in handlers and templ components:
 
 ```go
-wctx := webx.FromContext(ctx)
+wctx := dsx.FromContext(ctx)
 ```
 
 | Field | Type | Description |
@@ -154,14 +154,14 @@ WebX uses cookie-based middleware. No session store is required.
 
 | Middleware | What it does |
 |---|---|
-| `webx.Middleware(cfg)` | Creates/reads session, CSRF, and theme cookies; populates `webx.Context`; validates signed CSRF token on mutating requests (POST/PUT/DELETE) |
-| `webx.SecurityHeadersMiddleware()` | Sets `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Content-Security-Policy` headers (includes `unsafe-eval` for Datastar) |
-| `webx.SecurityHeadersMiddleware(true)` | Same as above, plus `Strict-Transport-Security` (HSTS) for HTTPS environments |
+| `dsx.Middleware(cfg)` | Creates/reads session, CSRF, and theme cookies; populates `dsx.Context`; validates signed CSRF token on mutating requests (POST/PUT/DELETE) |
+| `dsx.SecurityHeadersMiddleware()` | Sets `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Content-Security-Policy` headers (includes `unsafe-eval` for Datastar) |
+| `dsx.SecurityHeadersMiddleware(true)` | Same as above, plus `Strict-Transport-Security` (HSTS) for HTTPS environments |
 
 ### MiddlewareConfig
 
 ```go
-webx.MiddlewareConfig{
+dsx.MiddlewareConfig{
     Secret: []byte("..."), // HMAC-SHA256 key, minimum 32 bytes (panics if shorter)
     Secure: true,          // Set Secure flag on cookies (true for HTTPS / production)
 }

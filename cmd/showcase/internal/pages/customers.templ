@@ -26,7 +26,7 @@ templ Customers() {
 		Description: "Real-time customer list with drawer form and stream invalidation",
 		CurrentPath: "/examples/customers",
 	}) {
-		{{ wxctx := webx.FromContext(ctx) }}
+		{{ wxctx := dsx.FromContext(ctx) }}
 		<div class="space-y-8">
 			<div>
 				<h1 class="text-3xl font-bold">Customer List</h1>
@@ -37,7 +37,7 @@ templ Customers() {
 			</div>
 			@components.Example(components.ExampleProps{
 				Title: "Reactive Customer Count",
-				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+				TemplCode: `{{ wxctx := dsx.FromContext(ctx) }}
 <div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/count"))... }>
     @stat.Stats(stat.Props{Direction: stat.DirectionHorizontal}) {
         @stat.Stat() {
@@ -79,7 +79,7 @@ templ Customers() {
 			}
 			@components.Example(components.ExampleProps{
 				Title: "Reactive Customer Table",
-				TemplCode: `{{ wxctx := webx.FromContext(ctx) }}
+				TemplCode: `{{ wxctx := dsx.FromContext(ctx) }}
 <div { stream.Attrs(ctx, "customers:*", wxctx.APIPath("/customers/list"))... }>
     <div id="customer-table-body"
         { ds.Init(ds.GetOnce(wxctx.APIPath("/customers/list")))... }>

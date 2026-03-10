@@ -310,7 +310,7 @@ On success, the flow is similar but step 5 patches `submitting: false` and the `
 
 ### Forms in Drawers and Modals
 
-Drawers and modals render their content with `context.Background()`, not the request context (see ADR-0004). This means forms inside drawers cannot call `webx.FromContext(ctx)` to read the base path.
+Drawers and modals render their content with `context.Background()`, not the request context (see ADR-0004). This means forms inside drawers cannot call `dsx.FromContext(ctx)` to read the base path.
 
 The solution: pass the action URL as a parameter:
 
@@ -318,7 +318,7 @@ The solution: pass the action URL as a parameter:
 // Handler opens the drawer with the action URL pre-built
 func (h *handlers) newDrawer() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
-        wxctx := webx.FromContext(r.Context())
+        wxctx := dsx.FromContext(r.Context())
         sse := datastar.NewSSE(w, r)
         ds.Send.Drawer(sse, CustomerDrawer(wxctx.APIPath("/customers/create")))
     }

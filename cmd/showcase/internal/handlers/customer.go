@@ -81,7 +81,7 @@ func (h *customerHandlers) count() http.HandlerFunc {
 
 func (h *customerHandlers) newDrawer() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		wxctx := webx.FromContext(r.Context())
+		wxctx := dsx.FromContext(r.Context())
 		sse := datastar.NewSSE(w, r)
 		ds.Send.Drawer(sse, pages.CustomerDrawer(wxctx.APIPath("/customers/create")))
 	}

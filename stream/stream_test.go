@@ -66,7 +66,7 @@ func TestScopeSignals(t *testing.T) {
 }
 
 func TestWatchEffect(t *testing.T) {
-	wctx := &webx.Context{}
+	wctx := &dsx.Context{}
 	ctx := wctx.WithContext(context.Background())
 
 	effect := stream.WatchEffect(ctx, "counter:shared", "/api/counter")
@@ -87,7 +87,7 @@ func TestWatchEffect(t *testing.T) {
 }
 
 func TestWatchEffect_UniqueKeys(t *testing.T) {
-	wctx := &webx.Context{}
+	wctx := &dsx.Context{}
 	ctx := wctx.WithContext(context.Background())
 
 	effect1 := stream.WatchEffect(ctx, "counter:shared", "/api/counter")
@@ -113,7 +113,7 @@ func TestBrokerInvalidate(t *testing.T) {
 
 	// Subscribe to the expected subject
 	received := make(chan []byte, 1)
-	ps.Subscribe("webx.scope.counter.shared", func(data []byte) {
+	ps.Subscribe("dsx.scope.counter.shared", func(data []byte) {
 		received <- data
 	})
 
@@ -154,7 +154,7 @@ func TestBrokerInvalidateMany(t *testing.T) {
 	broker := stream.NewBroker(ps)
 
 	received := make(chan string, 10)
-	ps.Subscribe("webx.scope.>", func(data []byte) {
+	ps.Subscribe("dsx.scope.>", func(data []byte) {
 		received <- "got"
 	})
 
@@ -361,9 +361,9 @@ func TestCounterHandler_GetCounter(t *testing.T) {
 }
 
 func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
-	wctx := &webx.Context{
+	wctx := &dsx.Context{
 		StreamURL: "/showcase/stream",
-		Watchers:  []webx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
+		Watchers:  []dsx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
 	}
 	ctx := wctx.WithContext(context.Background())
 
@@ -406,7 +406,7 @@ func TestConnectTemplate_RendersWhenScopesExist(t *testing.T) {
 }
 
 func TestConnectTemplate_NoRenderWithoutScopes(t *testing.T) {
-	wctx := &webx.Context{
+	wctx := &dsx.Context{
 		StreamURL: "/showcase/stream",
 		Watchers:  nil,
 	}
@@ -424,9 +424,9 @@ func TestConnectTemplate_NoRenderWithoutScopes(t *testing.T) {
 }
 
 func TestConnectTemplate_NoRenderWithoutStreamURL(t *testing.T) {
-	wctx := &webx.Context{
+	wctx := &dsx.Context{
 		StreamURL: "",
-		Watchers:  []webx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
+		Watchers:  []dsx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
 	}
 	ctx := wctx.WithContext(context.Background())
 
@@ -451,7 +451,7 @@ func TestE2E_FullFlow(t *testing.T) {
 	broker := stream.NewBroker(ps)
 
 	// === Step 1: Simulate page render ===
-	wctx := &webx.Context{
+	wctx := &dsx.Context{
 		BasePath:  "/showcase",
 		StreamURL: "/showcase/stream",
 	}
@@ -613,9 +613,9 @@ func TestE2E_DataSignalsFormat(t *testing.T) {
 	}
 
 	// Test Connect template produces the same format
-	wctx := &webx.Context{
+	wctx := &dsx.Context{
 		StreamURL: "/stream",
-		Watchers:  []webx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
+		Watchers:  []dsx.Watcher{{Scope: "counter:shared", Key: "counter_shared"}},
 	}
 	ctx := wctx.WithContext(context.Background())
 
@@ -634,7 +634,7 @@ func TestE2E_MultipleScopes(t *testing.T) {
 	ps := newPubSub(t)
 	broker := stream.NewBroker(ps)
 
-	wctx := &webx.Context{
+	wctx := &dsx.Context{
 		StreamURL: "/stream",
 	}
 	ctx := wctx.WithContext(context.Background())
@@ -816,7 +816,7 @@ func TestBrokerInvalidateWithData(t *testing.T) {
 	}
 
 	received := make(chan []byte, 1)
-	ps.Subscribe("webx.scope.invoice.42", func(data []byte) {
+	ps.Subscribe("dsx.scope.invoice.42", func(data []byte) {
 		received <- data
 	})
 
@@ -942,7 +942,7 @@ func TestDynamicScopeRegistration(t *testing.T) {
 	broker := stream.NewBroker(ps)
 
 	// Create a session context
-	wctx := &webx.Context{SessionID: "test-session-123"}
+	wctx := &dsx.Context{SessionID: "test-session-123"}
 	ctx, cancel := context.WithCancel(wctx.WithContext(context.Background()))
 	defer cancel()
 
@@ -1017,7 +1017,7 @@ func TestSubscribeHandler(t *testing.T) {
 
 	// Test missing scope
 	req := httptest.NewRequest("POST", "/stream/subscribe", nil)
-	wctx := &webx.Context{SessionID: "sess1"}
+	wctx := &dsx.Context{SessionID: "sess1"}
 	req = req.WithContext(wctx.WithContext(req.Context()))
 	w := httptest.NewRecorder()
 	broker.SubscribeHandler().ServeHTTP(w, req)
@@ -1028,7 +1028,7 @@ func TestSubscribeHandler(t *testing.T) {
 	// Test missing session
 	req = httptest.NewRequest("POST", "/stream/subscribe", strings.NewReader("scope=invoice:42"))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	wctx2 := &webx.Context{SessionID: ""}
+	wctx2 := &dsx.Context{SessionID: ""}
 	req = req.WithContext(wctx2.WithContext(req.Context()))
 	w = httptest.NewRecorder()
 	broker.SubscribeHandler().ServeHTTP(w, req)
@@ -1039,7 +1039,7 @@ func TestSubscribeHandler(t *testing.T) {
 	// Test successful subscribe
 	req = httptest.NewRequest("POST", "/stream/subscribe", strings.NewReader("scope=invoice:42"))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	wctx3 := &webx.Context{SessionID: "sess1"}
+	wctx3 := &dsx.Context{SessionID: "sess1"}
 	req = req.WithContext(wctx3.WithContext(req.Context()))
 	w = httptest.NewRecorder()
 	broker.SubscribeHandler().ServeHTTP(w, req)
@@ -1049,7 +1049,7 @@ func TestSubscribeHandler(t *testing.T) {
 
 	// Test wrong method
 	req = httptest.NewRequest("GET", "/stream/subscribe?scope=x", nil)
-	wctx4 := &webx.Context{SessionID: "sess1"}
+	wctx4 := &dsx.Context{SessionID: "sess1"}
 	req = req.WithContext(wctx4.WithContext(req.Context()))
 	w = httptest.NewRecorder()
 	broker.SubscribeHandler().ServeHTTP(w, req)
