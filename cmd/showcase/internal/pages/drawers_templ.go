@@ -9,12 +9,12 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/cmd/showcase/internal/components"
-	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/button"
-	"github.com/plaenen/webx/ui/drawer"
-	"github.com/plaenen/webx/ui/menu"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/ui/button"
+	"github.com/laenen-partners/dsx/ui/drawer"
+	"github.com/laenen-partners/dsx/ui/menu"
 )
 
 func Drawers() templ.Component {

@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/cmd/showcase/internal/components"
-	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/money"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ui/money"
 )
 
 func Moneys() templ.Component {

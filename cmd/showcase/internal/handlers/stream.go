@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx/stream"
+	"github.com/laenen-partners/dsx/stream"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

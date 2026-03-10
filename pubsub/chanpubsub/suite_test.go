@@ -3,8 +3,8 @@ package chanpubsub_test
 import (
 	"testing"
 
-	"github.com/plaenen/webx/pubsub/chanpubsub"
-	"github.com/plaenen/webx/pubsub/pubsubtest"
+	"github.com/laenen-partners/dsx/pubsub/chanpubsub"
+	"github.com/laenen-partners/dsx/pubsub/pubsubtest"
 )
 
 func TestSuite(t *testing.T) {

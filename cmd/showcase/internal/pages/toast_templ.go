@@ -9,13 +9,13 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx"
-	"github.com/plaenen/webx/cmd/showcase/internal/components"
-	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/alert"
-	"github.com/plaenen/webx/ui/card"
-	"github.com/plaenen/webx/ui/toast"
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/ui/alert"
+	"github.com/laenen-partners/dsx/ui/card"
+	"github.com/laenen-partners/dsx/ui/toast"
 )
 
 func Toasts() templ.Component {

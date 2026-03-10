@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/cmd/showcase/internal/components"
-	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/codeview"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ui/codeview"
 )
 
 func CodeViews() templ.Component {
@@ -244,7 +244,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx/ds"
+	"github.com/laenen-partners/dsx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

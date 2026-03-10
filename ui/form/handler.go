@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/plaenen/webx/ds"
+	"github.com/laenen-partners/dsx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

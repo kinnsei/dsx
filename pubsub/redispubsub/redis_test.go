@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/plaenen/webx/pubsub/pubsubtest"
-	"github.com/plaenen/webx/pubsub/redispubsub"
+	"github.com/laenen-partners/dsx/pubsub/pubsubtest"
+	"github.com/laenen-partners/dsx/pubsub/redispubsub"
 	"github.com/redis/go-redis/v9"
 	tcredis "github.com/testcontainers/testcontainers-go/modules/redis"
 )

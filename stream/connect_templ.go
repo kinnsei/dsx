@@ -13,8 +13,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/plaenen/webx"
-	"github.com/plaenen/webx/ds"
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/ds"
 )
 
 // Connect renders a hidden element that opens the persistent SSE stream.

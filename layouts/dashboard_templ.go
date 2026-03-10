@@ -11,14 +11,14 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"strings"
 
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/avatar"
-	"github.com/plaenen/webx/ui/drawer"
-	"github.com/plaenen/webx/ui/dropdown"
-	"github.com/plaenen/webx/ui/icon"
-	"github.com/plaenen/webx/ui/menu"
-	"github.com/plaenen/webx/ui/navbar"
-	"github.com/plaenen/webx/ui/themecontroller"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/ui/avatar"
+	"github.com/laenen-partners/dsx/ui/drawer"
+	"github.com/laenen-partners/dsx/ui/dropdown"
+	"github.com/laenen-partners/dsx/ui/icon"
+	"github.com/laenen-partners/dsx/ui/menu"
+	"github.com/laenen-partners/dsx/ui/navbar"
+	"github.com/laenen-partners/dsx/ui/themecontroller"
 )
 
 // UserInfo configures the user section in the sidebar footer.

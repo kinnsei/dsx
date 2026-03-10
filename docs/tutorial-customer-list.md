@@ -19,8 +19,8 @@ The stream package needs a pub/sub backend. For development, the in-process chan
 
 ```go
 import (
-    "github.com/plaenen/webx/pubsub/chanpubsub"
-    "github.com/plaenen/webx/stream"
+    "github.com/laenen-partners/dsx/pubsub/chanpubsub"
+    "github.com/laenen-partners/dsx/stream"
 )
 
 broker := stream.NewBroker(chanpubsub.New())

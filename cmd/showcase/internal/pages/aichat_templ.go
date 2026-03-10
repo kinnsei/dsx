@@ -9,10 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/cmd/showcase/internal/components"
-	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/aichat"
-	"github.com/plaenen/webx/ui/commandbar"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ui/aichat"
+	"github.com/laenen-partners/dsx/ui/commandbar"
 )
 
 func AIChats() templ.Component {

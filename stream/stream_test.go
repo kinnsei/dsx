@@ -15,9 +15,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/plaenen/webx"
-	"github.com/plaenen/webx/pubsub/chanpubsub"
-	"github.com/plaenen/webx/stream"
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/pubsub/chanpubsub"
+	"github.com/laenen-partners/dsx/stream"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

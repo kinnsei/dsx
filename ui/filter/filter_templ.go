@@ -8,7 +8,7 @@ package filter
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/plaenen/webx/utils"
+import "github.com/laenen-partners/dsx/utils"
 
 // Props for the Filter container (form-based).
 type Props struct {

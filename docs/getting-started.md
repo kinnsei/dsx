@@ -1,6 +1,6 @@
 # Getting Started with WebX
 
-> **Module**: `github.com/plaenen/webx`
+> **Module**: `github.com/laenen-partners/dsx`
 > **Go Requirement**: Go 1.24+
 > **Stack**: Go + Chi (routing) + Templ (templating) + Tailwind CSS + DaisyUI (styling) + Datastar (frontend interactivity)
 
@@ -9,7 +9,7 @@
 ## Installation
 
 ```bash
-go get github.com/plaenen/webx
+go get github.com/laenen-partners/dsx
 ```
 
 Install dependencies with the task runner:
@@ -63,14 +63,14 @@ import (
     "github.com/go-chi/chi/v5"
     "github.com/nats-io/nats-server/v2/server"
     "github.com/nats-io/nats.go"
-    "github.com/plaenen/webx"
-    "github.com/plaenen/webx/pubsub/natspubsub"
-    "github.com/plaenen/webx/stream"
-    "github.com/plaenen/webx/ui"
-    "github.com/plaenen/webx/ui/calendar"
-    "github.com/plaenen/webx/ui/markdown"
-    "github.com/plaenen/webx/ui/moneyinput"
-    "github.com/plaenen/webx/ui/themecontroller"
+    "github.com/laenen-partners/dsx"
+    "github.com/laenen-partners/dsx/pubsub/natspubsub"
+    "github.com/laenen-partners/dsx/stream"
+    "github.com/laenen-partners/dsx/ui"
+    "github.com/laenen-partners/dsx/ui/calendar"
+    "github.com/laenen-partners/dsx/ui/markdown"
+    "github.com/laenen-partners/dsx/ui/moneyinput"
+    "github.com/laenen-partners/dsx/ui/themecontroller"
 )
 
 func main() {
@@ -213,7 +213,7 @@ Each handler package exports a path constant (e.g. `markdown.PreviewPath`, `mone
 Components live in `ui/` and follow a consistent pattern:
 
 ```go
-import "github.com/plaenen/webx/ui/button"
+import "github.com/laenen-partners/dsx/ui/button"
 
 // Use with optional props
 @button.Button(button.Props{Variant: button.VariantPrimary}) {

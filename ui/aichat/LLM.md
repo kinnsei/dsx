@@ -1,6 +1,6 @@
 # aichat — AI Conversation Component
 
-> **Import**: `"github.com/plaenen/webx/ui/aichat"`
+> **Import**: `"github.com/laenen-partners/dsx/ui/aichat"`
 
 A conversational AI chat widget with collapsed/expanded states, multi-turn messaging, typing indicators, quick replies, rich response cards, and member assignment. Messages are delivered via SSE.
 

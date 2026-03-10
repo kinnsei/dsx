@@ -8,7 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/plaenen/webx/pubsub"
+	"github.com/laenen-partners/dsx/pubsub"
 )
 
 // ChanPubSub is an in-process fan-out pub/sub with wildcard topic matching.

@@ -7,13 +7,13 @@ import (
 	"sync"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx"
-	"github.com/plaenen/webx/cmd/showcase/internal/pages"
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/form"
-	"github.com/plaenen/webx/utils/validators"
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/pages"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/ui/form"
+	"github.com/laenen-partners/dsx/utils/validators"
 	"github.com/starfederation/datastar-go/datastar"
-	"github.com/plaenen/webx/stream"
+	"github.com/laenen-partners/dsx/stream"
 )
 
 // Customer is a demo customer record.

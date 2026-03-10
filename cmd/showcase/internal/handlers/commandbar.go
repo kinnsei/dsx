@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/commandbar"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/ui/commandbar"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

@@ -8,7 +8,7 @@ package badge
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/plaenen/webx/utils"
+import "github.com/laenen-partners/dsx/utils"
 
 // Variant controls the badge color.
 type Variant string

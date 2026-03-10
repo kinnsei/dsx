@@ -56,7 +56,7 @@ templ Button(props ...Props) {
 Import and use in your templ files:
 
 ```go
-import "github.com/plaenen/webx/ui/button"
+import "github.com/laenen-partners/dsx/ui/button"
 
 @button.Button(button.Props{Variant: button.VariantPrimary}) {
     Click me

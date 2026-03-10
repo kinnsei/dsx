@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx/cmd/showcase/internal/pages"
-	"github.com/plaenen/webx/ds"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/pages"
+	"github.com/laenen-partners/dsx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

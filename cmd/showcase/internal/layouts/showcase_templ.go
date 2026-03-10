@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx"
-	"github.com/plaenen/webx/layouts"
-	"github.com/plaenen/webx/ui/icon"
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/layouts"
+	"github.com/laenen-partners/dsx/ui/icon"
 )
 
 type ShowcaseProps struct {

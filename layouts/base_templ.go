@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/stream"
+	"github.com/laenen-partners/dsx/stream"
 )
 
 type BaseProps struct {

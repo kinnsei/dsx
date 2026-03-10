@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx/utils/validators"
+	"github.com/laenen-partners/dsx/utils/validators"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

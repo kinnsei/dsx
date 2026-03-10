@@ -17,8 +17,8 @@ utils/data_class.go     — DataClass builder for data-class object syntax
 ## Imports
 
 ```go
-import "github.com/plaenen/webx/utils"       // TwMerge, If, RandomID, SignalManager
-import "github.com/plaenen/webx/ds"           // typed Datastar attributes
+import "github.com/laenen-partners/dsx/utils"       // TwMerge, If, RandomID, SignalManager
+import "github.com/laenen-partners/dsx/ds"           // typed Datastar attributes
 ```
 
 Only import `ds` when the component uses Datastar interactivity.
@@ -56,7 +56,7 @@ Use this for any component that has no interactive state.
 ```go
 package badge
 
-import "github.com/plaenen/webx/utils"
+import "github.com/laenen-partners/dsx/utils"
 
 type Variant string
 
@@ -107,7 +107,7 @@ Some DaisyUI components have sub-elements. Create a separate templ for each part
 ```go
 package card
 
-import "github.com/plaenen/webx/utils"
+import "github.com/laenen-partners/dsx/utils"
 
 type Props struct {
 	ID         string
@@ -260,8 +260,8 @@ If a component's toggle doesn't work, check `static/css/output.css` for the rele
 package drawer
 
 import (
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/utils"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/utils"
 )
 
 type DrawerSignals struct {

@@ -9,10 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/ui/badge"
-	"github.com/plaenen/webx/ui/codeview"
-	"github.com/plaenen/webx/ui/tab"
-	"github.com/plaenen/webx/utils"
+	"github.com/laenen-partners/dsx/ui/badge"
+	"github.com/laenen-partners/dsx/ui/codeview"
+	"github.com/laenen-partners/dsx/ui/tab"
+	"github.com/laenen-partners/dsx/utils"
 )
 
 type ExampleProps struct {

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/plaenen/webx/pubsub"
+	"github.com/laenen-partners/dsx/pubsub"
 )
 
 // RunSuite runs the full PubSub conformance test suite against the given

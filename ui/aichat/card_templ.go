@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/utils"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/utils"
 )
 
 // CardTag represents a category badge on a response card.

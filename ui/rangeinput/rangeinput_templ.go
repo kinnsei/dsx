@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"strconv"
 
-	"github.com/plaenen/webx/utils"
+	"github.com/laenen-partners/dsx/utils"
 )
 
 type Variant string

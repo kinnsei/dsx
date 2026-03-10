@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"strings"
 
-	"github.com/plaenen/webx/ui/aichat"
+	"github.com/laenen-partners/dsx/ui/aichat"
 )
 
 var demoMembers = []aichat.Member{

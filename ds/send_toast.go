@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/a-h/templ"
-	"github.com/plaenen/webx/utils"
+	"github.com/laenen-partners/dsx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

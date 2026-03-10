@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
-	"github.com/plaenen/webx"
-	"github.com/plaenen/webx/pubsub"
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/pubsub"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

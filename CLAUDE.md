@@ -4,7 +4,7 @@
 
 Go + Chi (routing) + Templ (templating) + Tailwind CSS + DaisyUI (styling) + Datastar (frontend interactivity)
 
-Module: `github.com/plaenen/webx`
+Module: `github.com/laenen-partners/dsx`
 
 ## Commands
 
@@ -52,8 +52,8 @@ templ MyComponent(props ...Props) {
 
 DaisyUI class conventions: `btn`, `btn-primary`, `card`, `card-body`, `card-title`, `card-actions`, `input`, `badge`, `alert`, `modal`, `drawer`, `tabs`, `dropdown`, etc. See [DaisyUI docs](https://daisyui.com/components/).
 
-Import components as: `"github.com/plaenen/webx/ui/button"`
-Import utils as: `"github.com/plaenen/webx/utils"`
+Import components as: `"github.com/laenen-partners/dsx/ui/button"`
+Import utils as: `"github.com/laenen-partners/dsx/utils"`
 
 ## Rules
 

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/plaenen/webx/pubsub"
+	"github.com/laenen-partners/dsx/pubsub"
 	"github.com/redis/go-redis/v9"
 )
 

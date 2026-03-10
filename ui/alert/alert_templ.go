@@ -8,7 +8,7 @@ package alert
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/plaenen/webx/utils"
+import "github.com/laenen-partners/dsx/utils"
 
 // Variant controls the alert color.
 type Variant string

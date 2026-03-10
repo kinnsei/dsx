@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx/stream"
+	"github.com/laenen-partners/dsx/stream"
 )
 
 // Handlers wires all showcase SSE/API handlers.

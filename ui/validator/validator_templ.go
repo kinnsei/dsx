@@ -11,9 +11,9 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	webx "github.com/plaenen/webx"
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/utils"
+	webx "github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/utils"
 )
 
 // InputType is the HTML input type attribute.

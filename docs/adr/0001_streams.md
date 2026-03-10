@@ -510,8 +510,8 @@ import (
     "github.com/go-chi/chi/v5"
     "github.com/nats-io/nats-server/v2/server"
     "github.com/nats-io/nats.go"
-    "github.com/plaenen/webx/stream"
-    "github.com/plaenen/webx/stream/natspubsub"
+    "github.com/laenen-partners/dsx/stream"
+    "github.com/laenen-partners/dsx/stream/natspubsub"
 )
 
 func run() error {

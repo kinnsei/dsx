@@ -11,9 +11,9 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/icon"
-	"github.com/plaenen/webx/utils"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/ui/icon"
+	"github.com/laenen-partners/dsx/utils"
 )
 
 // CommandBarSignals holds the reactive state for the command bar.

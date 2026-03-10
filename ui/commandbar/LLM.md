@@ -1,6 +1,6 @@
 # commandbar — Multi-Mode Command Input
 
-> **Import**: `"github.com/plaenen/webx/ui/commandbar"`
+> **Import**: `"github.com/laenen-partners/dsx/ui/commandbar"`
 
 An expandable multi-mode command input supporting text, file upload, and voice recording. Collapsed by default as a compact bar, expanding to a tabbed interface on interaction.
 

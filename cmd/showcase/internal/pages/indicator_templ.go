@@ -9,11 +9,11 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/plaenen/webx/cmd/showcase/internal/components"
-	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ui/badge"
-	"github.com/plaenen/webx/ui/indicator"
-	"github.com/plaenen/webx/ui/status"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ui/badge"
+	"github.com/laenen-partners/dsx/ui/indicator"
+	"github.com/laenen-partners/dsx/ui/status"
 )
 
 func Indicators() templ.Component {

@@ -1,5 +1,5 @@
 package static
 
-import "github.com/plaenen/webx"
+import "github.com/laenen-partners/dsx"
 
 var Static = webx.Static

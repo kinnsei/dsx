@@ -11,8 +11,8 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/utils"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/utils"
 )
 
 // Props configures the Markdown display component.

@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	webx "github.com/plaenen/webx"
-	"github.com/plaenen/webx/utils"
+	webx "github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

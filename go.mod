@@ -1,4 +1,4 @@
-module github.com/plaenen/webx
+module github.com/laenen-partners/dsx
 
 go 1.25.6
 

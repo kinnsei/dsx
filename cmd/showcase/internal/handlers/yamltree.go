@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/plaenen/webx/ui/yamltree"
+	"github.com/laenen-partners/dsx/ui/yamltree"
 )
 
 type yamltreeHandlers struct {

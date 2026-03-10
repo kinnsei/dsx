@@ -12,11 +12,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/plaenen/webx"
-	"github.com/plaenen/webx/cmd/showcase/internal/components"
-	"github.com/plaenen/webx/cmd/showcase/internal/layouts"
-	"github.com/plaenen/webx/ds"
-	"github.com/plaenen/webx/ui/calendar"
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/ui/calendar"
 )
 
 func CalendarAdvanced() templ.Component {

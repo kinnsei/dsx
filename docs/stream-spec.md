@@ -50,8 +50,8 @@ All adapters support dot-separated topics with wildcards: `*` matches one segmen
 import (
     "github.com/nats-io/nats-server/v2/server"
     "github.com/nats-io/nats.go"
-    "github.com/plaenen/webx/pubsub/natspubsub"
-    "github.com/plaenen/webx/stream"
+    "github.com/laenen-partners/dsx/pubsub/natspubsub"
+    "github.com/laenen-partners/dsx/stream"
 )
 
 // 1. Create a NATS connection (embedded or external)
@@ -74,8 +74,8 @@ r.Post("/stream/subscribe", broker.SubscribeHandler())
 ```go
 import (
     "github.com/redis/go-redis/v9"
-    "github.com/plaenen/webx/pubsub/redispubsub"
-    "github.com/plaenen/webx/stream"
+    "github.com/laenen-partners/dsx/pubsub/redispubsub"
+    "github.com/laenen-partners/dsx/stream"
 )
 
 client := redis.NewClient(&redis.Options{Addr: "localhost:6379"})
@@ -86,8 +86,8 @@ broker := stream.NewBroker(redispubsub.New(client))
 
 ```go
 import (
-    "github.com/plaenen/webx/pubsub/chanpubsub"
-    "github.com/plaenen/webx/stream"
+    "github.com/laenen-partners/dsx/pubsub/chanpubsub"
+    "github.com/laenen-partners/dsx/stream"
 )
 
 broker := stream.NewBroker(chanpubsub.New())

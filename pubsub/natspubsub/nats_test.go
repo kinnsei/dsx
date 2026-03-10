@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/nats-io/nats.go"
-	"github.com/plaenen/webx/pubsub/natspubsub"
-	"github.com/plaenen/webx/pubsub/pubsubtest"
+	"github.com/laenen-partners/dsx/pubsub/natspubsub"
+	"github.com/laenen-partners/dsx/pubsub/pubsubtest"
 	tcnats "github.com/testcontainers/testcontainers-go/modules/nats"
 )
 
