@@ -234,6 +234,7 @@ templ CommandBar(props Props) {
 					style="display: none;"
 					{ ds.Show(isFile)... }
 				>
+					<form enctype="multipart/form-data">
 					<div class="p-3">
 						<label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-base-300 rounded-box p-8 cursor-pointer hover:border-base-content/30 hover:bg-base-200/30 transition-colors">
 							@icon.FileUp(icon.Props{Size: 32, Class: "text-base-content/30"})
@@ -241,6 +242,7 @@ templ CommandBar(props Props) {
 							<div class="text-xs text-base-content/40">PDF, photo, receipt, document</div>
 							<input
 								type="file"
+								name="files"
 								class="hidden"
 								multiple
 								data-on:change={ fmt.Sprintf("%s; %s",
@@ -254,13 +256,14 @@ templ CommandBar(props Props) {
 						<label class="btn btn-sm btn-ghost">
 							@icon.Camera(icon.Props{Size: 14})
 							Camera
-							<input type="file" accept="image/*" capture="environment" class="hidden"/>
+							<input type="file" name="files" accept="image/*" capture="environment" class="hidden"/>
 						</label>
 						<label class="btn btn-sm btn-ghost">
 							@icon.FolderOpen(icon.Props{Size: 14})
 							Browse
 							<input
 								type="file"
+								name="files"
 								class="hidden"
 								multiple
 								data-on:change={ fmt.Sprintf("%s; %s",
@@ -270,6 +273,7 @@ templ CommandBar(props Props) {
 							/>
 						</label>
 					</div>
+				</form>
 				</div>
 			}
 			<!-- Voice mode -->
@@ -342,5 +346,5 @@ func actionExpr(url, componentID string) string {
 	if url == "" {
 		return "void 0"
 	}
-	return ds.Post(url, ds.WithRetries(0), ds.WithFilterSignals(componentID))
+	return ds.Post(url, ds.WithRetries(0), ds.WithContentType("form"), ds.WithFilterSignals(componentID))
 }

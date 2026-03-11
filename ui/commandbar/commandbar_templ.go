@@ -531,7 +531,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "><div class=\"p-3\"><label class=\"flex flex-col items-center justify-center gap-2 border-2 border-dashed border-base-300 rounded-box p-8 cursor-pointer hover:border-base-content/30 hover:bg-base-200/30 transition-colors\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "><form enctype=\"multipart/form-data\"><div class=\"p-3\"><label class=\"flex flex-col items-center justify-center gap-2 border-2 border-dashed border-base-300 rounded-box p-8 cursor-pointer hover:border-base-content/30 hover:bg-base-200/30 transition-colors\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -546,13 +546,13 @@ func CommandBar(props Props) templ.Component {
 			var templ_7745c5c3_Var13 string
 			templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(fileHint)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 240, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 241, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div><div class=\"text-xs text-base-content/40\">PDF, photo, receipt, document</div><input type=\"file\" class=\"hidden\" multiple data-on:change=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 54, "</div><div class=\"text-xs text-base-content/40\">PDF, photo, receipt, document</div><input type=\"file\" name=\"files\" class=\"hidden\" multiple data-on:change=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -562,7 +562,7 @@ func CommandBar(props Props) templ.Component {
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 249, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 251, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 			if templ_7745c5c3_Err != nil {
@@ -576,7 +576,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "Camera <input type=\"file\" accept=\"image/*\" capture=\"environment\" class=\"hidden\"></label> <label class=\"btn btn-sm btn-ghost\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 56, "Camera <input type=\"file\" name=\"files\" accept=\"image/*\" capture=\"environment\" class=\"hidden\"></label> <label class=\"btn btn-sm btn-ghost\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -584,7 +584,7 @@ func CommandBar(props Props) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "Browse <input type=\"file\" class=\"hidden\" multiple data-on:change=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 57, "Browse <input type=\"file\" name=\"files\" class=\"hidden\" multiple data-on:change=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -594,13 +594,13 @@ func CommandBar(props Props) templ.Component {
 				clearExpr,
 			))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 269, Col: 9}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `ui/commandbar/commandbar.templ`, Line: 272, Col: 9}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\"></label></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 58, "\"></label></div></form></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -687,7 +687,7 @@ func actionExpr(url, componentID string) string {
 	if url == "" {
 		return "void 0"
 	}
-	return ds.Post(url, ds.WithRetries(0), ds.WithFilterSignals(componentID))
+	return ds.Post(url, ds.WithRetries(0), ds.WithContentType("form"), ds.WithFilterSignals(componentID))
 }
 
 var _ = templruntime.GeneratedTemplate
