@@ -14,6 +14,12 @@ tasks:
       - task: setup:go
       - task: setup:daisyui
       - task: setup:datastar
+      - task: setup:hooks
+
+  setup:hooks:
+    desc: Configure git to use project hooks
+    cmds:
+      - git config core.hooksPath .githooks
 
   setup:go:
     desc: Install Go dependencies
@@ -76,7 +82,7 @@ tasks:
       - build:templ
       - build:styles
 
-  # --- Run (production) ---
+  # --- Run ---
 
   run:
     desc: Run production build
@@ -84,6 +90,14 @@ tasks:
       - ./bin/showcase serve
     deps:
       - build
+
+  run:example:
+    desc: Run the showcase example (stream + identity demo)
+    cmds:
+      - go run ./showcase/example
+    deps:
+      - build:templ
+      - build:styles
 
   # --- Live reload (development) ---
 
