@@ -1,18 +1,27 @@
-// Package stream provides a reactive SSE stream backed by pub/sub messaging.
+// Package stream provides DOM-driven SSE subscriptions backed by pub/sub.
 //
-// Components register scopes during render via [WatchEffect]. The stream
-// [Relay] subscribes to pub/sub change topics for those scopes and pushes
-// stale signals when notifications arrive. Components watch the stale signal
-// via data-effect and reload themselves.
+// Components declare subscriptions via data-watch attributes on their DOM
+// elements. A MutationObserver-based JS worker tracks these attributes and
+// manages SSE reconnects. The server pushes per-domain signals (e.g.
+// _ds_customers) with {id, action, ts}. Components react via data-effect
+// with action-aware conditions.
 //
-// Scopes use colon-separated naming that maps to pubsub change topics:
+// Each domain gets its own Datastar signal, so an event on "customers" only
+// triggers re-evaluation of effects that reference $_ds_customers — not
+// unrelated domains. This avoids the O(N) re-evaluation problem of a single
+// global signal.
 //
-//	"customer:42"   → subscribes to change.customer.42.>
-//	"customers:*"   → subscribes to change.customers.*.*
-//	"customer:>"    → subscribes to change.customer.>
+// The Watch function returns templ.Attributes that wire up a subscription
+// and data-effect expressions for action-aware reloading:
 //
-// The Relay only subscribes — publishing is the app's responsibility via
-// [pubsub.Bus] methods like NotifyCreated, NotifyUpdated, etc.
+//	stream.Watch(ctx, "customers",
+//	    stream.Structural.Get("/api/customers/list"),
+//	    stream.Any.Get("/api/customers/count"))
+//	stream.Watch(ctx, "customers",
+//	    stream.Updated.ID(42).Get("/api/row/42"))
+//
+// Publishing is the app's responsibility via [pubsub.Bus] methods like
+// NotifyCreated, NotifyUpdated, etc.
 package stream
 
 import (
@@ -26,35 +35,266 @@ import (
 	"time"
 
 	"github.com/a-h/templ"
-	"github.com/laenen-partners/dsx"
 	"github.com/laenen-partners/identity"
 	"github.com/laenen-partners/pubsub"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
 const (
-	// SignalNamespace is the Datastar signal namespace for stream stale flags.
-	// The underscore prefix makes it local-only (never sent to backend).
-	SignalNamespace = "_stream"
+	// signalPrefix is prepended to the domain name to form the per-domain
+	// Datastar signal key (e.g. "_ds_customers").
+	signalPrefix = "_ds_"
 
-	// DataNamespace is the Datastar signal namespace for scope payload data.
-	// When data is published alongside a scope notification, it is pushed under this namespace.
-	DataNamespace = "_streamData"
-
-	// maxScopes is the maximum number of scopes a single SSE connection may
-	// subscribe to. This prevents a malicious client from exhausting memory
-	// by requesting an unbounded number of scope subscriptions.
-	maxScopes = 64
+	// maxWatches is the maximum number of watch subscriptions a single SSE
+	// connection may have. This prevents resource exhaustion.
+	maxWatches = 64
 )
 
-// staleMsg carries scope signal keys and optional JSON payload through the event channel.
-type staleMsg struct {
-	keys []string
-	data []byte // nil for plain notifications
+// SignalKey returns the Datastar signal name for a given domain.
+func SignalKey(domain string) string {
+	return signalPrefix + domain
+}
+
+// ActionSet is a set of typed event actions that starts the reaction builder
+// chain. Use the predefined sets (Created, Updated, Deleted, Any, Structural)
+// or combine them with Or().
+//
+//	stream.Created.Get(url)
+//	stream.Updated.ID(42).Get(url)
+//	stream.Structural.Debounce(300*time.Millisecond).Get(url)
+//	stream.Created.Or(stream.Deleted).Get(url)
+//	stream.Action("archived").Get(url)
+type ActionSet struct {
+	actions []string
+}
+
+// Predefined action sets matching pubsub.Bus notification methods.
+var (
+	// Created matches "created" events (new entities).
+	Created = ActionSet{actions: []string{"created"}}
+	// Updated matches "updated" events (modified entities).
+	Updated = ActionSet{actions: []string{"updated"}}
+	// Deleted matches "deleted" events (removed entities).
+	Deleted = ActionSet{actions: []string{"deleted"}}
+	// Any matches all actions (wildcard). Use for counters, dashboards, etc.
+	Any = ActionSet{actions: []string{"*"}}
+	// Structural matches created + deleted — structural changes that affect
+	// lists and tables (items added or removed) but not in-place updates.
+	Structural = ActionSet{actions: []string{"created", "deleted"}}
+)
+
+// Action creates a custom action set for app-specific events.
+//
+//	stream.Action("archived").Get(url)
+//	stream.Action("shipped").Or(stream.Action("delivered")).Get(url)
+func Action(name string) ActionSet {
+	return ActionSet{actions: []string{name}}
+}
+
+// Or combines this action set with another, returning a new set that
+// matches any action from either.
+//
+//	stream.Created.Or(stream.Deleted).Get(url) // same as stream.Structural
+//	stream.Updated.Or(stream.Action("archived")).Get(url)
+func (a ActionSet) Or(other ActionSet) ActionSet {
+	combined := make([]string, 0, len(a.actions)+len(other.actions))
+	combined = append(combined, a.actions...)
+	combined = append(combined, other.actions...)
+	return ActionSet{actions: combined}
+}
+
+// ID filters the reaction to a specific entity ID and returns a builder
+// that must be finalized with Get().
+//
+//	stream.Updated.ID(42).Get(url)
+func (a ActionSet) ID(id any) *ReactionBuilder {
+	return &ReactionBuilder{actions: a.actions, id: fmt.Sprintf("%v", id)}
+}
+
+// Debounce adds a debounce delay and returns a builder that must be
+// finalized with Get(). When multiple events arrive in rapid succession
+// (e.g. bulk creates), only the last one triggers the @get() after the
+// delay elapses.
+//
+//	stream.Structural.Debounce(300*time.Millisecond).Get(url)
+func (a ActionSet) Debounce(d time.Duration) *ReactionBuilder {
+	return &ReactionBuilder{actions: a.actions, debounce: d}
+}
+
+// Get finalizes the reaction with the URL to fetch when triggered.
+//
+//	stream.Created.Get(url)
+//	stream.Any.Get(url)
+//	stream.Structural.Get(url)
+func (a ActionSet) Get(url string) Reaction {
+	return Reaction{actions: a.actions, url: url}
+}
+
+// ReactionBuilder is an intermediate builder used when ID() or Debounce()
+// is called on an ActionSet. Must be finalized with Get().
+type ReactionBuilder struct {
+	actions  []string
+	id       string
+	debounce time.Duration
+}
+
+// ID filters the reaction to a specific entity ID.
+func (b *ReactionBuilder) ID(id any) *ReactionBuilder {
+	b.id = fmt.Sprintf("%v", id)
+	return b
+}
+
+// Debounce adds a debounce delay to the reaction.
+func (b *ReactionBuilder) Debounce(d time.Duration) *ReactionBuilder {
+	b.debounce = d
+	return b
+}
+
+// Get finalizes the reaction with the URL to fetch when triggered.
+func (b *ReactionBuilder) Get(url string) Reaction {
+	return Reaction{
+		actions:  b.actions,
+		url:      url,
+		id:       b.id,
+		debounce: b.debounce,
+	}
+}
+
+// Reaction describes what should happen when a matching change event arrives.
+type Reaction struct {
+	actions  []string      // action names (e.g. ["created","deleted"]) or ["*"]
+	url      string        // URL to fetch when triggered
+	id       string        // optional: filter to specific entity ID
+	debounce time.Duration // optional: debounce rapid events
+}
+
+// isWildcard returns true if the reaction matches any action.
+func (r Reaction) isWildcard() bool {
+	for _, a := range r.actions {
+		if a == "*" {
+			return true
+		}
+	}
+	return false
+}
+
+// Watch returns templ.Attributes that wire up a subscription element and
+// data-effect expressions for action-aware reloading. Each call adds a
+// per-domain data-signals initializer.
+//
+//	stream.Watch(ctx, "customers",
+//	    stream.Structural.Get(wxctx.APIPath("/customers/list")),
+//	    stream.Any.Get(wxctx.APIPath("/customers/count")))
+//	stream.Watch(ctx, "customers",
+//	    stream.Updated.ID(42).Get(wxctx.APIPath("/customers/42/row")))
+func Watch(_ context.Context, domain string, reactions ...Reaction) templ.Attributes {
+	attrs := templ.Attributes{}
+
+	// Determine if any reaction has an ID filter — use domain.id for watch value.
+	// If multiple reactions have different IDs, we use just the domain (broad watch).
+	watchValue := domain
+	var singleID string
+	for _, r := range reactions {
+		if r.id != "" {
+			if singleID == "" {
+				singleID = r.id
+			} else if singleID != r.id {
+				singleID = ""
+				break
+			}
+		}
+	}
+	if singleID != "" {
+		watchValue = domain + "." + singleID
+	}
+
+	attrs["data-watch"] = watchValue
+
+	// Per-domain signal initialization.
+	sig := SignalKey(domain)
+	attrs["data-signals"] = fmt.Sprintf("{%s: {id: '', action: '', ts: 0}}", sig)
+
+	// Build data-effect expression(s) from reactions.
+	var effects []string
+	for _, r := range reactions {
+		effects = append(effects, buildEffect(domain, r))
+	}
+
+	if len(effects) > 0 {
+		attrs["data-effect"] = strings.Join(effects, " ")
+	}
+
+	return attrs
+}
+
+// buildEffect generates a data-effect expression for a single reaction.
+//
+// Design note: using @get() inside data-effect is an intentional pattern. While
+// data-effect is typically used for DOM mutations, Datastar's expression engine
+// supports action calls. This lets us express reactive reloads declaratively
+// without custom JS event wiring. The trade-off (unconventional usage) is
+// accepted because it keeps the API surface minimal and avoids a second
+// attribute for the same concern.
+//
+// The expression references the per-domain signal $_ds_{domain}.ts to ensure
+// Datastar detects every signal change. Only effects referencing this domain's
+// signal re-evaluate when it changes — other domains are unaffected.
+//
+// Every effect also matches action === 'connected' so that on SSE reconnect
+// the relay's synthetic "connected" event triggers a catch-up reload for all
+// watched components.
+func buildEffect(domain string, r Reaction) string {
+	sig := SignalKey(domain)
+
+	// Base condition: ts > 0 prevents the initial zero-value from triggering.
+	var conditions []string
+	conditions = append(conditions, fmt.Sprintf("$%s.ts > 0", sig))
+
+	// Action filter. Always include 'connected' for reconnect catch-up.
+	if !r.isWildcard() {
+		var parts []string
+		for _, a := range r.actions {
+			parts = append(parts, fmt.Sprintf("'%s'", a))
+		}
+		parts = append(parts, "'connected'")
+		conditions = append(conditions, fmt.Sprintf("[%s].includes($%s.action)", strings.Join(parts, ","), sig))
+	}
+
+	// ID filter.
+	if r.id != "" {
+		conditions = append(conditions, fmt.Sprintf("$%s.id === '%s' || $%s.action === 'connected'", sig, r.id, sig))
+	}
+
+	condition := strings.Join(conditions, " && ")
+
+	// Optional debounce wraps @get() in setTimeout/clearTimeout.
+	if r.debounce > 0 {
+		ms := r.debounce.Milliseconds()
+		// Use a stable timer key derived from domain + url to avoid collisions.
+		timerKey := fmt.Sprintf("__dsDb_%s_%d", domain, hashString(r.url))
+		return fmt.Sprintf("if(%s) { clearTimeout(window.%s); window.%s = setTimeout(() => { @get('%s') }, %d) }",
+			condition, timerKey, timerKey, r.url, ms)
+	}
+
+	return fmt.Sprintf("if(%s) { @get('%s') }", condition, r.url)
+}
+
+// hashString returns a simple hash for generating stable timer keys.
+func hashString(s string) uint32 {
+	var h uint32
+	for _, c := range s {
+		h = h*31 + uint32(c)
+	}
+	return h
 }
 
 // Relay listens for pub/sub change notifications and relays them to SSE
-// clients as stale signals. One Relay per application.
+// clients as per-domain signals. One Relay per application.
+//
+// Signal delivery is last-event-wins: if two events arrive in rapid succession
+// for the same domain, only the latest signal value is visible to Datastar
+// effects. This is acceptable because reactions always fetch fresh server state
+// via @get() — the signal is a trigger, not the data.
 //
 // Publishing is the app's responsibility via [pubsub.Bus]:
 //
@@ -86,28 +326,40 @@ func New(ps pubsub.PubSub, opts ...Option) *Relay {
 	return r
 }
 
+// eventMsg carries a structured change event through the internal channel.
+type eventMsg struct {
+	Domain string `json:"domain"`
+	ID     string `json:"id"`
+	Action string `json:"action"`
+	TS     int64  `json:"ts"`
+}
+
 // Handler returns an http.HandlerFunc that serves the persistent SSE stream.
-// It reads scopes from the query parameters (comma-separated or grouped by entity)
-// and subscribes to pub/sub change topics for each scope. Topics are
-// automatically scoped by tenant/workspace from the request's identity context.
+// It reads watch subscriptions from the "watch" query parameter (comma-separated)
+// and subscribes to pub/sub change topics for each.
 //
-// When a "keys" query param is present (JSON map of scope→[]signalKey), the handler
-// pushes all signal keys for a matching scope. This supports multiple components
-// watching the same scope with independent signals.
+// Watch values use dot-separated format:
+//
+//	"doc"     → subscribes to all changes for entity "doc"
+//	"doc.123" → subscribes to changes for entity "doc", id "123"
+//
+// On notification, pushes a per-domain signal:
+//
+//	{"_ds_doc": {"id": "123", "action": "updated", "ts": 1234567890}}
+//
+// On initial connection, a synthetic "connected" event is pushed for each
+// watched domain. This allows components to catch up after SSE reconnects —
+// every effect includes 'connected' in its action match list.
 func (rl *Relay) Handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		scopes := parseScopes(r)
-		if len(scopes) == 0 {
+		watches := parseWatches(r)
+		if len(watches) == 0 {
 			return
 		}
-		if len(scopes) > maxScopes {
-			http.Error(w, fmt.Sprintf("too many scopes (max %d)", maxScopes), http.StatusBadRequest)
+		if len(watches) > maxWatches {
+			http.Error(w, fmt.Sprintf("too many watches (max %d)", maxWatches), http.StatusBadRequest)
 			return
 		}
-
-		// Parse the optional key map: scope → list of signal keys.
-		// Without it, each scope uses its default ScopeKey.
-		scopeKeys := parseScopeKeys(r, scopes)
 
 		sse := datastar.NewSSE(w, r)
 		ctx := r.Context()
@@ -117,25 +369,55 @@ func (rl *Relay) Handler() http.HandlerFunc {
 			defer cancel()
 		}
 
-		staleC := make(chan staleMsg, 64)
+		// Push a "connected" event for each watched domain so components
+		// can catch up after SSE reconnects.
+		domains := domainsFromWatches(watches)
+		now := time.Now().UnixMilli()
+		for _, domain := range domains {
+			signals := map[string]any{
+				SignalKey(domain): map[string]any{
+					"id":     "",
+					"action": "connected",
+					"ts":     now,
+				},
+			}
+			if err := sse.MarshalAndPatchSignals(signals); err != nil {
+				return
+			}
+		}
+
+		eventC := make(chan eventMsg, 64)
 
 		var mu sync.Mutex
 		var subs []pubsub.Subscription
 
-		// Subscribe to each scope's change topic, scoped by identity.
-		for _, scope := range scopes {
-			keys := scopeKeys[scope]
-			pattern := scopeToPattern(r.Context(), scope)
+		for _, watch := range watches {
+			pattern := watchToPattern(r.Context(), watch)
 
 			sub, err := rl.ps.Subscribe(r.Context(), pattern, func(data []byte) {
-				sm := staleMsg{keys: keys, data: data}
+				var env pubsub.Envelope
+				if err := json.Unmarshal(data, &env); err != nil {
+					slog.Error("stream: unmarshal envelope", "error", err)
+					return
+				}
+				var cn pubsub.ChangeNotification
+				if err := json.Unmarshal(env.Data, &cn); err != nil {
+					slog.Error("stream: unmarshal change notification", "error", err)
+					return
+				}
+				msg := eventMsg{
+					Domain: cn.Entity,
+					ID:     cn.EntityID,
+					Action: cn.Action,
+					TS:     env.Time.UnixMilli(),
+				}
 				select {
-				case staleC <- sm:
+				case eventC <- msg:
 				default:
 				}
 			})
 			if err != nil {
-				slog.Error("stream: subscribe failed", "scope", scope, "pattern", pattern, "error", err)
+				slog.Error("stream: subscribe failed", "watch", watch, "pattern", pattern, "error", err)
 				continue
 			}
 			mu.Lock()
@@ -156,23 +438,13 @@ func (rl *Relay) Handler() http.HandlerFunc {
 			select {
 			case <-ctx.Done():
 				return
-			case msg := <-staleC:
-				staleSignals := make(map[string]any, len(msg.keys))
-				for _, k := range msg.keys {
-					staleSignals[k] = true
-				}
+			case msg := <-eventC:
 				signals := map[string]any{
-					SignalNamespace: staleSignals,
-				}
-				if len(msg.data) > 0 {
-					var payload any
-					if err := json.Unmarshal(msg.data, &payload); err == nil {
-						dataSignals := make(map[string]any, len(msg.keys))
-						for _, k := range msg.keys {
-							dataSignals[k] = payload
-						}
-						signals[DataNamespace] = dataSignals
-					}
+					SignalKey(msg.Domain): map[string]any{
+						"id":     msg.ID,
+						"action": msg.Action,
+						"ts":     msg.TS,
+					},
 				}
 				if err := sse.MarshalAndPatchSignals(signals); err != nil {
 					return
@@ -182,171 +454,58 @@ func (rl *Relay) Handler() http.HandlerFunc {
 	}
 }
 
-// scopeToPattern converts a scope string to a pub/sub change pattern,
+// domainsFromWatches extracts unique domain names from watch values.
+// "doc.123" → "doc", "counter" → "counter".
+func domainsFromWatches(watches []string) []string {
+	seen := map[string]struct{}{}
+	var domains []string
+	for _, w := range watches {
+		domain, _, _ := strings.Cut(w, ".")
+		if _, ok := seen[domain]; !ok {
+			seen[domain] = struct{}{}
+			domains = append(domains, domain)
+		}
+	}
+	return domains
+}
+
+// watchToPattern converts a watch string to a pub/sub change pattern,
 // incorporating tenant/workspace from the identity context.
 //
-// Scope format: "entity:id" or "entity:*" or "entity:>"
+// Watch format: "domain" or "domain.id"
 //
-//	"customer:42"  → ChangePattern(tenant, workspace, "customer", "42", ">")
-//	"customers:*"  → ChangePattern(tenant, workspace, "customers", "*", "*")
-//	"customer:>"   → ChangePattern(tenant, workspace, "customer", ">", "")
-func scopeToPattern(ctx context.Context, scope string) string {
+//	"doc"     → ChangePattern(tenant, workspace, "doc", ">", "")
+//	"doc.123" → ChangePattern(tenant, workspace, "doc", "123", ">")
+func watchToPattern(ctx context.Context, watch string) string {
 	tenant, workspace := "_", "_"
 	if id, ok := identity.FromContext(ctx); ok {
 		tenant = id.TenantID()
 		workspace = id.WorkspaceID()
+	} else {
+		slog.Warn("stream: no identity in context — events may not match publisher scope",
+			"watch", watch)
 	}
 
-	entity, entityID, _ := strings.Cut(scope, ":")
-	if entityID == "" {
-		entityID = ">"
+	domain, entityID, hasID := strings.Cut(watch, ".")
+	if !hasID || entityID == "" {
+		return pubsub.ChangePattern(tenant, workspace, domain, ">", "")
 	}
-
-	// Map scope wildcards to ChangePattern conventions.
-	switch entityID {
-	case ">":
-		// Match everything under this entity.
-		return pubsub.ChangePattern(tenant, workspace, entity, ">", "")
-	case "*":
-		// Match any single entity ID, any action.
-		return pubsub.ChangePattern(tenant, workspace, entity, "*", "*")
-	default:
-		// Match a specific entity ID, any action.
-		return pubsub.ChangePattern(tenant, workspace, entity, entityID, ">")
-	}
+	return pubsub.ChangePattern(tenant, workspace, domain, entityID, ">")
 }
 
-// parseScopeKeys extracts the scope→keys mapping from the "keys" query param.
-// Falls back to ScopeKey(scope) for each scope when no key map is present.
-func parseScopeKeys(r *http.Request, scopes []string) map[string][]string {
-	result := make(map[string][]string, len(scopes))
-
-	if keysJSON := r.URL.Query().Get("keys"); keysJSON != "" {
-		var keyMap map[string][]string
-		if err := json.Unmarshal([]byte(keysJSON), &keyMap); err == nil {
-			return keyMap
+// parseWatches extracts watch values from the "watch" query parameter.
+// Values are comma-separated: ?watch=doc,invoice.456
+func parseWatches(r *http.Request) []string {
+	raw := r.URL.Query().Get("watch")
+	if raw == "" {
+		return nil
+	}
+	var watches []string
+	for _, w := range strings.Split(raw, ",") {
+		w = strings.TrimSpace(w)
+		if w != "" {
+			watches = append(watches, w)
 		}
 	}
-
-	// Default: one key per scope.
-	for _, scope := range scopes {
-		result[scope] = []string{ScopeKey(scope)}
-	}
-	return result
-}
-
-// parseScopes extracts scopes from the request query string.
-// It supports three formats that can be mixed:
-//
-//	?scope=invoice:42,invoices:*          (comma-separated)
-//	?scope=invoice:42&scope=invoices:*    (repeated params)
-//	?customers=1,2,4&files=5,6           (grouped by entity)
-//
-// The grouped format expands each value into entity:value scopes.
-func parseScopes(r *http.Request) []string {
-	var scopes []string
-	for key, values := range r.URL.Query() {
-		for _, v := range values {
-			for _, p := range strings.Split(v, ",") {
-				p = strings.TrimSpace(p)
-				if p == "" {
-					continue
-				}
-				if key == "scope" {
-					scopes = append(scopes, p)
-				} else {
-					scopes = append(scopes, key+":"+p)
-				}
-			}
-		}
-	}
-	return scopes
-}
-
-// ScopeKey converts a scope string to a safe signal property name.
-// This is the key within the _stream signal namespace.
-//
-//	ScopeKey("invoice:42")  → "invoice_42"
-//	ScopeKey("invoices:*")  → "invoices_WILD"
-//	ScopeKey("workspace:1:*") → "workspace_1_WILD"
-func ScopeKey(scope string) string {
-	s := strings.ReplaceAll(scope, ":", "_")
-	s = strings.ReplaceAll(s, ".", "_")
-	s = strings.ReplaceAll(s, "*", "WILD")
-	return s
-}
-
-// WatchEffect registers a scope on the context and returns a data-effect
-// expression string that auto-reloads when the scope goes stale.
-//
-//	stream.WatchEffect(ctx, "invoice:42", "/showcase/api/invoice/42")
-//	// registers scope, returns: "if($_stream.invoice_42) { $_stream.invoice_42 = false; @get('/showcase/api/invoice/42') }"
-//
-// Multiple components can watch the same scope — each gets a unique signal key.
-func WatchEffect(ctx context.Context, scope string, reloadURL string) string {
-	wxctx := dsx.FromContext(ctx)
-	baseKey := ScopeKey(scope)
-	key := wxctx.WatchScope(scope, baseKey)
-
-	signal := fmt.Sprintf("$%s.%s", SignalNamespace, key)
-	return fmt.Sprintf("if(%s) { %s = false; @get('%s') }", signal, signal, reloadURL)
-}
-
-// Attrs registers a scope and returns templ.Attributes that set up both
-// data-signals (stale flag initialization) and data-effect (auto-reload on
-// stale). Place these on the component's wrapper element.
-//
-//	<div { stream.Attrs(ctx, "invoice:42", wxctx.APIPath("/invoice/42"))... }>
-func Attrs(ctx context.Context, scope string, reloadURL string) templ.Attributes {
-	wxctx := dsx.FromContext(ctx)
-	baseKey := ScopeKey(scope)
-	key := wxctx.WatchScope(scope, baseKey)
-
-	signal := fmt.Sprintf("$%s.%s", SignalNamespace, key)
-	effect := fmt.Sprintf("if(%s) { %s = false; @get('%s') }", signal, signal, reloadURL)
-
-	m := map[string]any{key: false}
-	j, _ := json.Marshal(m)
-	signals := "{" + SignalNamespace + ": " + string(j) + "}"
-
-	return templ.Attributes{
-		"data-signals": signals,
-		"data-effect":  effect,
-	}
-}
-
-// InitScope pushes a PatchSignals to initialize a stale signal for a scope
-// that wasn't known at initial render (e.g. new rows from infinite scroll).
-func InitScope(sse *datastar.ServerSentEventGenerator, scope string) error {
-	key := ScopeKey(scope)
-	return sse.MarshalAndPatchSignals(map[string]any{
-		SignalNamespace: map[string]any{key: false},
-	})
-}
-
-// ScopeSignals returns a data-signals value that initializes the stale flags
-// for the given scopes. Place this on the component element so the signals
-// exist before data-effect runs.
-//
-//	stream.ScopeSignals("counter:shared") → "_stream: {\"counter_shared\":false}"
-func ScopeSignals(scopes ...string) string {
-	m := make(map[string]any, len(scopes))
-	for _, s := range scopes {
-		m[ScopeKey(s)] = false
-	}
-	j, _ := json.Marshal(m)
-	return "{" + SignalNamespace + ": " + string(j) + "}"
-}
-
-// PreRegister registers scopes on the dsx context so that stream.Connect()
-// opens the SSE stream connection on initial page load. Use this for scopes
-// whose fragments are loaded asynchronously (via data-init) and therefore
-// can't register themselves in time for the initial render.
-//
-//	stream.PreRegister(ctx, "counter:shared", "invoices:*")
-func PreRegister(ctx context.Context, scopes ...string) {
-	wxctx := dsx.FromContext(ctx)
-	for _, scope := range scopes {
-		wxctx.WatchScope(scope, ScopeKey(scope))
-	}
+	return watches
 }
