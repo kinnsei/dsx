@@ -57,7 +57,7 @@ func TestDrawerAdvancedPage_CardOpensDrawer(t *testing.T) {
 	}
 
 	// Close via close button.
-	closeBtn := page.Locator("#drawer-panel button.btn-circle")
+	closeBtn := page.Locator("#drawer-panel button[title='Close']")
 	if err := closeBtn.Click(); err != nil {
 		t.Fatalf("click close: %v", err)
 	}
