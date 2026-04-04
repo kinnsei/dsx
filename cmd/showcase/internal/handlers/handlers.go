@@ -18,6 +18,7 @@ type Handlers struct {
 	aichat     *aichatHandlers
 	yamltree   *yamltreeHandlers
 	customer   *customerHandlers
+	combobox   *comboboxHandlers
 }
 
 func New(bus *pubsub.Bus, relay *stream.Relay) *Handlers {
@@ -33,6 +34,7 @@ func New(bus *pubsub.Bus, relay *stream.Relay) *Handlers {
 		aichat:     newAIChatHandlers(),
 		yamltree:   newYamlTreeHandlers(),
 		customer:   newCustomerHandlers(bus),
+		combobox:   newComboboxHandlers(),
 	}
 }
 
@@ -48,4 +50,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.aichat.register(r)
 	h.yamltree.register(r)
 	h.customer.register(r)
+	h.combobox.register(r)
 }

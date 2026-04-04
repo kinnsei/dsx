@@ -55,6 +55,7 @@ func main() {
 			"/components/avatar":            pages.Avatars(),
 			"/components/calendar":          pages.Calendars(),
 			"/components/chat":              pages.Chats(),
+			"/components/combobox":           pages.Comboboxes(),
 			"/components/badge":             pages.Badges(),
 			"/components/carousel":          pages.Carousels(),
 			"/components/breadcrumbs":       pages.Breadcrumbs(),

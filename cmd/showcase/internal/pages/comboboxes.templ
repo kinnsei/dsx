@@ -1,0 +1,99 @@
+package pages
+
+import (
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ui/combobox"
+)
+
+templ Comboboxes() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Combobox — WebX Showcase",
+		Description: "Server-side searchable dropdown component",
+		CurrentPath: "/components/combobox",
+	}) {
+		{{ wxctx := dsx.FromContext(ctx) }}
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Combobox</h1>
+				<p class="text-base-content/70 mt-2">
+					A searchable dropdown that fetches results from the server. Type to search — results
+					arrive via SSE and are rendered server-side. Works with any data source.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Country Picker",
+				TemplCode: `{{ wxctx := dsx.FromContext(ctx) }}
+@combobox.Combobox(combobox.Props{
+    ID:        "country",
+    Name:      "country_code",
+    SearchURL: wxctx.APIPath("/combobox/countries"),
+    Placeholder: "Search countries...",
+})`,
+				HandlerCode: `func searchCountries() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        q := r.URL.Query().Get("q")
+        id := r.URL.Query().Get("id")
+
+        results := searchCountryData(q)
+
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Patch(sse, combobox.Options(combobox.OptionsProps{
+            ComboboxID: id,
+            Items:      results,
+        }))
+    }
+}`,
+			}) {
+				<div class="max-w-sm">
+					@combobox.Combobox(combobox.Props{
+						ID:          "country",
+						Name:        "country_code",
+						SearchURL:   wxctx.APIPath("/combobox/countries"),
+						Placeholder: "Search countries...",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Pre-selected Value",
+				TemplCode: `@combobox.Combobox(combobox.Props{
+    ID:        "country-pre",
+    Name:      "country_code",
+    SearchURL: wxctx.APIPath("/combobox/countries"),
+    Value:     "BE",
+    Label:     "🇧🇪 Belgium",
+})`,
+			}) {
+				<div class="max-w-sm">
+					@combobox.Combobox(combobox.Props{
+						ID:          "country-pre",
+						Name:        "country_code",
+						SearchURL:   wxctx.APIPath("/combobox/countries"),
+						Value:       "BE",
+						Label:       "🇧🇪 Belgium",
+						Placeholder: "Search countries...",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "Simple List (No Descriptions)",
+				TemplCode: `@combobox.Combobox(combobox.Props{
+    ID:        "fruit",
+    Name:      "fruit",
+    SearchURL: wxctx.APIPath("/combobox/fruits"),
+    Placeholder: "Pick a fruit...",
+})`,
+			}) {
+				<div class="max-w-sm">
+					@combobox.Combobox(combobox.Props{
+						ID:          "fruit",
+						Name:        "fruit",
+						SearchURL:   wxctx.APIPath("/combobox/fruits"),
+						Placeholder: "Pick a fruit...",
+					})
+				</div>
+			}
+		</div>
+	}
+}

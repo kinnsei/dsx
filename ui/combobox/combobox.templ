@@ -1,0 +1,207 @@
+package combobox
+
+import (
+	"fmt"
+
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/utils"
+)
+
+// Signals holds the reactive state for a combobox instance.
+type Signals struct {
+	Open   bool   `json:"open"`
+	Search string `json:"search"`
+	Value  string `json:"value"`
+	Label  string `json:"label"`
+}
+
+// Item represents a single option in the combobox results.
+type Item struct {
+	Value       string // form value (submitted when selected)
+	Label       string // primary display text
+	Description string // optional secondary text
+}
+
+// Size mirrors DaisyUI input sizes.
+type Size string
+
+const (
+	SizeDefault Size = ""
+	SizeXs      Size = "input-xs"
+	SizeSm      Size = "input-sm"
+	SizeMd      Size = "input-md"
+	SizeLg      Size = "input-lg"
+)
+
+// Variant mirrors DaisyUI input variants.
+type Variant string
+
+const (
+	VariantDefault Variant = ""
+	VariantPrimary Variant = "input-primary"
+	VariantError   Variant = "input-error"
+)
+
+// Props configures a combobox.
+type Props struct {
+	ID          string
+	Class       string
+	Attributes  templ.Attributes
+	Name        string // name attribute for the hidden form input
+	Placeholder string // placeholder text for the search input
+	SearchURL   string // GET endpoint called with ?q=<searchText>&id=<comboboxID>
+	Value       string // initial selected value
+	Label       string // initial display label
+	Size        Size
+	Variant     Variant
+	Disabled    bool
+}
+
+// ResultsID returns the DOM id for the results container, derived from
+// the combobox ID. Used by Options() to target the correct element.
+func ResultsID(comboboxID string) string {
+	return comboboxID + "-results"
+}
+
+// Combobox renders a searchable single-select dropdown. Typing in the
+// input fires a debounced GET to SearchURL. The server returns an Options
+// fragment that is patched into the results dropdown.
+templ Combobox(props Props) {
+	{{
+		id := props.ID
+		if id == "" {
+			id = utils.RandomID()
+		}
+		signals := ds.NewSignals(id, Signals{
+			Open:   false,
+			Search: props.Label,
+			Value:  props.Value,
+			Label:  props.Label,
+		})
+		placeholder := props.Placeholder
+		if placeholder == "" {
+			placeholder = "Search..."
+		}
+		searchExpr := fmt.Sprintf(
+			"%s; @get('%s?q=' + encodeURIComponent(%s) + '&id=%s', {retryMaxCount: 0})",
+			signals.Set("open", "true"),
+			props.SearchURL,
+			signals.Signal("search"),
+			id,
+		)
+	}}
+	<div
+		id={ id }
+		data-signals={ signals.DataSignals }
+		class={ utils.TwMerge("relative", props.Class) }
+		{ ds.On("click__outside", signals.Set("open", "false"))... }
+		{ props.Attributes... }
+	>
+		// Hidden input for form submission.
+		<input
+			type="hidden"
+			if props.Name != "" {
+				name={ props.Name }
+			}
+			{ ds.Bind(id, "value")... }
+		/>
+		// Visible search input.
+		<input
+			type="text"
+			class={ utils.TwMerge("input input-bordered w-full", string(props.Size), string(props.Variant)) }
+			placeholder={ placeholder }
+			autocomplete="off"
+			role="combobox"
+			aria-autocomplete="list"
+			aria-controls={ ResultsID(id) }
+			{ ds.Bind(id, "search")... }
+			{ ds.Attr("placeholder", fmt.Sprintf("%s || '%s'", signals.Signal("label"), placeholder))... }
+			{ ds.Attr("aria-expanded", signals.Signal("open"))... }
+			{ ds.On("focus", fmt.Sprintf("if(%s === %s) { %s }; %s",
+			signals.Signal("search"), signals.Signal("label"),
+			signals.SetString("search", ""),
+			signals.Set("open", "true"),
+		))... }
+			{ ds.On("input__debounce_300ms", searchExpr)... }
+			{ ds.On("keydown", fmt.Sprintf("if(evt.key==='Escape'){%s; evt.target.blur()}", signals.Set("open", "false")))... }
+			if props.Disabled {
+				disabled
+			}
+		/>
+		// Clear button — visible when a value is selected.
+		<button
+			type="button"
+			class="absolute right-3 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-base-content/70"
+			{ ds.Show(fmt.Sprintf("%s !== ''", signals.Signal("value")))... }
+			{ ds.OnClick(fmt.Sprintf("%s; %s; %s; %s",
+				signals.SetString("value", ""),
+				signals.SetString("label", ""),
+				signals.SetString("search", ""),
+				signals.Set("open", "false"),
+			))... }
+			if props.Disabled {
+				disabled
+			}
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M18 6 6 18"></path>
+				<path d="m6 6 12 12"></path>
+			</svg>
+		</button>
+		// Results dropdown.
+		<div
+			id={ ResultsID(id) }
+			role="listbox"
+			class="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto bg-base-100 rounded-box border border-base-200 shadow-lg"
+			{ ds.Show(signals.Signal("open"))... }
+		></div>
+	</div>
+}
+
+// OptionsProps configures the options list returned by a search handler.
+type OptionsProps struct {
+	ComboboxID string // must match the Combobox's ID
+	Items      []Item
+}
+
+// Options renders a list of selectable items for a combobox. This is the
+// templ component that server-side search handlers return via ds.Send.Patch.
+//
+//	sse := datastar.NewSSE(w, r)
+//	ds.Send.Patch(sse, combobox.Options(combobox.OptionsProps{
+//	    ComboboxID: "country_picker",
+//	    Items:      items,
+//	}))
+templ Options(props OptionsProps) {
+	{{ signals := ds.NewSignals(props.ComboboxID, Signals{}) }}
+	<div
+		id={ ResultsID(props.ComboboxID) }
+		role="listbox"
+		class="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto bg-base-100 rounded-box border border-base-200 shadow-lg"
+		{ ds.Show(signals.Signal("open"))... }
+	>
+		if len(props.Items) == 0 {
+			<div class="px-4 py-3 text-sm text-base-content/50">
+				No results
+			</div>
+		}
+		for _, item := range props.Items {
+			<div
+				class="px-4 py-2 cursor-pointer hover:bg-base-200 transition-colors"
+				tabindex="0"
+				role="option"
+				{ ds.OnClick(fmt.Sprintf("%s; %s; %s; %s",
+					signals.SetString("value", item.Value),
+					signals.SetString("label", item.Label),
+					signals.SetString("search", item.Label),
+					signals.Set("open", "false"),
+				))... }
+			>
+				<div class="text-sm font-medium">{ item.Label }</div>
+				if item.Description != "" {
+					<div class="text-xs text-base-content/50">{ item.Description }</div>
+				}
+			</div>
+		}
+	</div>
+}
