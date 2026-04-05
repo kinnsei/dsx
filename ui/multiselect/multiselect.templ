@@ -1,0 +1,227 @@
+package multiselect
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/laenen-partners/dsx/ds"
+	"github.com/laenen-partners/dsx/utils"
+)
+
+// Signals holds the reactive state for a multiselect instance.
+type Signals struct {
+	Open     bool   `json:"open"`
+	Search   string `json:"search"`
+	Selected string `json:"selected"` // comma-separated values: "fr,nl,de"
+}
+
+// Item represents a single option in the multiselect results.
+type Item struct {
+	Value       string // form value
+	Label       string // primary display text
+	Description string // optional secondary text
+}
+
+// SelectedItem represents a selected item shown as a tag.
+type SelectedItem struct {
+	Value string
+	Label string
+}
+
+// Props configures a multiselect.
+type Props struct {
+	ID          string
+	Class       string
+	Attributes  templ.Attributes
+	Name        string         // name attribute for hidden form inputs
+	Placeholder string         // placeholder text for the search input
+	SearchURL   string         // GET endpoint called with ?q=<text>&selected=<csv>&id=<id>
+	Selected    []SelectedItem // initial selected items
+	Disabled    bool
+}
+
+// ResultsID returns the DOM id for the results container.
+func ResultsID(id string) string {
+	return id + "-results"
+}
+
+// TagsID returns the DOM id for the tags container.
+func TagsID(id string) string {
+	return id + "-tags"
+}
+
+// selectedCSV returns a comma-separated string of selected values.
+func selectedCSV(items []SelectedItem) string {
+	vals := make([]string, len(items))
+	for i, item := range items {
+		vals[i] = item.Value
+	}
+	return strings.Join(vals, ",")
+}
+
+// MultiSelect renders a searchable multi-select dropdown. Typing in the
+// input fires a debounced GET to SearchURL with q, selected, and id params.
+// The server returns Tags, Options, and a signal patch via SSE.
+//
+// Selection/removal use add= and remove= query params so the server drives
+// the signal update — avoids Datastar signal timing issues.
+templ MultiSelect(props Props) {
+	{{
+		id := props.ID
+		if id == "" {
+			id = utils.RandomID()
+		}
+		csv := selectedCSV(props.Selected)
+		signals := ds.NewSignals(id, Signals{
+			Open:     false,
+			Search:   "",
+			Selected: csv,
+		})
+		placeholder := props.Placeholder
+		if placeholder == "" {
+			placeholder = "Search..."
+		}
+		// Search: sends current selected + search text.
+		searchExpr := fmt.Sprintf(
+			"%s; @get('%s?q=' + encodeURIComponent(%s) + '&selected=' + encodeURIComponent(%s) + '&id=%s', {retryMaxCount: 0})",
+			signals.Set("open", "true"),
+			props.SearchURL,
+			signals.Signal("search"),
+			signals.Signal("selected"),
+			id,
+		)
+	}}
+	<div
+		id={ id }
+		data-signals={ signals.DataSignals }
+		class={ utils.TwMerge("relative", props.Class) }
+		{ ds.On("click__outside", signals.Set("open", "false"))... }
+		{ props.Attributes... }
+	>
+		<div
+			class="flex flex-wrap gap-1.5 items-center min-h-12 rounded-btn border border-base-content/20 bg-base-100 px-3 py-2 cursor-text focus-within:outline focus-within:outline-2 focus-within:outline-base-content/20"
+			{ ds.OnClick(fmt.Sprintf("document.getElementById('%s-search').focus()", id))... }
+		>
+			<div id={ TagsID(id) } class="contents">
+				for _, item := range props.Selected {
+					@tag(id, props.SearchURL, item)
+				}
+			</div>
+			<input
+				id={ id + "-search" }
+				type="text"
+				class="flex-1 min-w-[80px] outline-none bg-transparent text-sm"
+				placeholder={ placeholder }
+				autocomplete="off"
+				role="combobox"
+				aria-autocomplete="list"
+				aria-controls={ ResultsID(id) }
+				{ ds.Bind(id, "search")... }
+				{ ds.On("focus__once", searchExpr)... }
+				{ ds.On("input__debounce_300ms", searchExpr)... }
+				{ ds.On("keydown", fmt.Sprintf("if(evt.key==='Escape'){%s; evt.target.blur()}", signals.Set("open", "false")))... }
+				if props.Disabled {
+					disabled
+				}
+			/>
+		</div>
+		<div
+			id={ ResultsID(id) }
+			role="listbox"
+			class="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto bg-base-100 rounded-box border border-base-200 shadow-lg"
+			{ ds.Show(signals.Signal("open"))... }
+		></div>
+	</div>
+}
+
+// tag renders a single selected item as a badge with a remove button.
+// The remove action sends ?remove=VALUE to the server, which updates
+// tags, options, and the selected signal.
+templ tag(componentID string, searchURL string, item SelectedItem) {
+	<input type="hidden" name={ componentID } value={ item.Value }/>
+	<span class="badge badge-sm gap-1">
+		{ item.Label }
+		<button
+			type="button"
+			class="text-base-content/50 hover:text-base-content"
+			{ ds.OnClick(fmt.Sprintf(
+				"@get('%s?remove=%s&selected=' + encodeURIComponent($%s.selected) + '&id=%s', {retryMaxCount: 0})",
+				searchURL,
+				item.Value,
+				strings.ReplaceAll(componentID, "-", "_"),
+				componentID,
+			))... }
+		>
+			<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				<path d="M18 6 6 18"></path>
+				<path d="m6 6 12 12"></path>
+			</svg>
+		</button>
+	</span>
+}
+
+// TagsProps configures the tags fragment returned by a search handler.
+type TagsProps struct {
+	MultiSelectID string
+	SearchURL     string
+	Items         []SelectedItem
+}
+
+// Tags renders the selected items as badges. Server-side search handlers
+// return this alongside Options via ds.Send.Patch calls.
+templ Tags(props TagsProps) {
+	<div id={ TagsID(props.MultiSelectID) } class="contents">
+		for _, item := range props.Items {
+			@tag(props.MultiSelectID, props.SearchURL, item)
+		}
+	</div>
+}
+
+// OptionsProps configures the options list returned by a search handler.
+type OptionsProps struct {
+	MultiSelectID string // must match the MultiSelect's ID
+	SearchURL     string // must match the MultiSelect's SearchURL
+	Items         []Item
+}
+
+// Options renders a list of selectable items for a multiselect.
+// Each option's click sends ?add=VALUE to the server.
+//
+// The handler should return three SSE patches:
+//
+//	sse.MarshalAndPatchSignals(signals)  // update selected signal
+//	ds.Send.Patch(sse, multiselect.Tags(...))
+//	ds.Send.Patch(sse, multiselect.Options(...))
+templ Options(props OptionsProps) {
+	<div
+		id={ ResultsID(props.MultiSelectID) }
+		role="listbox"
+		class="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto bg-base-100 rounded-box border border-base-200 shadow-lg"
+		{ ds.Show(fmt.Sprintf("$%s.open", strings.ReplaceAll(props.MultiSelectID, "-", "_")))... }
+	>
+		if len(props.Items) == 0 {
+			<div class="px-4 py-3 text-sm text-base-content/50">
+				No results
+			</div>
+		}
+		for _, item := range props.Items {
+			<div
+				class="px-4 py-2 cursor-pointer hover:bg-base-200 transition-colors"
+				tabindex="0"
+				role="option"
+				{ ds.OnClick(fmt.Sprintf(
+					"@get('%s?add=%s&selected=' + encodeURIComponent($%s.selected) + '&id=%s', {retryMaxCount: 0})",
+					props.SearchURL,
+					item.Value,
+					strings.ReplaceAll(props.MultiSelectID, "-", "_"),
+					props.MultiSelectID,
+				))... }
+			>
+				<div class="text-sm font-medium">{ item.Label }</div>
+				if item.Description != "" {
+					<div class="text-xs text-base-content/50">{ item.Description }</div>
+				}
+			</div>
+		}
+	</div>
+}

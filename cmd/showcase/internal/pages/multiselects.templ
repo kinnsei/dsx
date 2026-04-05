@@ -1,0 +1,86 @@
+package pages
+
+import (
+	"github.com/laenen-partners/dsx"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
+	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
+	"github.com/laenen-partners/dsx/ui/multiselect"
+)
+
+templ MultiSelects() {
+	@layouts.Showcase(layouts.ShowcaseProps{
+		Title:       "Multi-Select — WebX Showcase",
+		Description: "Server-side searchable multi-select component",
+		CurrentPath: "/components/multi-select",
+	}) {
+		{{ wxctx := dsx.FromContext(ctx) }}
+		<div class="space-y-8">
+			<div>
+				<h1 class="text-3xl font-bold">Multi-Select</h1>
+				<p class="text-base-content/70 mt-2">
+					A searchable multi-select dropdown. Selected items appear as tags.
+					Search results are fetched from the server and exclude already-selected items.
+				</p>
+			</div>
+			@components.Example(components.ExampleProps{
+				Title: "Language Picker",
+				TemplCode: `{{ wxctx := dsx.FromContext(ctx) }}
+@multiselect.MultiSelect(multiselect.Props{
+    ID:          "languages",
+    Name:        "languages",
+    SearchURL:   wxctx.APIPath("/multiselect/languages"),
+    Placeholder: "Add languages...",
+})`,
+				HandlerCode: `func searchLanguages() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        q := r.URL.Query().Get("q")
+        id := r.URL.Query().Get("id")
+        selected := r.URL.Query().Get("selected")
+
+        // Filter, exclude selected
+        results := search(q, selected)
+        tags := buildTags(selected)
+
+        sse := datastar.NewSSE(w, r)
+        ds.Send.Patch(sse, multiselect.Tags(tagsProps))
+        ds.Send.Patch(sse, multiselect.Options(optionsProps))
+    }
+}`,
+			}) {
+				<div class="max-w-md">
+					@multiselect.MultiSelect(multiselect.Props{
+						ID:          "languages",
+						Name:        "languages",
+						SearchURL:   wxctx.APIPath("/multiselect/languages"),
+						Placeholder: "Add languages...",
+					})
+				</div>
+			}
+			@components.Example(components.ExampleProps{
+				Title: "With Pre-selected Values",
+				TemplCode: `@multiselect.MultiSelect(multiselect.Props{
+    ID:        "languages-pre",
+    Name:      "languages",
+    SearchURL: wxctx.APIPath("/multiselect/languages"),
+    Selected: []multiselect.SelectedItem{
+        {Value: "fr", Label: "French"},
+        {Value: "nl", Label: "Dutch"},
+    },
+})`,
+			}) {
+				<div class="max-w-md">
+					@multiselect.MultiSelect(multiselect.Props{
+						ID:          "languages-pre",
+						Name:        "languages",
+						SearchURL:   wxctx.APIPath("/multiselect/languages"),
+						Placeholder: "Add languages...",
+						Selected: []multiselect.SelectedItem{
+							{Value: "fr", Label: "French"},
+							{Value: "nl", Label: "Dutch"},
+						},
+					})
+				</div>
+			}
+		</div>
+	}
+}

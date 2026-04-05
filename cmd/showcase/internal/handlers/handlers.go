@@ -18,23 +18,25 @@ type Handlers struct {
 	aichat     *aichatHandlers
 	yamltree   *yamltreeHandlers
 	customer   *customerHandlers
-	combobox   *comboboxHandlers
+	combobox    *comboboxHandlers
+	multiselect *multiselectHandlers
 }
 
 func New(bus *pubsub.Bus, relay *stream.Relay) *Handlers {
 	fileStore := newFileStore()
 	return &Handlers{
-		form:       newFormHandlers(),
-		upload:     newUploadHandlers(fileStore),
-		toast:      newToastHandlers(),
-		stream:     newStreamHandlers(bus, relay),
-		drawer:     newDrawerHandlers(),
-		modal:      newModalHandlers(),
-		commandbar: newCommandbarHandlers(),
-		aichat:     newAIChatHandlers(),
-		yamltree:   newYamlTreeHandlers(),
-		customer:   newCustomerHandlers(bus),
-		combobox:   newComboboxHandlers(),
+		form:        newFormHandlers(),
+		upload:      newUploadHandlers(fileStore),
+		toast:       newToastHandlers(),
+		stream:      newStreamHandlers(bus, relay),
+		drawer:      newDrawerHandlers(),
+		modal:       newModalHandlers(),
+		commandbar:  newCommandbarHandlers(),
+		aichat:      newAIChatHandlers(),
+		yamltree:    newYamlTreeHandlers(),
+		customer:    newCustomerHandlers(bus),
+		combobox:    newComboboxHandlers(),
+		multiselect: newMultiselectHandlers(),
 	}
 }
 
@@ -51,4 +53,5 @@ func (h *Handlers) RegisterRoutes(r chi.Router) {
 	h.yamltree.register(r)
 	h.customer.register(r)
 	h.combobox.register(r)
+	h.multiselect.register(r)
 }

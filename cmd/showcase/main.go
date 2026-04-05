@@ -56,6 +56,7 @@ func main() {
 			"/components/calendar":          pages.Calendars(),
 			"/components/chat":              pages.Chats(),
 			"/components/combobox":           pages.Comboboxes(),
+			"/components/multi-select":       pages.MultiSelects(),
 			"/components/badge":             pages.Badges(),
 			"/components/carousel":          pages.Carousels(),
 			"/components/breadcrumbs":       pages.Breadcrumbs(),
