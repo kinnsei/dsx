@@ -123,6 +123,23 @@ templ QuickReplies(props QuickRepliesProps) {
 	</div>
 }
 
+// StreamBubble renders an assistant message bubble with a stable ID for
+// merge-mode SSE patching. Used by ChatSender.StreamText to update the
+// bubble in place as tokens arrive, avoiding append-per-token.
+templ StreamBubble(chatID string, text string, streaming bool) {
+	<div id={ chatID + "-stream" } class="flex items-start gap-2">
+		@sparkleAvatar()
+		<div class="flex flex-col gap-2 max-w-[85%]">
+			<div class="bg-base-200 rounded-2xl px-4 py-2 text-sm">
+				{ text }
+				if streaming {
+					<span class="loading loading-dots loading-xs ml-1"></span>
+				}
+			</div>
+		</div>
+	</div>
+}
+
 // sparkleAvatar renders the small dark circle with sparkle icon.
 templ sparkleAvatar() {
 	<div class="w-6 h-6 rounded-full bg-neutral text-neutral-content flex items-center justify-center text-xs flex-shrink-0 mt-0.5">

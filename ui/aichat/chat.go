@@ -10,6 +10,7 @@ const typingIndicatorID = "typing-indicator"
 // ChatSender provides SSE operations scoped to a specific AI chat instance.
 type ChatSender struct {
 	sse      *datastar.ServerSentEventGenerator
+	chatID   string
 	selector string
 }
 
@@ -24,6 +25,7 @@ type ChatSender struct {
 func Chat(sse *datastar.ServerSentEventGenerator, chatID string) *ChatSender {
 	return &ChatSender{
 		sse:      sse,
+		chatID:   chatID,
 		selector: "#" + MessagesID(chatID),
 	}
 }
@@ -71,5 +73,39 @@ func (c *ChatSender) Append(component templ.Component) error {
 		component,
 		datastar.WithSelector(c.selector),
 		datastar.WithModeAppend(),
+	)
+}
+
+// StreamStart appends an empty streaming AI bubble to the messages area.
+// The bubble has a stable ID so subsequent StreamText calls merge into it.
+// Call this once before streaming tokens.
+//
+//	chat.StreamStart()
+//	for token := range tokens {
+//	    accumulated += token
+//	    chat.StreamText(accumulated)
+//	}
+//	chat.StreamDone(fullText)
+func (c *ChatSender) StreamStart() error {
+	return c.sse.PatchElementTempl(
+		StreamBubble(c.chatID, "", true),
+		datastar.WithSelector(c.selector),
+		datastar.WithModeAppend(),
+	)
+}
+
+// StreamText updates the streaming AI bubble with accumulated text.
+// Uses merge mode (Datastar's default morph) to update in place.
+func (c *ChatSender) StreamText(accumulated string) error {
+	return c.sse.PatchElementTempl(
+		StreamBubble(c.chatID, accumulated, true),
+	)
+}
+
+// StreamDone finalizes the streaming AI bubble, removing the loading
+// indicator. The bubble remains in the message list as a regular message.
+func (c *ChatSender) StreamDone(fullText string) error {
+	return c.sse.PatchElementTempl(
+		StreamBubble(c.chatID, fullText, false),
 	)
 }
