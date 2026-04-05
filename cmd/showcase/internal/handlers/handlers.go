@@ -8,16 +8,16 @@ import (
 
 // Handlers wires all showcase SSE/API handlers.
 type Handlers struct {
-	form       *formHandlers
-	upload     *uploadHandlers
-	toast      *toastHandlers
-	stream     *streamHandlers
-	drawer     *drawerHandlers
-	modal      *modalHandlers
-	commandbar *commandbarHandlers
-	aichat     *aichatHandlers
-	yamltree   *yamltreeHandlers
-	customer   *customerHandlers
+	form        *formHandlers
+	upload      *uploadHandlers
+	toast       *toastHandlers
+	stream      *streamHandlers
+	drawer      *drawerHandlers
+	modal       *modalHandlers
+	commandbar  *commandbarHandlers
+	aichat      *aichatHandlers
+	yamltree    *yamltreeHandlers
+	customer    *customerHandlers
 	combobox    *comboboxHandlers
 	multiselect *multiselectHandlers
 }
