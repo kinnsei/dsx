@@ -188,6 +188,7 @@ templ fullPageChat(props Props) {
 		<div
 			id={ messagesID }
 			class="flex-1 overflow-y-auto flex flex-col gap-3 p-4"
+			{ ds.Init(scrollExpr)... }
 			data-on:ds-patch-elements__window={ scrollExpr }
 		>
 			{ children... }
