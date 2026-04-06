@@ -54,9 +54,13 @@ func AttachmentsID(chatID string) string {
 // In full-page mode: fills parent container, compose bar pinned at bottom.
 templ AIChat(props Props) {
 	if props.Mode == ModeFullPage {
-		@fullPageChat(props)
+		@fullPageChat(props) {
+			{ children... }
+		}
 	} else {
-		@widgetChat(props)
+		@widgetChat(props) {
+			{ children... }
+		}
 	}
 }
 

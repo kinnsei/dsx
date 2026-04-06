@@ -27,6 +27,21 @@ templ AIChatFullPage() {
 				@aichat.AssistantMessage() {
 					@aichat.AssistantText("Welcome! I'm your AI assistant. Try sending a message — I'll respond with streaming text.")
 				}
+				@aichat.UserMessage(aichat.UserMessageProps{Text: "Can you help me cancel my Netflix subscription?"})
+				@aichat.AssistantMessage() {
+					@aichat.AssistantText("Of course! You have 8 active subscriptions. Which one would you like to cancel?")
+				}
+				@aichat.AssistantMessage() {
+					@aichat.QuickReplies(aichat.QuickRepliesProps{
+						ChatID:    "demo-fullpage",
+						SubmitURL: "/showcase/aichat/send-fullpage",
+						Options: []aichat.QuickReply{
+							{Label: "Netflix €12.99", Value: "Netflix"},
+							{Label: "Spotify €17.99", Value: "Spotify"},
+							{Label: "Show all 8", Value: "Show all"},
+						},
+					})
+				}
 			}
 		</div>
 	}
