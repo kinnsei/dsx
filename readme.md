@@ -24,6 +24,10 @@ Browser                          Server (Go)
 - **Type-safe Datastar** helpers. No string typos in `data-on:click` attributes.
 - **You own the code.** Fork it, edit it, ship it. No versioning conflicts.
 
+![showcase](./docs/showcase.png)
+
+
+
 ## Quick start
 
 ```bash
