@@ -9,20 +9,34 @@ import (
 
 // AIChatSignals holds the reactive state for the AI chat.
 type AIChatSignals struct {
-	Open  bool   `json:"open"`  // collapsed vs expanded
+	Open  bool   `json:"open"`  // collapsed vs expanded (widget mode only)
 	Input string `json:"input"` // current input text
 }
+
+// Mode controls the chat layout variant.
+type Mode string
+
+const (
+	// ModeWidget is the default collapsible widget with max-h-96.
+	ModeWidget Mode = ""
+	// ModeFullPage fills the parent container with compose bar pinned at bottom.
+	ModeFullPage Mode = "fullpage"
+)
 
 // Props configures the AI chat component.
 type Props struct {
 	ID               string
 	Class            string
 	Attributes       templ.Attributes
+	Mode             Mode            // widget (default) or fullpage
 	Placeholder      string          // collapsed placeholder (default "Tell your butler something...")
 	ReplyPlaceholder string          // reply input placeholder (default "Type a reply...")
 	SubmitURL        string          // POST endpoint for user messages
+	UploadURL        string          // POST endpoint for file uploads (multipart). When set, shows + button.
+	RemoveURL        string          // POST endpoint for file removal. Required when UploadURL is set.
 	Shortcut         string          // keyboard shortcut hint (default "⌘K")
 	InputSlot        templ.Component // optional: replaces default input row (e.g. embedded CommandBar)
+	FooterSlot       templ.Component // optional: content below the compose bar (disclaimers, file previews, etc.)
 }
 
 // MessagesID returns the ID of the messages container for SSE targeting.
@@ -30,10 +44,24 @@ func MessagesID(chatID string) string {
 	return chatID + "-messages"
 }
 
-// AIChat renders a conversational AI chat widget.
-// Collapsed: sparkle icon + placeholder + keyboard shortcut.
-// Expanded: scrollable message area + reply input.
+// AttachmentsID returns the ID of the file attachments list for SSE targeting.
+func AttachmentsID(chatID string) string {
+	return chatID + "-attachments"
+}
+
+// AIChat renders a conversational AI chat component.
+// In widget mode (default): collapsible sparkle widget with max-h-96.
+// In full-page mode: fills parent container, compose bar pinned at bottom.
 templ AIChat(props Props) {
+	if props.Mode == ModeFullPage {
+		@fullPageChat(props)
+	} else {
+		@widgetChat(props)
+	}
+}
+
+// widgetChat renders the collapsible widget variant (existing behaviour).
+templ widgetChat(props Props) {
 	{{
 		id := props.ID
 		if id == "" {
@@ -124,5 +152,124 @@ templ AIChat(props Props) {
 				</div>
 			}
 		</div>
+	</div>
+}
+
+// fullPageChat renders the full-page variant: fills parent container,
+// messages grow to fill available space, compose bar pinned at bottom.
+// No collapse/expand, no sparkle icon, no close button.
+templ fullPageChat(props Props) {
+	{{
+		id := props.ID
+		if id == "" {
+			id = utils.RandomID()
+		}
+		replyPlaceholder := props.ReplyPlaceholder
+		if replyPlaceholder == "" {
+			replyPlaceholder = "Type a message..."
+		}
+
+		signals := ds.NewSignals(id, AIChatSignals{Open: true, Input: ""})
+		inputSignal := signals.Signal("input")
+		messagesID := MessagesID(id)
+		scrollExpr := fmt.Sprintf("requestAnimationFrame(()=>{let el=document.getElementById('%s');if(el)el.scrollTop=el.scrollHeight})", messagesID)
+	}}
+	<div
+		id={ id }
+		data-signals={ signals.DataSignals }
+		class={ utils.TwMerge("flex flex-col h-full", props.Class) }
+		{ props.Attributes... }
+	>
+		<!-- Messages area (grows to fill available space) -->
+		<div
+			id={ messagesID }
+			class="flex-1 overflow-y-auto flex flex-col gap-3 p-4"
+			data-on:ds-patch-elements__window={ scrollExpr }
+		>
+			{ children... }
+		</div>
+		<!-- Compose bar (pinned at bottom) -->
+		if props.InputSlot != nil {
+			<div class="border-t border-base-200">
+				@props.InputSlot
+			</div>
+		} else {
+			{{
+				submitExpr := fmt.Sprintf("if(%s.trim()) { %s; %s }",
+					inputSignal,
+					ds.PostOnce(props.SubmitURL),
+					signals.SetString("input", ""),
+				)
+				clearDOM := fmt.Sprintf("document.getElementById('%s-textarea').value=''; document.getElementById('%s-textarea').style.height='auto'", id, id)
+			}}
+			<div class="border-t border-base-200 px-4 py-3">
+				// File attachments area — patched by fileupload handler.
+				if props.UploadURL != "" {
+					<div id={ AttachmentsID(id) + "-list" } class="mb-2"></div>
+					<div id={ AttachmentsID(id) + "-errors" }></div>
+				}
+				<div class="flex items-center gap-2">
+					// + button for file attachments.
+					if props.UploadURL != "" {
+						{{
+							attachID := AttachmentsID(id)
+							uploadURL := fmt.Sprintf("%s?id=%s&removeUrl=%s",
+								props.UploadURL,
+								attachID,
+								props.RemoveURL,
+							)
+						}}
+						<form enctype="multipart/form-data" class="contents">
+							<input
+								type="file"
+								name="files"
+								id={ id + "-file-input" }
+								class="hidden"
+								multiple
+								{ ds.On("change", ds.Post(uploadURL, ds.WithContentType("form")))... }
+							/>
+						</form>
+						<button
+							type="button"
+							class="btn btn-sm btn-ghost btn-circle text-base-content/50 hover:text-base-content"
+							{ ds.OnClick(fmt.Sprintf("document.getElementById('%s-file-input').click()", id))... }
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<path d="M5 12h14"></path>
+								<path d="M12 5v14"></path>
+							</svg>
+						</button>
+					}
+					<textarea
+						id={ id + "-textarea" }
+						class="textarea textarea-sm flex-1 resize-none min-h-[2.5rem] max-h-32"
+						rows="1"
+						placeholder={ replyPlaceholder }
+						{ ds.Bind(id, "input")... }
+						data-on:keydown={ fmt.Sprintf("if(evt.key === 'Enter' && !evt.shiftKey && %s.trim()) { evt.preventDefault(); %s; %s; this.value=''; this.style.height='auto' }",
+							inputSignal,
+							ds.PostOnce(props.SubmitURL),
+							signals.SetString("input", ""),
+						) }
+						data-on:input="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,128)+'px'"
+					></textarea>
+					<button
+						type="button"
+						class="btn btn-sm btn-primary btn-circle"
+						{ ds.OnClick(fmt.Sprintf("%s; %s", submitExpr, clearDOM))... }
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
+							<path d="m21.854 2.147-10.94 10.939"></path>
+						</svg>
+					</button>
+				</div>
+			</div>
+		}
+		if props.FooterSlot != nil {
+			<div class="border-t border-base-200">
+				@props.FooterSlot
+			</div>
+		}
 	</div>
 }

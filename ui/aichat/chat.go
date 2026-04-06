@@ -1,6 +1,9 @@
 package aichat
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/a-h/templ"
 	"github.com/starfederation/datastar-go/datastar"
 )
@@ -74,6 +77,23 @@ func (c *ChatSender) Append(component templ.Component) error {
 		datastar.WithSelector(c.selector),
 		datastar.WithModeAppend(),
 	)
+}
+
+// ClearAttachments empties the file attachments list via SSE patch.
+func (c *ChatSender) ClearAttachments() error {
+	return c.sse.PatchElements(
+		fmt.Sprintf(`<div id="%s-list"></div>`, AttachmentsID(c.chatID)),
+	)
+}
+
+// ClearInput resets the compose input signal to empty via SSE patch.
+func (c *ChatSender) ClearInput() error {
+	sanitizedID := strings.ReplaceAll(c.chatID, "-", "_")
+	return c.sse.MarshalAndPatchSignals(map[string]any{
+		sanitizedID: map[string]any{
+			"input": "",
+		},
+	})
 }
 
 // StreamStart appends an empty streaming AI bubble to the messages area.

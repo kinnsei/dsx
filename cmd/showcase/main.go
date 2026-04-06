@@ -51,6 +51,7 @@ func main() {
 			"/components/drawer":            pages.Drawers(),
 			"/components/accordion":         pages.Accordions(),
 			"/components/ai-chat":           pages.AIChats(),
+			"/examples/ai-chat-fullpage":    pages.AIChatFullPage(),
 			"/components/alert":             pages.Alerts(),
 			"/components/avatar":            pages.Avatars(),
 			"/components/calendar":          pages.Calendars(),

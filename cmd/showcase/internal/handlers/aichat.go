@@ -8,21 +8,26 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	dsx "github.com/laenen-partners/dsx"
 	"github.com/laenen-partners/dsx/ds"
 	"github.com/laenen-partners/dsx/ui/aichat"
 	"github.com/laenen-partners/dsx/ui/commandbar"
+	"github.com/laenen-partners/dsx/ui/fileupload"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
-type aichatHandlers struct{}
+type aichatHandlers struct {
+	fileStore fileupload.Store
+}
 
-func newAIChatHandlers() *aichatHandlers {
-	return &aichatHandlers{}
+func newAIChatHandlers(fileStore fileupload.Store) *aichatHandlers {
+	return &aichatHandlers{fileStore: fileStore}
 }
 
 func (h *aichatHandlers) register(r chi.Router) {
 	r.Post("/aichat/send", h.send(demoChatID, h.readAIChatInput))
 	r.Post("/aichat/send-combined", h.send(combinedChatID, h.readCommandBarInput))
+	r.Post("/aichat/send-fullpage", h.send(fullPageChatID, h.readAIChatInputFor(fullPageChatID)))
 	r.Post("/aichat/action", h.action())
 	r.Post("/aichat/upload", h.action())
 	r.Post("/aichat/voice", h.action())
@@ -32,6 +37,7 @@ const (
 	demoChatID     = "demo-aichat"
 	combinedChatID = "demo-combined"
 	combinedBarID  = "combined-bar"
+	fullPageChatID = "demo-fullpage"
 )
 
 // inputReader extracts the user's text from the request signals.
@@ -43,6 +49,16 @@ func (h *aichatHandlers) readAIChatInput(r *http.Request) (string, error) {
 		return "", fmt.Errorf("read aichat signals: %w", err)
 	}
 	return signals.Input, nil
+}
+
+func (h *aichatHandlers) readAIChatInputFor(chatID string) inputReader {
+	return func(r *http.Request) (string, error) {
+		var signals aichat.AIChatSignals
+		if err := aichat.ReadSignals(chatID, r, &signals); err != nil {
+			return "", fmt.Errorf("read aichat signals: %w", err)
+		}
+		return signals.Input, nil
+	}
 }
 
 func (h *aichatHandlers) readCommandBarInput(r *http.Request) (string, error) {
@@ -67,10 +83,29 @@ func (h *aichatHandlers) send(chatID string, readInput inputReader) http.Handler
 			return
 		}
 
+		// Check for attached files.
+		wxctx := dsx.FromContext(r.Context())
+		attachKey := fileupload.StoreKey(wxctx.SessionID, aichat.AttachmentsID(chatID))
+		attachedFiles := h.fileStore.List(attachKey)
+
 		sse := datastar.NewSSE(w, r)
 		chat := aichat.Chat(sse, chatID)
 
-		_ = chat.UserMessage(input)
+		_ = chat.ClearInput()
+		_ = chat.ClearAttachments()
+
+		// Show attached file names in the user message.
+		if len(attachedFiles) > 0 {
+			var names []string
+			for _, f := range attachedFiles {
+				names = append(names, f.Name)
+			}
+			_ = chat.UserMessage(fmt.Sprintf("%s\n📎 %d file(s): %s", input, len(attachedFiles), strings.Join(names, ", ")))
+			h.fileStore.Clear(attachKey)
+		} else {
+			_ = chat.UserMessage(input)
+		}
+
 		_ = chat.ShowTyping()
 		time.Sleep(800 * time.Millisecond)
 		_ = chat.HideTyping()
@@ -78,6 +113,8 @@ func (h *aichatHandlers) send(chatID string, readInput inputReader) http.Handler
 		submitURL := "/showcase/aichat/send"
 		if chatID == combinedChatID {
 			submitURL = "/showcase/aichat/send-combined"
+		} else if chatID == fullPageChatID {
+			submitURL = "/showcase/aichat/send-fullpage"
 		}
 		actionURL := "/showcase/aichat/action"
 

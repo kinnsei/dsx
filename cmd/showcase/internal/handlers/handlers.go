@@ -32,7 +32,7 @@ func New(bus *pubsub.Bus, relay *stream.Relay) *Handlers {
 		drawer:      newDrawerHandlers(),
 		modal:       newModalHandlers(),
 		commandbar:  newCommandbarHandlers(),
-		aichat:      newAIChatHandlers(),
+		aichat:      newAIChatHandlers(fileStore),
 		yamltree:    newYamlTreeHandlers(),
 		customer:    newCustomerHandlers(bus),
 		combobox:    newComboboxHandlers(),

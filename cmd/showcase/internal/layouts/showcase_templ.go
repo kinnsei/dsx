@@ -32,6 +32,7 @@ var showcaseNav = []layouts.NavGroup{
 	{
 		Title: "Examples",
 		Items: []layouts.NavItem{
+			{Label: "AI Chat Full Page", Href: "/examples/ai-chat-fullpage", Icon: icon.MessageSquare},
 			{Label: "Customer Care Hub", Href: "/examples/butler", Icon: icon.Headset},
 			{Label: "Customer List", Href: "/examples/customers", Icon: icon.Users},
 		},

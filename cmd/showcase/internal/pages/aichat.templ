@@ -256,6 +256,30 @@ func (h *handler) sendCombined() http.HandlerFunc {
 					})
 				</div>
 			}
+			@components.Example(components.ExampleProps{
+				Title: "Full-Page Mode",
+				TemplCode: `@aichat.AIChat(aichat.Props{
+    ID:        "demo-fullpage",
+    Mode:      aichat.ModeFullPage,
+    SubmitURL: "/showcase/aichat/send-fullpage",
+}) {
+    @aichat.AssistantMessage() {
+        @aichat.AssistantText("Welcome! I'm your assistant. How can I help?")
+    }
+}`,
+			}) {
+				<div class="h-96 max-w-lg mx-auto border border-base-300 rounded-box overflow-hidden">
+					@aichat.AIChat(aichat.Props{
+						ID:        "demo-fullpage",
+						Mode:      aichat.ModeFullPage,
+						SubmitURL: "/showcase/aichat/send-fullpage",
+					}) {
+						@aichat.AssistantMessage() {
+							@aichat.AssistantText("Welcome! I'm your assistant. How can I help?")
+						}
+					}
+				</div>
+			}
 		</div>
 	}
 }
