@@ -275,10 +275,10 @@ func myHandler(w http.ResponseWriter, r *http.Request) {
     ds.Send.Toast(sse, ds.ToastSuccess, "Saved!")
 
     // Show modal with templ content
-    ds.Send.Modal(sse, myModalContent())
+    ds.Send.Modal(r.Context(), sse, myModalContent())
 
     // Show drawer
-    ds.Send.Drawer(sse, myDrawerContent())
+    ds.Send.Drawer(r.Context(), sse, myDrawerContent())
 
     // Confirmation dialog
     ds.Send.Confirm(sse, "Delete this item?", "/items/delete")

@@ -457,7 +457,7 @@ func contextEditHandler(identities []Identity) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cc := currentContext(r, identities)
 		sse := datastar.NewSSE(w, r)
-		_ = ds.Send.Drawer(sse, ContextEditor(cc))
+		_ = ds.Send.Drawer(r.Context(), sse, ContextEditor(cc))
 	}
 }
 

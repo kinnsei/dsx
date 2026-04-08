@@ -182,7 +182,7 @@ The base layout (`layouts/base.templ`) must include container elements:
 Opens a slide-in panel from the right side. Content is a templ component rendered server-side.
 
 ```go
-func (s *Sender) Drawer(sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...DrawerOption) error
+func (s *Sender) Drawer(ctx context.Context, sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...DrawerOption) error
 func (s *Sender) HideDrawer(sse *datastar.ServerSentEventGenerator) error
 ```
 
@@ -195,7 +195,7 @@ func (h *handler) showDetail() http.HandlerFunc {
         item := loadItem(id)
 
         sse := datastar.NewSSE(w, r)
-        ds.Send.Drawer(sse, itemDetail(item))
+        ds.Send.Drawer(r.Context(), sse, itemDetail(item))
     }
 }
 ```
@@ -204,7 +204,7 @@ func (h *handler) showDetail() http.HandlerFunc {
 
 ```go
 // Wider panel
-ds.Send.Drawer(sse, content, ds.WithDrawerMaxWidth("max-w-2xl"))
+ds.Send.Drawer(r.Context(), sse, content, ds.WithDrawerMaxWidth("max-w-2xl"))
 ```
 
 **Server-initiated close** (e.g. after form submit inside drawer):
@@ -239,7 +239,7 @@ Appends a toast notification to `#toast-container` via SSE.
 
 ```go
 func (s *Sender) Toast(sse, level ToastLevel, message string, opts ...ToastOption) error
-func (s *Sender) ToastComponent(sse, component templ.Component) error
+func (s *Sender) ToastComponent(ctx context.Context, sse *datastar.ServerSentEventGenerator, component templ.Component) error
 ```
 
 **Basic usage:**
@@ -268,7 +268,7 @@ ds.Send.Toast(sse, ds.ToastInfo, "New version available.",
 )
 
 // Custom templ component
-ds.Send.ToastComponent(sse, myCustomToast(data))
+ds.Send.ToastComponent(r.Context(), sse, myCustomToast(data))
 ```
 
 **Levels:** `ds.ToastInfo`, `ds.ToastSuccess`, `ds.ToastWarning`, `ds.ToastError`
@@ -287,7 +287,7 @@ ds.Send.ToastComponent(sse, myCustomToast(data))
 Opens a centered modal dialog. Content is a templ component rendered server-side.
 
 ```go
-func (s *Sender) Modal(sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...ModalOption) error
+func (s *Sender) Modal(ctx context.Context, sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...ModalOption) error
 func (s *Sender) HideModal(sse *datastar.ServerSentEventGenerator) error
 ```
 
@@ -295,10 +295,10 @@ func (s *Sender) HideModal(sse *datastar.ServerSentEventGenerator) error
 
 ```go
 sse := datastar.NewSSE(w, r)
-ds.Send.Modal(sse, editForm(item))
+ds.Send.Modal(r.Context(), sse, editForm(item))
 
 // With options
-ds.Send.Modal(sse, editForm(item), ds.WithModalMaxWidth("max-w-2xl"))
+ds.Send.Modal(r.Context(), sse, editForm(item), ds.WithModalMaxWidth("max-w-2xl"))
 ```
 
 **Server-initiated close** (e.g. after form submit inside modal):
@@ -464,7 +464,7 @@ A single SSE response can contain multiple events. Show a drawer and a toast in 
 
 ```go
 sse := datastar.NewSSE(w, r)
-ds.Send.Drawer(sse, editForm(item))
+ds.Send.Drawer(r.Context(), sse, editForm(item))
 ds.Send.Toast(sse, ds.ToastInfo, "Editing item", ds.WithToastDuration(2000))
 ```
 

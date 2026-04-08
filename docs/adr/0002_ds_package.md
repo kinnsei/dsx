@@ -212,7 +212,7 @@ Options: `WithToastDuration(ms)`, `WithToastPersistent()`, `WithToastAction(labe
 Shows a centered dialog with a templ component as content:
 
 ```go
-ds.Send.Modal(sse, ConfirmDeleteDialog(id), ds.WithModalMaxWidth("max-w-sm"))
+ds.Send.Modal(r.Context(), sse, ConfirmDeleteDialog(id), ds.WithModalMaxWidth("max-w-sm"))
 ```
 
 `ds.Send.HideModal(sse)` closes it.
@@ -222,7 +222,7 @@ ds.Send.Modal(sse, ConfirmDeleteDialog(id), ds.WithModalMaxWidth("max-w-sm"))
 Shows a slide-in panel from the right:
 
 ```go
-ds.Send.Drawer(sse, EditCustomerForm(customer), ds.WithDrawerMaxWidth("max-w-md"))
+ds.Send.Drawer(r.Context(), sse, EditCustomerForm(customer), ds.WithDrawerMaxWidth("max-w-md"))
 ```
 
 `ds.Send.HideDrawer(sse)` closes it.

@@ -107,9 +107,9 @@ func (s *Sender) Toast(sse *datastar.ServerSentEventGenerator, level ToastLevel,
 }
 
 // ToastComponent appends a custom templ component as a toast via SSE.
-func (s *Sender) ToastComponent(sse *datastar.ServerSentEventGenerator, component templ.Component) error {
+func (s *Sender) ToastComponent(ctx context.Context, sse *datastar.ServerSentEventGenerator, component templ.Component) error {
 	var buf bytes.Buffer
-	if err := component.Render(context.Background(), &buf); err != nil {
+	if err := component.Render(ctx, &buf); err != nil {
 		return fmt.Errorf("rendering toast component: %w", err)
 	}
 	return patchToast(sse, buf.String())

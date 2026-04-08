@@ -29,14 +29,14 @@ func WithModalMaxWidth(class string) ModalOption {
 
 // Modal renders a templ component inside a centered modal dialog
 // and patches it into #modal-panel via SSE.
-func (s *Sender) Modal(sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...ModalOption) error {
+func (s *Sender) Modal(ctx context.Context, sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...ModalOption) error {
 	cfg := &modalConfig{maxWidth: "max-w-lg"}
 	for _, opt := range opts {
 		opt(cfg)
 	}
 
 	var contentBuf bytes.Buffer
-	if err := content.Render(context.Background(), &contentBuf); err != nil {
+	if err := content.Render(ctx, &contentBuf); err != nil {
 		return fmt.Errorf("rendering modal content: %w", err)
 	}
 

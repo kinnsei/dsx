@@ -31,14 +31,14 @@ func (h *modalHandlers) register(r chi.Router) {
 func (h *modalHandlers) showModal() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sse := datastar.NewSSE(w, r)
-		_ = ds.Send.Modal(sse, pages.ModalContent())
+		_ = ds.Send.Modal(r.Context(), sse, pages.ModalContent())
 	}
 }
 
 func (h *modalHandlers) showWideModal() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		sse := datastar.NewSSE(w, r)
-		_ = ds.Send.Modal(sse, pages.ModalContentWide(), ds.WithModalMaxWidth("max-w-2xl"))
+		_ = ds.Send.Modal(r.Context(), sse, pages.ModalContentWide(), ds.WithModalMaxWidth("max-w-2xl"))
 	}
 }
 

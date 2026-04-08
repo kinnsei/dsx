@@ -137,8 +137,8 @@ ds.Send.Patch(sse, myComponent(data))
 
 // UI feedback
 ds.Send.Toast(sse, ds.ToastSuccess, "Saved!")
-ds.Send.Drawer(sse, editForm(item))
-ds.Send.Modal(sse, confirmDialog())
+ds.Send.Drawer(r.Context(), sse, editForm(item))
+ds.Send.Modal(r.Context(), sse, confirmDialog())
 ds.Send.Confirm(sse, "Delete this?", "/api/delete/42")
 ds.Send.HideDrawer(sse)
 ds.Send.HideModal(sse)

@@ -180,7 +180,7 @@ templ CustomerDrawer() {
 func (h *customerHandlers) newDrawer() http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         sse := datastar.NewSSE(w, r)
-        ds.Send.Drawer(sse, pages.CustomerDrawer())
+        ds.Send.Drawer(r.Context(), sse, pages.CustomerDrawer())
     }
 }
 ```
@@ -264,7 +264,7 @@ func (h *customerHandlers) register(r chi.Router) {
 |--------|-------------|
 | `stream.Attrs(ctx, scope, url)` | Registers a scope and returns `data-signals` + `data-effect` for auto-reload |
 | `bus.NotifyCreated(ctx, "entity", "id")` | Publishes to a scope — all tabs watching a matching scope reload |
-| `ds.Send.Drawer(sse, component)` | Renders a templ component inside a slide-in drawer via SSE |
+| `ds.Send.Drawer(ctx, sse, component)` | Renders a templ component inside a slide-in drawer via SSE |
 | `ds.Send.HideDrawer(sse)` | Closes the drawer from the server side |
 | `ds.Send.Toast(sse, level, msg)` | Appends a toast notification via SSE |
 | `ds.Send.Patch(sse, component)` | Patches a templ component into the DOM via SSE |

@@ -44,14 +44,14 @@ func WithDrawerExpandable() DrawerOption {
 
 // Drawer renders a templ component inside a slide-in drawer panel
 // and patches it into #drawer-panel via SSE.
-func (s *Sender) Drawer(sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...DrawerOption) error {
+func (s *Sender) Drawer(ctx context.Context, sse *datastar.ServerSentEventGenerator, content templ.Component, opts ...DrawerOption) error {
 	cfg := &drawerConfig{maxWidth: "max-w-lg"}
 	for _, opt := range opts {
 		opt(cfg)
 	}
 
 	var contentBuf bytes.Buffer
-	if err := content.Render(context.Background(), &contentBuf); err != nil {
+	if err := content.Render(ctx, &contentBuf); err != nil {
 		return fmt.Errorf("rendering drawer content: %w", err)
 	}
 
