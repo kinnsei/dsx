@@ -38,7 +38,7 @@ func newBus(t *testing.T, ps pubsub.PubSub) *pubsub.Bus {
 }
 
 func testIdentity() identity.Context {
-	id, _ := identity.New("t1", "ws1", "user1", identity.PrincipalUser, []string{"admin"})
+	id, _ := identity.New("t1", "ws1", "user1", identity.PrincipalUser, "test", []string{"admin"})
 	return id
 }
 

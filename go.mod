@@ -6,7 +6,7 @@ require (
 	github.com/Oudwins/tailwind-merge-go v0.2.1
 	github.com/a-h/templ v0.3.1001
 	github.com/go-chi/chi/v5 v5.2.5
-	github.com/laenen-partners/identity v0.1.0
+	github.com/laenen-partners/identity v0.2.0
 	github.com/laenen-partners/pubsub v0.3.1
 	github.com/laenen-partners/validators v0.1.0
 	github.com/playwright-community/playwright-go v0.5200.1

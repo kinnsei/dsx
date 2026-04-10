@@ -332,6 +332,7 @@ func contextMiddleware(identities []Identity) func(http.Handler) http.Handler {
 					cc.WorkspaceID,
 					cc.PrincipalID,
 					pt,
+					"showcase",
 					roles,
 				)
 				if err != nil {
@@ -371,6 +372,7 @@ func contextMiddleware(identities []Identity) func(http.Handler) http.Handler {
 				persona.WorkspaceID,
 				persona.PrincipalID,
 				persona.PrincipalType,
+				"showcase",
 				persona.Roles,
 			)
 			if err != nil {
@@ -498,7 +500,7 @@ func contextSaveHandler(identities []Identity) http.HandlerFunc {
 		if pt == "" {
 			pt = identity.PrincipalUser
 		}
-		_, err := identity.New(cc.TenantID, cc.WorkspaceID, cc.PrincipalID, pt, splitRoles(cc.Roles))
+		_, err := identity.New(cc.TenantID, cc.WorkspaceID, cc.PrincipalID, pt, "showcase", splitRoles(cc.Roles))
 		if err != nil {
 			sse := datastar.NewSSE(w, r)
 			_ = ds.Send.Toast(sse, ds.ToastError, fmt.Sprintf("Invalid identity: %v", err))
