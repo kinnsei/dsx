@@ -21,10 +21,13 @@ type UserInfo struct {
 }
 
 // UserMenuItem is a single item in the user dropdown menu.
+// Use Href for regular links, or Action for Datastar actions (e.g. ds.Get("/auth/logout")).
+// When Action is set, the item renders as a <button> with data-on:click instead of an <a>.
 type UserMenuItem struct {
-	Label string
-	Href  string
-	Icon  icon.IconType
+	Label  string
+	Href   string // regular link (used when Action is empty)
+	Action string // Datastar action expression (e.g. "@get('/auth/logout')")
+	Icon   icon.IconType
 }
 
 // NavItem is a single navigation item in the sidebar.
@@ -202,12 +205,21 @@ templ dashboardSidebarFooter(user UserInfo, items []UserMenuItem) {
 				}) {
 					for _, item := range items {
 						<li>
-							<a href={ templ.SafeURL(item.Href) }>
-								if item.Icon != nil {
-									@item.Icon(icon.Props{Size: 16})
-								}
-								{ item.Label }
-							</a>
+							if item.Action != "" {
+								<button { ds.OnClick(item.Action)... }>
+									if item.Icon != nil {
+										@item.Icon(icon.Props{Size: 16})
+									}
+									{ item.Label }
+								</button>
+							} else {
+								<a href={ templ.SafeURL(item.Href) }>
+									if item.Icon != nil {
+										@item.Icon(icon.Props{Size: 16})
+									}
+									{ item.Label }
+								</a>
+							}
 						</li>
 					}
 				}
