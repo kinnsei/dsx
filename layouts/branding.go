@@ -10,6 +10,10 @@ type AppBranding struct {
 	LogoFullUrl string
 	// Href is the logo click destination (defaults to "/")
 	Href string
+	// HideNavbarName hides the app name text in the navbar.
+	// The sidebar header still shows it. Use with PageTitle to show
+	// a page-specific title in the navbar instead of the app name.
+	HideNavbarName bool
 }
 
 // DefaultLogoUrl returns the logo URL to use, defaulting to "/assets/logo.png" if not set.

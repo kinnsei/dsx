@@ -77,6 +77,10 @@ type DashboardProps struct {
 	// ShowDetailPanel enables the right-side detail panel (controlled by Datastar signals)
 	ShowDetailPanel bool
 
+	// PageTitle shown in the navbar header. When set, replaces the app name.
+	// The sidebar header still shows App.Name independently.
+	PageTitle string
+
 	// HeaderActions is an optional slot for action buttons in the navbar
 	HeaderActions templ.Component
 
@@ -101,12 +105,16 @@ templ Dashboard(props DashboardProps) {
 					@navbar.Navbar() {
 						@navbar.Start() {
 							@drawer.ToggleButton(DrawerID)
-							<a href={ templ.SafeURL(props.App.DefaultHref()) } class="btn btn-ghost text-xl">
-								if props.App.LogoFullUrl != "" {
-									<img src={ props.App.DefaultLogoUrl() } alt={ props.App.DefaultName() } class="h-6"/>
-								}
-								{ props.App.DefaultName() }
-							</a>
+							if props.PageTitle != "" {
+								<span class="text-xl font-semibold">{ props.PageTitle }</span>
+							} else if !props.App.HideNavbarName {
+								<a href={ templ.SafeURL(props.App.DefaultHref()) } class="btn btn-ghost text-xl">
+									if props.App.LogoFullUrl != "" {
+										<img src={ props.App.DefaultLogoUrl() } alt={ props.App.DefaultName() } class="h-6"/>
+									}
+									{ props.App.DefaultName() }
+								</a>
+							}
 						}
 						@navbar.End() {
 							if props.ThemeToggle != nil {
