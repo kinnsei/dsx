@@ -1,0 +1,33 @@
+package modalpanel
+
+import (
+	"github.com/laenen-partners/dsx/utils"
+)
+
+// ContainerID is the fixed ID of the modal container in the base template.
+const ContainerID = "modal-panel"
+
+// closeExpr is the inline Datastar expression for closing the modal.
+const closeExpr = "document.getElementById('" + ContainerID + "').innerHTML=''"
+
+// Config configures the modal appearance.
+type Config struct {
+	// MaxWidth is the CSS max-width class (e.g. "max-w-lg").
+	MaxWidth string
+}
+
+// Modal renders the modal dialog shell with overlay and content slot.
+// Patched into #modal-panel via SSE.
+templ Modal(cfg Config, content templ.Component) {
+	<div id={ ContainerID }>
+		<div class="fixed inset-0 bg-black/40 z-40" data-on:click={ closeExpr }></div>
+		<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+			<div class={ utils.TwMerge("bg-base-100 rounded-box shadow-xl w-full overflow-y-auto max-h-[90vh]", cfg.MaxWidth) }>
+				<div class="p-6 relative">
+					<button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4" data-on:click={ closeExpr }>✕</button>
+					@content
+				</div>
+			</div>
+		</div>
+	</div>
+}

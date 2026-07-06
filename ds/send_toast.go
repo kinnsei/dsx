@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/a-h/templ"
+	"github.com/laenen-partners/dsx/ui/toastcontainer"
 	"github.com/laenen-partners/dsx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
 // ToastContainerID is the fixed ID of the toast container in the base template.
-const ToastContainerID = "toast-container"
+const ToastContainerID = toastcontainer.ContainerID
 
 // ToastLevel represents the severity of a toast notification.
 type ToastLevel string
@@ -77,33 +77,22 @@ func (s *Sender) Toast(sse *datastar.ServerSentEventGenerator, level ToastLevel,
 		cfg.duration = 0
 	}
 
-	id := "toast-" + utils.RandomID()
-	variant := toastLevelToVariant(level)
-
-	var body strings.Builder
-	if cfg.linkText != "" && cfg.linkURL != "" {
-		fmt.Fprintf(&body,
-			`<span>%s <a href="%s" class="underline font-semibold" data-on:click="document.getElementById('%s')?.remove()">%s</a></span>`,
-			templ.EscapeString(message),
-			templ.EscapeString(cfg.linkURL),
-			id,
-			templ.EscapeString(cfg.linkText),
-		)
-	} else {
-		fmt.Fprintf(&body, `<span>%s</span>`, templ.EscapeString(message))
+	tc := toastcontainer.Config{
+		ID:          "toast-" + utils.RandomID(),
+		Message:     message,
+		Variant:     toastLevelToVariant(level),
+		DurationMs:  cfg.duration,
+		LinkText:    cfg.linkText,
+		LinkURL:     cfg.linkURL,
+		ActionLabel: cfg.actionLabel,
+		ActionURL:   cfg.actionURL,
 	}
 
-	if cfg.actionLabel != "" && cfg.actionURL != "" {
-		fmt.Fprintf(&body,
-			`<button class="btn btn-sm" data-on:click="@get('%s'); document.getElementById('%s')?.remove()">%s</button>`,
-			templ.EscapeString(cfg.actionURL),
-			id,
-			templ.EscapeString(cfg.actionLabel),
-		)
+	var buf bytes.Buffer
+	if err := toastcontainer.Toast(tc).Render(context.Background(), &buf); err != nil {
+		return fmt.Errorf("rendering toast: %w", err)
 	}
-
-	html := buildToastHTML(id, variant, body.String(), cfg.duration)
-	return patchToast(sse, html)
+	return patchToast(sse, buf.String())
 }
 
 // ToastComponent appends a custom templ component as a toast via SSE.
@@ -113,28 +102,6 @@ func (s *Sender) ToastComponent(ctx context.Context, sse *datastar.ServerSentEve
 		return fmt.Errorf("rendering toast component: %w", err)
 	}
 	return patchToast(sse, buf.String())
-}
-
-func buildToastHTML(id, variant, body string, durationMs int) string {
-	var b strings.Builder
-
-	fmt.Fprintf(&b, `<div id="%s" class="alert %s shadow-lg"`, id, variant)
-
-	if durationMs > 0 {
-		fmt.Fprintf(&b, ` data-init="setTimeout(() => document.getElementById('%s')?.remove(), %d)"`, id, durationMs)
-	}
-
-	b.WriteString(`>`)
-	b.WriteString(body)
-
-	// Close button
-	fmt.Fprintf(&b,
-		`<button class="btn btn-sm btn-ghost btn-circle" data-on:click="document.getElementById('%s')?.remove()">✕</button>`,
-		id,
-	)
-
-	b.WriteString(`</div>`)
-	return b.String()
 }
 
 func patchToast(sse *datastar.ServerSentEventGenerator, html string) error {

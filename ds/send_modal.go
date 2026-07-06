@@ -4,15 +4,17 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/a-h/templ"
+	"github.com/laenen-partners/dsx/ui/modalpanel"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
 // ModalContainerID is the fixed ID of the modal container in the base template.
-const ModalContainerID = "modal-panel"
+const ModalContainerID = modalpanel.ContainerID
 
+// modalCloseExpr is the inline Datastar expression for closing the modal.
+// Used internally by Confirm and other modal-based operations.
 const modalCloseExpr = "document.getElementById('" + ModalContainerID + "').innerHTML=''"
 
 // ModalOption customizes modal appearance.
@@ -35,42 +37,14 @@ func (s *Sender) Modal(ctx context.Context, sse *datastar.ServerSentEventGenerat
 		opt(cfg)
 	}
 
-	var contentBuf bytes.Buffer
-	if err := content.Render(ctx, &contentBuf); err != nil {
-		return fmt.Errorf("rendering modal content: %w", err)
+	mc := modalpanel.Config{MaxWidth: cfg.maxWidth}
+	modal := modalpanel.Modal(mc, content)
+
+	var buf bytes.Buffer
+	if err := modal.Render(ctx, &buf); err != nil {
+		return fmt.Errorf("rendering modal: %w", err)
 	}
-
-	var b strings.Builder
-	fmt.Fprintf(&b, `<div id="%s">`, ModalContainerID)
-
-	// Overlay
-	fmt.Fprintf(&b,
-		`<div class="fixed inset-0 bg-black/40 z-40" data-on:click="%s"></div>`,
-		modalCloseExpr,
-	)
-
-	// Dialog
-	fmt.Fprintf(&b,
-		`<div class="fixed inset-0 z-50 flex items-center justify-center p-4">`,
-	)
-	fmt.Fprintf(&b,
-		`<div class="bg-base-100 rounded-box shadow-xl w-full %s overflow-y-auto max-h-[90vh]">`,
-		cfg.maxWidth,
-	)
-	b.WriteString(`<div class="p-6 relative">`)
-
-	// Close button
-	fmt.Fprintf(&b,
-		`<button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4" data-on:click="%s">✕</button>`,
-		modalCloseExpr,
-	)
-
-	// Content
-	b.WriteString(contentBuf.String())
-
-	b.WriteString(`</div></div></div></div>`)
-
-	return sse.PatchElements(b.String())
+	return sse.PatchElements(buf.String())
 }
 
 // HideModal patches #modal-panel back to its empty placeholder via SSE.

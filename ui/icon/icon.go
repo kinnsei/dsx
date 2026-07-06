@@ -61,10 +61,13 @@ func Icon(name string) IconType {
 			p = props[0]
 		}
 
-		// Create a unique key for the cache based on icon name and all relevant props.
-		// This ensures different stylings of the same icon are cached separately.
-		cacheKey := fmt.Sprintf("%s|s:%d|c:%s|f:%s|sk:%s|sw:%s|cl:%s",
-			name, p.Size, p.Color, p.Fill, p.Stroke, p.StrokeWidth, p.Class)
+		// Create a unique key for the cache based on icon name and style props.
+		// Class is intentionally excluded — its value space is unbounded
+		// (any CSS class string) and would cause unbounded cache growth with
+		// dynamically styled icons. The class is applied to the SVG element
+		// at render time from the Props, but it doesn't affect SVG content.
+		cacheKey := fmt.Sprintf("%s|s:%d|c:%s|f:%s|sk:%s|sw:%s",
+			name, p.Size, p.Color, p.Fill, p.Stroke, p.StrokeWidth)
 
 		return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
 			iconMutex.RLock()

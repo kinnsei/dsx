@@ -244,6 +244,69 @@ func TestGetOnceNoCSRF(t *testing.T) {
 	}
 }
 
+func TestPostWithFilterSignals(t *testing.T) {
+	got := ds.Post("/api/submit", ds.WithFilterSignals("my-form"))
+	assertContains(t, got, "filterSignals")
+	assertContains(t, got, "my_form")
+	assertContains(t, got, "X-CSRF-Token")
+}
+
+func TestPostWithRequestCancellation(t *testing.T) {
+	got := ds.Post("/api/stream", ds.WithRequestCancellation("disabled"))
+	assertContains(t, got, "requestCancellation: 'disabled'")
+	assertContains(t, got, "X-CSRF-Token")
+}
+
+func TestGetWithRequestCancellation(t *testing.T) {
+	got := ds.Get("/stream", ds.WithRequestCancellation("disabled"))
+	assertContains(t, got, "requestCancellation: 'disabled'")
+	// GET should not include CSRF even with cancellation.
+	if strings.Contains(got, "X-CSRF-Token") {
+		t.Errorf("Get() should NOT include CSRF header, got %q", got)
+	}
+}
+
+func TestGetWithFilterSignals(t *testing.T) {
+	got := ds.Get("/api/data", ds.WithFilterSignals("my-component"))
+	assertContains(t, got, "filterSignals")
+	assertContains(t, got, "my_component")
+}
+
+func TestWithFilterSignals_SanitizesHyphens(t *testing.T) {
+	got := ds.Post("/api", ds.WithFilterSignals("my-bar"))
+	assertContains(t, got, "my_bar")
+	if strings.Contains(got, "my-bar") {
+		t.Errorf("hyphen should be sanitized to underscore, got %q", got)
+	}
+}
+
+func TestGetMultipleOptions(t *testing.T) {
+	got := ds.Get("/api/data", ds.WithRetries(5), ds.WithFilterSignals("comp"))
+	assertContains(t, got, "retryMaxCount: 5")
+	assertContains(t, got, "filterSignals")
+}
+
+func TestBuildAction_NoOptions(t *testing.T) {
+	// Internal helper test — checks the plain @get output.
+	got := ds.Get("/api/data")
+	assertString(t, got, "@get('/api/data')")
+}
+
+func TestBuildAction_AllOptions(t *testing.T) {
+	got := ds.Post("/api/submit",
+		ds.WithRetries(3),
+		ds.WithContentType("form"),
+		ds.WithRequestCancellation("disabled"),
+		ds.WithFilterSignals("my-form"),
+	)
+	assertContains(t, got, "retryMaxCount: 3")
+	assertContains(t, got, "contentType: 'form'")
+	assertContains(t, got, "requestCancellation: 'disabled'")
+	assertContains(t, got, "filterSignals")
+	assertContains(t, got, "my_form")
+	assertContains(t, got, "X-CSRF-Token")
+}
+
 // --- helpers ---
 
 func assertAttr(t *testing.T, attrs map[string]any, key string, want any) {

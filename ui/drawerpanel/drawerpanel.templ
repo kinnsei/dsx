@@ -1,0 +1,60 @@
+package drawerpanel
+
+import (
+	"github.com/laenen-partners/dsx/utils"
+)
+
+// ContainerID is the fixed ID of the drawer container in the base template.
+const ContainerID = "drawer-panel"
+
+// closeExpr is the inline Datastar expression for closing the drawer.
+const closeExpr = "document.getElementById('" + ContainerID + "').innerHTML=''"
+
+// Config configures the drawer panel appearance.
+type Config struct {
+	// MaxWidth is the CSS max-width class (e.g. "max-w-lg").
+	MaxWidth string
+	// Expandable enables expand/collapse toggle.
+	Expandable bool
+}
+
+// Drawer renders the drawer shell with overlay and content slot.
+// Patched into #drawer-panel via SSE.
+templ Drawer(cfg Config, content templ.Component) {
+	<div id={ ContainerID }>
+		<div class="fixed inset-0 bg-black/40 z-40" data-on:click={ closeExpr }></div>
+		if cfg.Expandable {
+			@expandableDrawer(cfg, content)
+		} else {
+			@standardDrawer(cfg, content)
+		}
+	</div>
+}
+
+templ standardDrawer(cfg Config, content templ.Component) {
+	<div class={ utils.TwMerge("fixed inset-y-0 right-0 w-full bg-base-100 shadow-xl z-50 overflow-y-auto", cfg.MaxWidth) }>
+		<div class="p-6 relative">
+			<button class="btn btn-sm btn-circle btn-ghost absolute right-4 top-4" data-on:click={ closeExpr }>✕</button>
+			@content
+		</div>
+	</div>
+}
+
+templ expandableDrawer(cfg Config, content templ.Component) {
+	<div
+		data-signals="{_drawerExpanded: false}"
+		class={ utils.TwMerge("fixed inset-y-0 right-0 w-full bg-base-100 shadow-xl z-50 overflow-y-auto", cfg.MaxWidth) }
+		data-class={ "{'" + cfg.MaxWidth + "': !$_drawerExpanded}" }
+	>
+		<div class="sticky top-0 z-10 flex justify-between p-2 bg-base-100 border-b border-base-200">
+			<button class="btn btn-sm btn-circle btn-ghost" data-on:click="$_drawerExpanded = !$_drawerExpanded" title="Toggle full width">
+				<span data-show="!$_drawerExpanded">@templ.Raw(iconMaximize2)</span>
+				<span data-show="$_drawerExpanded">@templ.Raw(iconMinimize2)</span>
+			</button>
+			<button class="btn btn-sm btn-circle btn-ghost" data-on:click={ closeExpr } title="Close">✕</button>
+		</div>
+		<div class="p-6">
+			@content
+		</div>
+	</div>
+}
