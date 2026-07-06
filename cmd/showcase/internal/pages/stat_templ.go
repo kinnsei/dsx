@@ -9,9 +9,9 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
-	"github.com/laenen-partners/dsx/ui/stat"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/components"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/layouts"
+	"github.com/kinnsei/dsx/ui/stat"
 )
 
 func Stats() templ.Component {

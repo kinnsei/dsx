@@ -1,0 +1,11 @@
+{
+  "action": "browser_screenshot",
+  "driver": "browser",
+  "path": "/Users/kinnsei/ai/dsx/.zero/artifacts/badge-borders-matching-input.png",
+  "args": [
+    "screenshot",
+    "--annotate",
+    "/Users/kinnsei/ai/dsx/.zero/artifacts/badge-borders-matching-input.png"
+  ],
+  "createdAt": "2026-07-05T16:12:57.643642Z"
+}

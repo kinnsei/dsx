@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	dsx "github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/ui/aichat"
-	"github.com/laenen-partners/dsx/ui/commandbar"
-	"github.com/laenen-partners/dsx/ui/fileupload"
+	dsx "github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/ui/aichat"
+	"github.com/kinnsei/dsx/ui/commandbar"
+	"github.com/kinnsei/dsx/ui/fileupload"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

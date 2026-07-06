@@ -9,10 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/laenen-partners/dsx/ui/badge"
-	"github.com/laenen-partners/dsx/ui/codeview"
-	"github.com/laenen-partners/dsx/ui/tab"
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/ui/badge"
+	"github.com/kinnsei/dsx/ui/codeview"
+	"github.com/kinnsei/dsx/ui/tab"
+	"github.com/kinnsei/dsx/utils"
 )
 
 type ExampleProps struct {
@@ -135,7 +135,7 @@ func Example(props ExampleProps) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = tab.Content(tab.ContentProps{Class: "border-base-300 bg-base-100 p-6"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tab.Content(tab.ContentProps{Class: "border border-base-300 bg-base-100 p-6"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -169,7 +169,7 @@ func Example(props ExampleProps) templ.Component {
 				}
 				return nil
 			})
-			templ_7745c5c3_Err = tab.Content(tab.ContentProps{Class: "border-base-300 bg-base-100 p-4"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = tab.Content(tab.ContentProps{Class: "border border-base-300 bg-base-100 p-4"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -204,7 +204,7 @@ func Example(props ExampleProps) templ.Component {
 					}
 					return nil
 				})
-				templ_7745c5c3_Err = tab.Content(tab.ContentProps{Class: "border-base-300 bg-base-100 p-4"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
+				templ_7745c5c3_Err = tab.Content(tab.ContentProps{Class: "border border-base-300 bg-base-100 p-4"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}

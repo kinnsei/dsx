@@ -21,7 +21,7 @@ The stream package needs a pub/sub backend. For development, the in-process chan
 import (
     "github.com/laenen-partners/pubsub/chanpubsub"
     "github.com/laenen-partners/pubsub"
-    "github.com/laenen-partners/dsx/stream"
+    "github.com/kinnsei/dsx/stream"
 )
 
 ps := chanpubsub.New()

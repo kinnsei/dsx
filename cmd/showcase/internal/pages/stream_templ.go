@@ -9,13 +9,13 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/stream"
-	"github.com/laenen-partners/dsx/ui/card"
-	"github.com/laenen-partners/dsx/ui/markdown"
+	"github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/components"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/layouts"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/stream"
+	"github.com/kinnsei/dsx/ui/card"
+	"github.com/kinnsei/dsx/ui/markdown"
 )
 
 func Stream(specContent string) templ.Component {

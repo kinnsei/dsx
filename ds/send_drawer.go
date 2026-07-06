@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/a-h/templ"
-	"github.com/laenen-partners/dsx/ui/drawerpanel"
+	"github.com/kinnsei/dsx/ui/drawerpanel"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

@@ -1,6 +1,6 @@
 # Spec: dsx — AIChat Full-Page Mode
 
-> **Library**: `github.com/laenen-partners/dsx`
+> **Library**: `github.com/kinnsei/dsx`
 > **Package**: `ui/aichat`
 > **Extends**: Existing `aichat.AIChat` component
 

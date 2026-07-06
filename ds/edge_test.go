@@ -3,7 +3,7 @@ package ds_test
 import (
 	"testing"
 
-	"github.com/laenen-partners/dsx/ds"
+	"github.com/kinnsei/dsx/ds"
 )
 
 // TestMerge_Nil verifies Merge handles nil attributes gracefully.

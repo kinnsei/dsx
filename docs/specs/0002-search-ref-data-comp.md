@@ -1,6 +1,6 @@
 # Spec: dsx — Reference Data Components
 
-> **Library**: `github.com/laenen-partners/dsx`
+> **Library**: `github.com/kinnsei/dsx`
 > **Package**: `ui/countrypicker`, `ui/phoneinput`, `ui/currencypicker`, `ui/languagepicker`
 > **Depends on**: `github.com/laenen-partners/domains/ref` for data + search + formatting
 

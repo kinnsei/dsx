@@ -10,8 +10,8 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/utils"
 )
 
 // DebugSignals holds the debugger's reactive state.

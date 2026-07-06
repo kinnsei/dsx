@@ -8,7 +8,7 @@ package toast
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/laenen-partners/dsx/utils"
+import "github.com/kinnsei/dsx/utils"
 
 // HorizontalPosition controls horizontal alignment.
 type HorizontalPosition string

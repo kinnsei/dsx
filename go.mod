@@ -1,4 +1,4 @@
-module github.com/laenen-partners/dsx
+module github.com/kinnsei/dsx
 
 go 1.26
 

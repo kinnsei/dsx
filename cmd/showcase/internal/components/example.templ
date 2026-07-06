@@ -1,10 +1,10 @@
 package components
 
 import (
-	"github.com/laenen-partners/dsx/ui/badge"
-	"github.com/laenen-partners/dsx/ui/codeview"
-	"github.com/laenen-partners/dsx/ui/tab"
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/ui/badge"
+	"github.com/kinnsei/dsx/ui/codeview"
+	"github.com/kinnsei/dsx/ui/tab"
+	"github.com/kinnsei/dsx/utils"
 )
 
 type ExampleProps struct {
@@ -31,16 +31,16 @@ templ Example(props ExampleProps) {
 		}
 		@tab.Tabs(tab.Props{Variant: tab.VariantBorder}) {
 			@tab.RadioTab(tab.RadioTabProps{Name: tabName, Label: "Preview", Checked: true})
-			@tab.Content(tab.ContentProps{Class: "border-base-300 bg-base-100 p-6"}) {
+			@tab.Content(tab.ContentProps{Class: "border border-base-300 bg-base-100 p-6"}) {
 				{ children... }
 			}
 			@tab.RadioTab(tab.RadioTabProps{Name: tabName, Label: "Templ"})
-			@tab.Content(tab.ContentProps{Class: "border-base-300 bg-base-100 p-4"}) {
+			@tab.Content(tab.ContentProps{Class: "border border-base-300 bg-base-100 p-4"}) {
 				@codeview.CodeView(codeview.Props{Code: props.TemplCode, Language: "templ"})
 			}
 			if props.HandlerCode != "" {
 				@tab.RadioTab(tab.RadioTabProps{Name: tabName, Label: "Handler"})
-				@tab.Content(tab.ContentProps{Class: "border-base-300 bg-base-100 p-4"}) {
+				@tab.Content(tab.ContentProps{Class: "border border-base-300 bg-base-100 p-4"}) {
 					@codeview.CodeView(codeview.Props{Code: props.HandlerCode, Language: "go"})
 				}
 			}

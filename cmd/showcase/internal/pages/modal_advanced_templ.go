@@ -9,10 +9,10 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
-	"github.com/laenen-partners/dsx/ds"
+	"github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/components"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/layouts"
+	"github.com/kinnsei/dsx/ds"
 )
 
 func ModalAdvanced() templ.Component {

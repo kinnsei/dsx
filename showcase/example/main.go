@@ -16,9 +16,9 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/showcase"
-	"github.com/laenen-partners/dsx/stream"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/showcase"
+	"github.com/kinnsei/dsx/stream"
 	"github.com/laenen-partners/pubsub"
 	"github.com/starfederation/datastar-go/datastar"
 )

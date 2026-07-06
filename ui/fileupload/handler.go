@@ -10,9 +10,9 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	dsx "github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/utils"
-	"github.com/laenen-partners/dsx/utils/iox"
+	dsx "github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/utils"
+	"github.com/kinnsei/dsx/utils/iox"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

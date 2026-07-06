@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/laenen-partners/dsx/stream"
+	"github.com/kinnsei/dsx/stream"
 	"github.com/laenen-partners/pubsub"
 	"github.com/starfederation/datastar-go/datastar"
 )

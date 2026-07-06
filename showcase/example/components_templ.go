@@ -11,10 +11,10 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/showcase"
-	"github.com/laenen-partners/dsx/stream"
-	"github.com/laenen-partners/dsx/ui/button"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/showcase"
+	"github.com/kinnsei/dsx/stream"
+	"github.com/kinnsei/dsx/ui/button"
 )
 
 // homePage wraps the showcase page with a counter fragment that auto-loads.

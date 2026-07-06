@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/laenen-partners/dsx/ui/form"
+	"github.com/kinnsei/dsx/ui/form"
 )
 
 // loginSignals defines the expected form fields for testing.

@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/a-h/templ"
-	"github.com/laenen-partners/dsx/ds"
+	"github.com/kinnsei/dsx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

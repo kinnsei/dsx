@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/laenen-partners/dsx"
+	"github.com/kinnsei/dsx"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

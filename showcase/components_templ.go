@@ -12,14 +12,14 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/layouts"
-	"github.com/laenen-partners/dsx/ui/badge"
-	"github.com/laenen-partners/dsx/ui/button"
-	"github.com/laenen-partners/dsx/ui/dropdown"
-	"github.com/laenen-partners/dsx/ui/form"
-	"github.com/laenen-partners/dsx/ui/selectinput"
+	"github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/layouts"
+	"github.com/kinnsei/dsx/ui/badge"
+	"github.com/kinnsei/dsx/ui/button"
+	"github.com/kinnsei/dsx/ui/dropdown"
+	"github.com/kinnsei/dsx/ui/form"
+	"github.com/kinnsei/dsx/ui/selectinput"
 )
 
 // Head returns the standard showcase head with DSX CSS and DataStar JS.

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/go-chi/chi/v5"
-	"github.com/laenen-partners/dsx/ui/fileupload"
+	"github.com/kinnsei/dsx/ui/fileupload"
 )
 
 type uploadHandlers struct {

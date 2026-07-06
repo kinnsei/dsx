@@ -1,6 +1,6 @@
 # ds — Datastar Helpers for WebX
 
-> **Import**: `"github.com/laenen-partners/dsx/ds"`
+> **Import**: `"github.com/kinnsei/dsx/ds"`
 
 The `ds` package is split into two namespaces:
 

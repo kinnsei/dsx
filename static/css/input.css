@@ -254,3 +254,66 @@
     margin-top: 1em;
     margin-bottom: 1em;
 }
+
+/* Silk theme: flatten all shadows & outlines globally */
+
+/* 1. Form field borders (silk --border: 2px → 1px) */
+.input, .select, .textarea, .file-input {
+    border-width: 1px;
+}
+
+/* 2. Badge borders: match input's subtle border effect */
+.badge {
+    border: 1px solid color-mix(in oklab, var(--badge-color, var(--color-base-content)) 20%, transparent);
+}
+/* badge-ghost often shares border-color with bg, making edges look heavy */
+.badge-ghost {
+    border-color: color-mix(in oklab, var(--color-base-content) 15%, transparent);
+}
+
+/* 2. Kill ALL focus outlines everywhere */
+:focus, :focus-within, :focus-visible {
+    outline: none !important;
+}
+
+/* 3. Kill remaining hardcoded box-shadows (--depth: 0 handles most) */
+.modal-box {
+    box-shadow: none;
+}
+.btn {
+    box-shadow: none;
+}
+.kbd {
+    box-shadow: none;
+}
+.alert {
+    box-shadow: none;
+}
+.toggle .toggle-thumb {
+    box-shadow: none;
+}
+.checkbox:checked,
+.checkbox[checked] {
+    box-shadow: none;
+}
+.toggle {
+    box-shadow: none;
+}
+.status {
+    box-shadow: none;
+}
+.tabs-box > .tab-active {
+    box-shadow: none;
+}
+.timeline-box {
+    box-shadow: none;
+}
+details > ul {
+    box-shadow: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+    box-shadow: none;
+}
+input[type="range"]::-moz-range-thumb {
+    box-shadow: none;
+}

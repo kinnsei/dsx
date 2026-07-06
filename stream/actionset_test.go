@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/laenen-partners/dsx/stream"
+	"github.com/kinnsei/dsx/stream"
 )
 
 func TestAction_ID(t *testing.T) {

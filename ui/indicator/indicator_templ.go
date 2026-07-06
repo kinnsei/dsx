@@ -8,7 +8,7 @@ package indicator
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/laenen-partners/dsx/utils"
+import "github.com/kinnsei/dsx/utils"
 
 // HorizontalAlign controls horizontal placement of the indicator item.
 type HorizontalAlign string

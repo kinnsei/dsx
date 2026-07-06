@@ -4,7 +4,7 @@
 
 Go + Chi (routing) + Templ (templating) + Tailwind CSS + DaisyUI (styling) + Datastar (frontend interactivity)
 
-Module: `github.com/laenen-partners/dsx`
+Module: `github.com/kinnsei/dsx`
 
 ## Commands
 
@@ -52,8 +52,8 @@ templ MyComponent(props ...Props) {
 
 DaisyUI class conventions: `btn`, `btn-primary`, `card`, `card-body`, `card-title`, `card-actions`, `input`, `badge`, `alert`, `modal`, `drawer`, `tabs`, `dropdown`, etc. See [DaisyUI docs](https://daisyui.com/components/).
 
-Import components as: `"github.com/laenen-partners/dsx/ui/button"`
-Import utils as: `"github.com/laenen-partners/dsx/utils"`
+Import components as: `"github.com/kinnsei/dsx/ui/button"`
+Import utils as: `"github.com/kinnsei/dsx/utils"`
 
 ## Rules
 

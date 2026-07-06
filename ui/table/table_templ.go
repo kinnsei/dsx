@@ -8,7 +8,7 @@ package table
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/laenen-partners/dsx/utils"
+import "github.com/kinnsei/dsx/utils"
 
 // Size controls the table row density.
 type Size string

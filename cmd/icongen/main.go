@@ -34,7 +34,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/laenen-partners/dsx/utils/iox"
+	"github.com/kinnsei/dsx/utils/iox"
 )
 
 const (

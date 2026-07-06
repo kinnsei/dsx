@@ -8,7 +8,7 @@ package scrollstrip
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/laenen-partners/dsx/utils"
+import "github.com/kinnsei/dsx/utils"
 
 // Props configures the scroll strip container.
 type Props struct {

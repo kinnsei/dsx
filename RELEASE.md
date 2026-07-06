@@ -77,10 +77,10 @@ This release removes the local pub/sub implementation from dsx, replaces it with
 ### 1. Update imports
 
 ```diff
-- "github.com/laenen-partners/dsx/pubsub"
-- "github.com/laenen-partners/dsx/pubsub/chanpubsub"
-- "github.com/laenen-partners/dsx/pubsub/natspubsub"
-- "github.com/laenen-partners/dsx/pubsub/redispubsub"
+- "github.com/kinnsei/dsx/pubsub"
+- "github.com/kinnsei/dsx/pubsub/chanpubsub"
+- "github.com/kinnsei/dsx/pubsub/natspubsub"
+- "github.com/kinnsei/dsx/pubsub/redispubsub"
 + "github.com/laenen-partners/pubsub"
 + "github.com/laenen-partners/pubsub/chanpubsub"
 + "github.com/laenen-partners/pubsub/natspubsub"

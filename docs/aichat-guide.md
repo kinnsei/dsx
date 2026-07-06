@@ -7,7 +7,7 @@ The `ui/aichat` package provides a complete conversational AI chat component wit
 ### Frontend (templ)
 
 ```go
-import "github.com/laenen-partners/dsx/ui/aichat"
+import "github.com/kinnsei/dsx/ui/aichat"
 
 // Widget mode — collapsible sparkle bar (dashboards, sidebars)
 @aichat.AIChat(aichat.Props{
@@ -95,7 +95,7 @@ Add `UploadURL` and `RemoveURL` to enable the `+` button for file attachments:
 This reuses the `ui/fileupload` handlers:
 
 ```go
-import "github.com/laenen-partners/dsx/ui/fileupload"
+import "github.com/kinnsei/dsx/ui/fileupload"
 
 store := fileupload.NewStore()
 r.Post("/api/upload/files", fileupload.UploadHandler(store))

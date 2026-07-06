@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	"github.com/laenen-partners/dsx/ui/badge"
+	"github.com/kinnsei/dsx/ui/badge"
 )
 
 // Project holds mock data for the drawer detail view.

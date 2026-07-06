@@ -2,7 +2,7 @@
 
 > **Status:** Closed — already implemented
 >
-> **Library**: `github.com/laenen-partners/dsx`
+> **Library**: `github.com/kinnsei/dsx`
 > **Package**: `ui/aichat`
 > **Showcase**: `showcase/aichat`
 > **Depends on**: `ui/chat`, `ui/form`, `ui/badge`, `ds` (Datastar helpers)

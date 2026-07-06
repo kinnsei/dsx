@@ -3,14 +3,14 @@
 // This package re-exports from internal sub-packages for backward compatibility.
 // New code can import the sub-packages directly:
 //
-//	import "github.com/laenen-partners/dsx/internal/uxcontext"
-//	import "github.com/laenen-partners/dsx/internal/middleware"
+//	import "github.com/kinnsei/dsx/internal/uxcontext"
+//	import "github.com/kinnsei/dsx/internal/middleware"
 package dsx
 
 import (
 	"context"
 
-	"github.com/laenen-partners/dsx/internal/uxcontext"
+	"github.com/kinnsei/dsx/internal/uxcontext"
 )
 
 // Context carries request-scoped state through the middleware chain and into

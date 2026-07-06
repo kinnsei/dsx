@@ -1,7 +1,7 @@
 # 0023 — Separate topbar and sidebar branding in dsx dashboard layout
 
 **Status:** Open
-**Package:** `github.com/laenen-partners/dsx` (`layouts/dashboard.templ`)
+**Package:** `github.com/kinnsei/dsx` (`layouts/dashboard.templ`)
 
 ## Problem
 

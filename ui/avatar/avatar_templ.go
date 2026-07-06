@@ -8,7 +8,7 @@ package avatar
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/laenen-partners/dsx/utils"
+import "github.com/kinnsei/dsx/utils"
 
 // Status shows an online/offline indicator.
 type Status string

@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/ui/watchdebugger"
+	"github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/ui/watchdebugger"
 )
 
 type BaseProps struct {

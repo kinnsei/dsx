@@ -12,11 +12,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/components"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/layouts"
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/ui/calendar"
+	"github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/components"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/layouts"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/ui/calendar"
 )
 
 func CalendarAdvanced() templ.Component {

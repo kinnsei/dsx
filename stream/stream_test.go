@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/laenen-partners/dsx/stream"
+	"github.com/kinnsei/dsx/stream"
 	"github.com/laenen-partners/pubsub"
 	"github.com/laenen-partners/pubsub/chanpubsub"
 	"github.com/starfederation/datastar-go/datastar"

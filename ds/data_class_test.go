@@ -3,7 +3,7 @@ package ds_test
 import (
 	"testing"
 
-	"github.com/laenen-partners/dsx/ds"
+	"github.com/kinnsei/dsx/ds"
 )
 
 func TestNewDataClass_Empty(t *testing.T) {

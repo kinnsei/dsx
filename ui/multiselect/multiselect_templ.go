@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/utils"
 )
 
 // Signals holds the reactive state for a multiselect instance.

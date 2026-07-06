@@ -72,7 +72,7 @@ Open [http://localhost:3333](http://localhost:3333) to browse all components.
 Every request carries a `dsx.Context` with session, CSRF, theme, and stream state.
 
 ```go
-import "github.com/laenen-partners/dsx"
+import "github.com/kinnsei/dsx"
 
 r := chi.NewRouter()
 
@@ -104,7 +104,7 @@ Type-safe helpers for Datastar attributes and SSE operations. Prevents common mi
 #### Frontend attributes
 
 ```go
-import "github.com/laenen-partners/dsx/ds"
+import "github.com/kinnsei/dsx/ds"
 
 // Event handlers
 ds.OnClick(ds.Post("/api/save"))     // data-on:click="@post('/api/save', ...)"
@@ -153,7 +153,7 @@ See the [Real-Time Reactive UIs](#real-time-reactive-uis) section below for full
 ### `layouts` — Page layouts
 
 ```go
-import "github.com/laenen-partners/dsx/layouts"
+import "github.com/kinnsei/dsx/layouts"
 
 // Base layout provides HTML shell with all required containers
 templ MyPage() {
@@ -203,7 +203,7 @@ The Dashboard layout adds a sidebar, navbar, and optional detail panel:
 70+ components in `ui/`, each following the same pattern:
 
 ```go
-import "github.com/laenen-partners/dsx/ui/button"
+import "github.com/kinnsei/dsx/ui/button"
 
 @button.Button(button.Props{
     Variant: button.VariantPrimary,
@@ -229,9 +229,9 @@ The `showcase` package provides a reusable dev server for previewing components:
 
 ```go
 import (
-    "github.com/laenen-partners/dsx/showcase"
+    "github.com/kinnsei/dsx/showcase"
     "github.com/laenen-partners/pubsub"
-    "github.com/laenen-partners/dsx/stream"
+    "github.com/kinnsei/dsx/stream"
 )
 
 showcase.Run(showcase.Config{
@@ -347,7 +347,7 @@ Three things are needed: a pub/sub backend, a relay, and the watch worker script
 
 ```go
 import (
-    "github.com/laenen-partners/dsx/stream"
+    "github.com/kinnsei/dsx/stream"
     "github.com/laenen-partners/pubsub"
     "github.com/laenen-partners/pubsub/chanpubsub" // or natspubsub, redispubsub
 )

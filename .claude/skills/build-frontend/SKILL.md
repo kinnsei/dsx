@@ -48,12 +48,12 @@ static/js/           — Datastar JS bundle + watch worker
 **Imports**:
 ```go
 import (
-    "github.com/laenen-partners/dsx"                // Context, Middleware
-    "github.com/laenen-partners/dsx/ds"              // Datastar helpers
-    "github.com/laenen-partners/dsx/stream"          // Live updates
-    "github.com/laenen-partners/dsx/utils"           // TwMerge, If, RandomID
-    "github.com/laenen-partners/dsx/ui/button"       // UI components
-    "github.com/laenen-partners/dsx/ui/form"         // Form components + handler
+    "github.com/kinnsei/dsx"                // Context, Middleware
+    "github.com/kinnsei/dsx/ds"              // Datastar helpers
+    "github.com/kinnsei/dsx/stream"          // Live updates
+    "github.com/kinnsei/dsx/utils"           // TwMerge, If, RandomID
+    "github.com/kinnsei/dsx/ui/button"       // UI components
+    "github.com/kinnsei/dsx/ui/form"         // Form components + handler
     "github.com/starfederation/datastar-go/datastar" // Datastar Go SDK
 )
 ```
@@ -67,7 +67,7 @@ Every UI component follows this exact pattern:
 ```go
 package mycomponent
 
-import "github.com/laenen-partners/dsx/utils"
+import "github.com/kinnsei/dsx/utils"
 
 type Props struct {
     ID         string

@@ -9,7 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/utils"
 )
 
 // ContainerID is the fixed ID of the drawer container in the base template.

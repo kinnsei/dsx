@@ -39,9 +39,9 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
-	"github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/stream"
+	"github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/stream"
 	"github.com/laenen-partners/identity"
 	"github.com/laenen-partners/pubsub"
 	"github.com/laenen-partners/pubsub/chanpubsub"

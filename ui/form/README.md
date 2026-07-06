@@ -5,7 +5,7 @@ Datastar-powered form component with SSE submission, signal-based validation, an
 ## Import
 
 ```go
-import "github.com/laenen-partners/dsx/ui/form"
+import "github.com/kinnsei/dsx/ui/form"
 ```
 
 ## Quick start

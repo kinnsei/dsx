@@ -1,7 +1,7 @@
 package dsx
 
 import (
-	"github.com/laenen-partners/dsx/internal/middleware"
+	"github.com/kinnsei/dsx/internal/middleware"
 )
 
 // MiddlewareConfig configures the dsx middleware.

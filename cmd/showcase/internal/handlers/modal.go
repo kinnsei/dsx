@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/laenen-partners/dsx"
-	"github.com/laenen-partners/dsx/cmd/showcase/internal/pages"
-	"github.com/laenen-partners/dsx/ds"
+	"github.com/kinnsei/dsx"
+	"github.com/kinnsei/dsx/cmd/showcase/internal/pages"
+	"github.com/kinnsei/dsx/ds"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

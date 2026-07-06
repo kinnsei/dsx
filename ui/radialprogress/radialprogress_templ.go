@@ -11,7 +11,7 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/utils"
 )
 
 type Props struct {

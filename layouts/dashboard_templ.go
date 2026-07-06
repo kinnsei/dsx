@@ -11,14 +11,14 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"strings"
 
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/ui/avatar"
-	"github.com/laenen-partners/dsx/ui/drawer"
-	"github.com/laenen-partners/dsx/ui/dropdown"
-	"github.com/laenen-partners/dsx/ui/icon"
-	"github.com/laenen-partners/dsx/ui/menu"
-	"github.com/laenen-partners/dsx/ui/navbar"
-	"github.com/laenen-partners/dsx/ui/themecontroller"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/ui/avatar"
+	"github.com/kinnsei/dsx/ui/drawer"
+	"github.com/kinnsei/dsx/ui/dropdown"
+	"github.com/kinnsei/dsx/ui/icon"
+	"github.com/kinnsei/dsx/ui/menu"
+	"github.com/kinnsei/dsx/ui/navbar"
+	"github.com/kinnsei/dsx/ui/themecontroller"
 )
 
 // UserInfo configures the user section in the sidebar footer.

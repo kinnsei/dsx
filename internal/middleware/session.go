@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/laenen-partners/dsx/internal/uxcontext"
+	"github.com/kinnsei/dsx/internal/uxcontext"
 )
 
 const (

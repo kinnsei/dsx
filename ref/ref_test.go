@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/laenen-partners/dsx/ref"
+	"github.com/kinnsei/dsx/ref"
 )
 
 func TestCountryLookup(t *testing.T) {

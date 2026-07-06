@@ -58,7 +58,7 @@ import (
     "github.com/nats-io/nats-server/v2/server"
     "github.com/nats-io/nats.go"
     "github.com/laenen-partners/pubsub/natspubsub"
-    "github.com/laenen-partners/dsx/stream"
+    "github.com/kinnsei/dsx/stream"
     "github.com/laenen-partners/pubsub"
 )
 
@@ -90,7 +90,7 @@ r.Get("/stream", relay.Handler())
 import (
     "github.com/redis/go-redis/v9"
     "github.com/laenen-partners/pubsub/redispubsub"
-    "github.com/laenen-partners/dsx/stream"
+    "github.com/kinnsei/dsx/stream"
     "github.com/laenen-partners/pubsub"
 )
 
@@ -114,7 +114,7 @@ bus := pubsub.NewBus(ps, "myapp", pubsub.WithScope(tenant, workspace))
 ```go
 import (
     "github.com/laenen-partners/pubsub/chanpubsub"
-    "github.com/laenen-partners/dsx/stream"
+    "github.com/kinnsei/dsx/stream"
     "github.com/laenen-partners/pubsub"
 )
 
@@ -290,7 +290,7 @@ The `watchdebugger` component provides a floating inspector panel for debugging 
 Or use the component directly anywhere in your page:
 
 ```go
-import "github.com/laenen-partners/dsx/ui/watchdebugger"
+import "github.com/kinnsei/dsx/ui/watchdebugger"
 
 @watchdebugger.WatchDebugger()
 ```

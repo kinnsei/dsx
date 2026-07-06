@@ -6,8 +6,8 @@ import (
 	"fmt"
 
 	"github.com/a-h/templ"
-	"github.com/laenen-partners/dsx/ui/toastcontainer"
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/ui/toastcontainer"
+	"github.com/kinnsei/dsx/utils"
 	"github.com/starfederation/datastar-go/datastar"
 )
 

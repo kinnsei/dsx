@@ -11,9 +11,9 @@ import templruntime "github.com/a-h/templ/runtime"
 import (
 	"fmt"
 
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/ui/button"
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/ui/button"
+	"github.com/kinnsei/dsx/utils"
 )
 
 // FormSignals holds the reactive state for a form.

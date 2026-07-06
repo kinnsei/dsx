@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/laenen-partners/dsx/ds"
+	"github.com/kinnsei/dsx/ds"
 )
 
 func TestOn(t *testing.T) {

@@ -500,7 +500,7 @@ import (
     "github.com/nats-io/nats.go"
     "github.com/laenen-partners/pubsub"
     "github.com/laenen-partners/pubsub/natspubsub"
-    "github.com/laenen-partners/dsx/stream"
+    "github.com/kinnsei/dsx/stream"
 )
 
 func run() error {

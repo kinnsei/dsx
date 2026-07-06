@@ -1,6 +1,6 @@
 # Getting Started with WebX
 
-> **Module**: `github.com/laenen-partners/dsx`
+> **Module**: `github.com/kinnsei/dsx`
 > **Go Requirement**: Go 1.24+
 > **Stack**: Go + Chi (routing) + Templ (templating) + Tailwind CSS + DaisyUI (styling) + Datastar (frontend interactivity)
 
@@ -9,7 +9,7 @@
 ## Installation
 
 ```bash
-go get github.com/laenen-partners/dsx
+go get github.com/kinnsei/dsx
 ```
 
 Install dependencies with the task runner:
@@ -63,15 +63,15 @@ import (
     "github.com/go-chi/chi/v5"
     "github.com/nats-io/nats-server/v2/server"
     "github.com/nats-io/nats.go"
-    "github.com/laenen-partners/dsx"
+    "github.com/kinnsei/dsx"
     "github.com/laenen-partners/pubsub"
     "github.com/laenen-partners/pubsub/natspubsub"
-    "github.com/laenen-partners/dsx/stream"
-    "github.com/laenen-partners/dsx/ui"
-    "github.com/laenen-partners/dsx/ui/calendar"
-    "github.com/laenen-partners/dsx/ui/markdown"
-    "github.com/laenen-partners/dsx/ui/moneyinput"
-    "github.com/laenen-partners/dsx/ui/themecontroller"
+    "github.com/kinnsei/dsx/stream"
+    "github.com/kinnsei/dsx/ui"
+    "github.com/kinnsei/dsx/ui/calendar"
+    "github.com/kinnsei/dsx/ui/markdown"
+    "github.com/kinnsei/dsx/ui/moneyinput"
+    "github.com/kinnsei/dsx/ui/themecontroller"
 )
 
 func main() {
@@ -225,7 +225,7 @@ Each handler package exports a path constant (e.g. `markdown.PreviewPath`, `mone
 Components live in `ui/` and follow a consistent pattern:
 
 ```go
-import "github.com/laenen-partners/dsx/ui/button"
+import "github.com/kinnsei/dsx/ui/button"
 
 // Use with optional props
 @button.Button(button.Props{Variant: button.VariantPrimary}) {

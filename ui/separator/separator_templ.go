@@ -8,7 +8,7 @@ package separator
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/laenen-partners/dsx/utils"
+import "github.com/kinnsei/dsx/utils"
 
 // Variant controls the separator color.
 type Variant string

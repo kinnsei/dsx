@@ -12,8 +12,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/laenen-partners/dsx/ds"
-	"github.com/laenen-partners/dsx/utils"
+	"github.com/kinnsei/dsx/ds"
+	"github.com/kinnsei/dsx/utils"
 )
 
 // Mode controls the selection behavior of a calendar.
