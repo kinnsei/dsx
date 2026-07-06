@@ -1,10 +1,11 @@
 package ds
 
 import (
+	"bytes"
+	"context"
 	"fmt"
-	"strings"
 
-	"github.com/a-h/templ"
+	"github.com/laenen-partners/dsx/ui/modalpanel"
 	"github.com/starfederation/datastar-go/datastar"
 )
 
@@ -69,61 +70,26 @@ func (s *Sender) Confirm(sse *datastar.ServerSentEventGenerator, message string,
 		opt(cfg)
 	}
 
-	var b strings.Builder
-	fmt.Fprintf(&b, `<div id="%s">`, ModalContainerID)
-
-	// Overlay
-	fmt.Fprintf(&b,
-		`<div class="fixed inset-0 bg-black/40 z-40" data-on:click="%s"></div>`,
-		modalCloseExpr,
-	)
-
-	// Dialog
-	b.WriteString(`<div class="fixed inset-0 z-50 flex items-center justify-center p-4">`)
-	fmt.Fprintf(&b,
-		`<div class="bg-base-100 rounded-box shadow-xl w-full %s">`,
-		cfg.maxWidth,
-	)
-	b.WriteString(`<div class="p-6">`)
-
-	// Title
-	fmt.Fprintf(&b,
-		`<h3 class="text-lg font-bold">%s</h3>`,
-		templ.EscapeString(cfg.title),
-	)
-
-	// Message
-	fmt.Fprintf(&b,
-		`<p class="py-4">%s</p>`,
-		templ.EscapeString(message),
-	)
-
-	// Actions
-	b.WriteString(`<div class="flex justify-end gap-2">`)
-
-	// Cancel button
-	fmt.Fprintf(&b,
-		`<button class="btn" data-on:click="%s">%s</button>`,
-		modalCloseExpr,
-		templ.EscapeString(cfg.cancelLabel),
-	)
-
-	// Confirm button — uses PostOnce (with CSRF) by default, GetOnce if WithConfirmGet.
 	var actionExpr string
 	if cfg.method == "get" {
 		actionExpr = GetOnce(confirmURL)
 	} else {
 		actionExpr = PostOnce(confirmURL)
 	}
-	fmt.Fprintf(&b,
-		`<button class="%s" data-on:click="%s; %s">%s</button>`,
-		cfg.confirmClass,
-		actionExpr,
-		modalCloseExpr,
-		templ.EscapeString(cfg.confirmLabel),
-	)
 
-	b.WriteString(`</div></div></div></div></div>`)
+	cc := modalpanel.ConfirmConfig{
+		MaxWidth:     cfg.maxWidth,
+		Title:        cfg.title,
+		Message:      message,
+		CancelLabel:  cfg.cancelLabel,
+		ConfirmLabel: cfg.confirmLabel,
+		ConfirmClass: cfg.confirmClass,
+		ActionExpr:   actionExpr,
+	}
 
-	return sse.PatchElements(b.String())
+	var buf bytes.Buffer
+	if err := modalpanel.Confirm(cc).Render(context.Background(), &buf); err != nil {
+		return fmt.Errorf("rendering confirm dialog: %w", err)
+	}
+	return sse.PatchElements(buf.String())
 }
